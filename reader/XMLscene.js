@@ -25,13 +25,18 @@ XMLscene.prototype.init = function (application) {
 
 XMLscene.prototype.initLights = function () {
 
-	//console.log(this.lights[0].kq);
+
 	this.lights[0].setSpotExponent(100);
 	this.lights[0].setSpotDirection(3, 3, 3, 0);
 	this.lights[0].setSpecular(1, 1, 1, 1);
 	this.lights[0].setPosition(1, 1, 1, 0);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].update();
+	
+
+	//var lightOmni = this.graph.omni.legth;
+
+
 };
 
 XMLscene.prototype.initCameras = function () {
@@ -59,6 +64,8 @@ XMLscene.prototype.onGraphLoaded = function () {
 	var backgroundA = this.graph.illumination.background.a;
 
 	this.gl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
+
+	 this.axis=new CGFaxis(this,this.graph.axisLength,0.1);
 };
 
 XMLscene.prototype.display = function () {

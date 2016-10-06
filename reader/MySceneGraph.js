@@ -49,6 +49,7 @@ MySceneGraph.prototype.onXMLReady = function () {
 	this.parseViews(rootElement);
 	this.parseScene(rootElement);
 	this.parseMaterials(rootElement);
+	this.parseLights(rootElement);
 
 	if (error != null) {
 		this.onXMLError(error);
@@ -73,8 +74,7 @@ MySceneGraph.prototype.getRGBAElem = function (rootElement) {
 
 	var rgba = new RGBA(r, g, b, a);
 
-	console.log(rootElement);
-	console.log(rgba);
+	//console.log(rgba);
 
 	return rgba;
 }
@@ -88,7 +88,7 @@ MySceneGraph.prototype.getPoint3D = function (rootElement) {
 	var point = new Point3D(x, y, z)
 
 
-	console.log(point);
+	//console.log(point);
 
 	return point;
 }
@@ -110,7 +110,7 @@ MySceneGraph.prototype.parseMaterials = function (rootElement) {
 		materi = m1[i];
 		id = this.reader.getString(materi, 'id');
 
-		console.log(materi);
+		//console.log(materi);
 
 		emission = materi.getElementsByTagName('emission')[0];
 		ambient = materi.getElementsByTagName('ambient')[0];
@@ -120,12 +120,12 @@ MySceneGraph.prototype.parseMaterials = function (rootElement) {
 
 
 		this.materials[i] = new Material(id, this.getRGBAElem(emission),
-										 this.getRGBAElem(ambient),
+			this.getRGBAElem(ambient),
 		 								 this.getRGBAElem(diffuse),
 		 								 this.getRGBAElem(specular),
 		 								 this.reader.getFloat(shininess, 'value'));
 
-		console.log(this.materials[i]);
+		//console.log(this.materials[i]);
 	}
 
 
@@ -145,7 +145,7 @@ MySceneGraph.prototype.parseIllumination = function (rootElement) {
 
 	this.illumination = new Illumination(doublesided, local, this.getRGBAElem(ambient), this.getRGBAElem(background));
 
-	console.log(this.illumination);
+	//console.log(this.illumination);
 }
 
 MySceneGraph.prototype.parseScene = function (rootElement) {
@@ -158,7 +158,7 @@ MySceneGraph.prototype.parseScene = function (rootElement) {
 	this.axisLength = this.reader.getFloat(scene, 'axis_length');
 
 
-	console.log(this.root + "---axis:" + this.axisLength);
+	//console.log(this.root + "---axis:" + this.axisLength);
 }
 
 MySceneGraph.prototype.parseTextures = function (rootElement) {
@@ -175,7 +175,7 @@ MySceneGraph.prototype.parseTextures = function (rootElement) {
 	for (i; i < length; i++) {
 		texture = rootElement.getElementsByTagName('texture')[i];
 
-		console.log(texture);
+		//console.log(texture);
 
 		id = this.reader.getString(texture, 'id');
 		file = this.reader.getString(texture, 'file');
@@ -183,7 +183,7 @@ MySceneGraph.prototype.parseTextures = function (rootElement) {
 		length_t = this.reader.getString(texture, 'length_t');
 
 		this.textures[i] = new Texture(id, file, length_s, length_t);
-		console.log(this.textures[i]);
+		//console.log(this.textures[i]);
 	}
 
 }
@@ -211,15 +211,101 @@ MySceneGraph.prototype.parseViews = function (rootElement) {
 		from = perspetive.getElementsByTagName('from')[0];
 		to = perspetive.getElementsByTagName('to')[0];
 
-		console.log(from);
+		//	console.log(from);
 
 		this.views[i] = new Perspective(id, near, far, angle, this.getPoint3D(from), this.getPoint3D(to));
 
-		console.log(this.views[i]);
+		//	console.log(this.views[i]);
 	}
 
 
 }
+
+MySceneGraph.prototype.parseLights = function (rootElement) {
+
+
+
+	var light, omni, spot;
+
+	light = rootElement.getElementsByTagName("lights")[0];
+	omni = light.getElementsByTagName("omni");
+	spot = light.getElementsByTagName("spot");
+
+	if (omni == null && spot == null)
+		return "have not lights";
+
+
+	console.log(omni.length);
+
+	var i, id, enabled, location, ambient, diffuse, specular, root;
+	for (i = 0; i < omni.length; i++) {
+
+		root = omni[i]
+
+		id = this.reader.getString(root, 'id');
+		enabled = this.reader.getBoolean(root, 'enabled');
+		location = root.getElementsByTagName('location');
+		lambient = root.getElementsByTagName('ambient');
+		diffuse = root.getElementsByTagName('diffuse');
+		specular = root.getElementsByTagName('specular');
+
+		this.omni[i] = new Omni(id, enabled, location, ambient, diffuse, specular);
+
+		console.log("omni");
+		console.log(omni[i]);
+	}
+
+	var angle, exponent, target;
+	for (i = 0; i < spot.length; i++) {
+
+		console.log("spot");
+		root = spot[i];
+
+		id = this.reader.getString(root, 'id');
+		enabled = this.reader.getBoolean(root, 'enabled');
+		angle = this.reader.getFloat(root, 'angle');
+		exponent = this.reader.getFloat(root, 'exponent');
+		target = root.getElementsByTagName('target');
+		location = root.getElementsByTagName('location');
+		lambient = root.getElementsByTagName('ambient');
+		diffuse = root.getElementsByTagName('diffuse');
+		specular = root.getElementsByTagName('specular');
+
+		this.spot[i] = new Spot(id, enabled, angle, exponent, target, location, ambient, diffuse, specular);
+
+		console.log(this.spot[i].angle);
+	}
+
+	console.log("fim light");
+}
+
+/*MySceneGraph.prototype.Transformation = function (elem){
+
+
+}
+
+MySceneGraph.prototype.parseTransformations = function (rootElement) {
+
+	var t = rootElement.getElementsByTagName('transformations')[0];
+	var transfor = t.getElementsByTagName('transformation');
+
+	if (transfor == null)
+		return "have not transformations";
+
+	var i, id, root;
+
+	for (i = 0; i < transfor.length; i++) {
+
+		root= transfor[i];
+
+		id= this.reader.getString(transfor, 'id');
+
+
+	}
+
+}*/
+
+
 
 /*
  * Example of method that parses elements of one block and stores information in a specific data structure
