@@ -11,8 +11,6 @@ XMLscene.prototype.init = function (application) {
 
     this.initCameras();
 
-    this.initLights();
-
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     this.gl.clearDepth(100.0);
@@ -21,26 +19,65 @@ XMLscene.prototype.init = function (application) {
     this.gl.depthFunc(this.gl.LEQUAL);
 
 	this.axis = new CGFaxis(this);
+
 };
 
 XMLscene.prototype.initLights = function () {
 
+	var i = 0;
+	for (omni of this.graph.omni) {
 
-	this.lights[0].setSpotExponent(100);
-	this.lights[0].setSpotDirection(3, 3, 3, 0);
-	this.lights[0].setSpecular(1, 1, 1, 1);
-	this.lights[0].setPosition(1, 1, 1, 0);
-    this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
-    this.lights[0].update();
-	
+		this.lights[i].setAmbient(omni.ambient.r, omni.ambient.g, omni.ambient.b, omni.ambient.a);
+		this.lights[i].setDiffuse(omni.diffuse.r, omni.diffuse.g, omni.diffuse.b, omni.diffuse.a);
+		this.lights[i].setSpecular(omni.specular.r, omni.specular.g, omni.specular.b, omni.specular.a);
+		this.lights[i].setPosition(omni.location.x, omni.location.y, omni.location.z, 0);
+		this.lights[i].update();
 
-	//var lightOmni = this.graph.omni.legth;
+		if (omni.enable) {
+			this.lights[i].enable();
+			this.lights[i].setVisible(true);
+		}
+		else {
+			this.lights[i].disable();
+			this.lights[i].setVisible(false);
+		}
 
+		i++;
+	}
+
+	for (spot of this.graph.spot) {
+
+		this.lights[i].setAmbient(spot.ambient.r, spot.ambient.g, spot.ambient.b, spot.ambient.a);
+		this.lights[i].setDiffuse(spot.diffuse.r, spot.diffuse.g, spot.diffuse.b, spot.diffuse.a);
+		this.lights[i].setSpecular(spot.specular.r, spot.specular.g, spot.specular.b, spot.specular.a);
+		this.lights[i].setPosition(spot.location.x, spot.location.y, spot.location.z, 1);
+		this.lights[i].setSpotExponent(spot.exponent);
+		this.lights[i].setSpotDirection(spot.target.x, spot.target.y, spot.target.z);
+
+		this.lights[i].update();
+
+		if (spot.enable) {
+			this.lights[i].enable();
+			this.lights[i].setVisible(true);
+		}
+		else {
+			this.lights[i].disable();
+			this.lights[i].setVisible(false);
+		}
+
+		i++;
+	}
 
 };
 
 XMLscene.prototype.initCameras = function () {
     this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+
+	for(camara of this.graph.views)
+	{
+
+		
+	}
 };
 
 XMLscene.prototype.setDefaultAppearance = function () {
@@ -54,10 +91,6 @@ XMLscene.prototype.setDefaultAppearance = function () {
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function () {
 
-	this.lights[0].setVisible(true);
-    this.lights[0].enable();
-
-
 	var backgroundR = this.graph.illumination.background.r;
 	var backgroundG = this.graph.illumination.background.g;
 	var backgroundB = this.graph.illumination.background.b;
@@ -65,7 +98,12 @@ XMLscene.prototype.onGraphLoaded = function () {
 
 	this.gl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
 
-	 this.axis=new CGFaxis(this,this.graph.axisLength,0.1);
+	this.axis = new CGFaxis(this, this.graph.axisLength, 0.1);
+
+	this.initLights();
+
+
+
 };
 
 XMLscene.prototype.display = function () {
@@ -93,7 +131,9 @@ XMLscene.prototype.display = function () {
 	// only get executed after the graph has loaded correctly.
 	// This is one possible way to do it
 	if (this.graph.loadedOk) {
-		this.lights[0].update();
+
+		for (light of this.lights)
+			light.update();
 	};
 };
 

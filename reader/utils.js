@@ -58,10 +58,10 @@ class Perspective{
 }
 
 class Omni{
-  constructor(id, enabled, location, ambient, diffuse, specular)
+  constructor(id, enable, location, ambient, diffuse, specular)
   {
     this.id = id;
-    this.enabled = enabled;
+    this.enable = enable;
     this.location = location;
     this.ambient = ambient;
     this.diffuse = diffuse;
@@ -71,14 +71,14 @@ class Omni{
 }
 
 class Spot{
-  constructor(id, enabled, angle, exponent, target, lacation, ambient, diffuse, specular)
+  constructor(id, enable, angle, exponent, target, location, ambient, diffuse, specular)
   {
     this.id = id;
-    this.enabled = enabled;
+    this.enable = enable;
     this.angle = angle;
     this.exponent = exponent;
     this.target = target;
-    this.lacation = location;
+    this.location = location;
     this.ambient = ambient;
     this.diffuse = diffuse;
     this.specular = specular;
