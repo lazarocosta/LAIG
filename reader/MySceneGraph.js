@@ -19,7 +19,7 @@ function MySceneGraph(filename, scene) {
 	this.spot = [];
 	this.textures = [];
 	this.materials = [];
-	this.transformations =[];
+	this.transformations = [];
 	this.primitives = [];
 	this.component = [];
 
@@ -44,12 +44,20 @@ MySceneGraph.prototype.onXMLReady = function () {
 
 
 	// Here should go the calls for different functions to parse the various blocks
+	console.log("Parse illumination");
 	var error = this.parseIllumination(rootElement);
+	console.log("Parse textures");
 	this.parseTextures(rootElement);
+	console.log("Parse views");
 	this.parseViews(rootElement);
+	console.log("Parse scene");
 	this.parseScene(rootElement);
+	console.log("Parse materials");
 	this.parseMaterials(rootElement);
+	console.log("Parse lights");
 	this.parseLights(rootElement);
+	console.log("Parse transformations");
+	this.parseTransformations(rootElement);
 
 	if (error != null) {
 		this.onXMLError(error);
@@ -174,7 +182,7 @@ MySceneGraph.prototype.parseTextures = function (rootElement) {
 	length = root.getElementsByTagName('texture').length;
 
 	for (i; i < length; i++) {
-		
+
 		texture = root.getElementsByTagName('texture')[i];
 
 		id = this.reader.getString(texture, 'id');
@@ -185,7 +193,7 @@ MySceneGraph.prototype.parseTextures = function (rootElement) {
 		this.textures[i] = new Texture(id, file, length_s, length_t);
 		//console.log(this.textures[i]);
 	}
-	
+
 
 }
 
@@ -196,7 +204,10 @@ MySceneGraph.prototype.parseViews = function (rootElement) {
 	var list = rootElement.getElementsByTagName('views');
 
 	if (list == null)
-		return "have not views";
+		return "views element is missing.";
+
+	if (list.length < 1)
+		return "zero 'views' elements found.";
 
 	var i = 0, id, near, far, angle, from, to, perspetive;
 
@@ -279,58 +290,95 @@ MySceneGraph.prototype.parseLights = function (rootElement) {
 		//console.log(this.spot[i].diffuse.g);
 	}
 
-//	console.log( this.omni.length);
-	
+	//	console.log( this.omni.length);
+
+}
+
+MySceneGraph.prototype.parseTransformations = function (rootElement) {
+
+	var transformations = rootElement.getElementsByTagName('transformations');
+
+	if (transformations == null)
+		return "transformations element is missing.";
+
+	if (transformations.length != 1)
+		return "either zero or more than one 'transformations' element found.";
+
+	var tl = transformations[0].children.length;
+
+	if (transformations.length < 1) {
+		return "zero transformations found";
+	}
+
+	for (var i = 0; i < tl; i++) {
+		var transformation = transformations[0].children[i];
+		if (transformation.tagName != 'transformation') {
+			console.error("Invalid tag name for supposed transformation " + i + ".");
+			continue;
+		}
+		var id = transformation.id;
+		console.log("Id: " + id);
+
+		for (var j = 0; j < transformation.children.length; j++) {
+			var tr = transformation.children[j];
+			var type = tr.tagName;
+			switch (type) {
+				case 'translate':
+					console.log("Translate");
+					var tx = tr.attributes.getNamedItem('x').value;
+					var ty = tr.attributes.getNamedItem('y').value;
+					var tz = tr.attributes.getNamedItem('z').value;
+					console.log("Tx: " + tx);
+					console.log("Ty: " + ty);
+					console.log("Tz: " + tz);
+					break;
+				case 'rotate':
+					console.log("Rotate");
+					var raxis = tr.attributes.getNamedItem('axis').value;
+					var rangle = tr.attributes.getNamedItem('angle').value;
+					console.log("Raxis: " + raxis);
+					console.log("Rangle: " + rangle);
+					break;
+				case 'scale':
+					console.log("Scale");
+					var sx = tr.attributes.getNamedItem('x').value;
+					var sy = tr.attributes.getNamedItem('y').value;
+					var sz = tr.attributes.getNamedItem('z').value;
+					console.log("Sx: " + sx);
+					console.log("Sy: " + sy);
+					console.log("Sz: " + sz);
+					break;
+				default:
+					console.error("Unknown '" + type + "' transformation.");
+					break;
+			}
+		}
+	}
+
 }
 
 MySceneGraph.prototype.parsePrimitive = function (rootElement) {
 
 	var primitives = rootElement.getElementsByTagName('primitives')[0];
 
-	if(primitives == null || primitives.length==0)
-	return "have not primitives";
+	if (primitives == null)
+		return "primitives element is missing.";
+
+	if (primitives.length < 1) {
+		return "zero 'primitives' elements found.";
+	}
 
 	var primi = primitives.getElementsByTagName('primitive');
 	var id;
 
-	for(root of primi)
-	{
-		if(root.child.length != 1)
-		return "error primitive";
-		
+	for (root of primi) {
+		if (root.child.length != 1)
+			return "error primitive";
+
 		id = this.reader.getString(root, 'id');
 
-
 	}
 }
-
-/*MySceneGraph.prototype.Transformation = function (elem){
-
-
-}
-
-MySceneGraph.prototype.parseTransformations = function (rootElement) {
-
-	var t = rootElement.getElementsByTagName('transformations')[0];
-	var transfor = t.getElementsByTagName('transformation');
-
-	if (transfor == null)
-		return "have not transformations";
-
-	var i, id, root;
-
-	for (i = 0; i < transfor.length; i++) {
-
-		root= transfor[i];
-
-		id= this.reader.getString(transfor, 'id');
-
-
-	}
-
-}*/
-
-
 
 /*
  * Example of method that parses elements of one block and stores information in a specific data structure
