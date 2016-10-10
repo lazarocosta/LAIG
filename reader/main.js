@@ -30,7 +30,7 @@ function getUrlVars() {
     return vars;
 }
 
-serialInclude(['../lib/CGF.js', 'XMLscene.js','utils.js', 'MySceneGraph.js',
+serialInclude(['../lib/CGF.js', 'XMLscene.js','utils.js', 'MySceneGraph.js','MyRectangle.js','MyTriangle.js','MyTorus.js',
 
     main = function () {
         // Standard application, scene and interface setup
