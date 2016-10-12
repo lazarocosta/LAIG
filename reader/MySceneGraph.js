@@ -176,18 +176,18 @@ MySceneGraph.prototype.parseViews = function (element) {
 
 		//console.log(perspetive);
 
-		var id = this.reader.getString(perspetive, 'id');
-		var near = this.reader.getFloat(perspetive, 'near');
-		var far = this.reader.getFloat(perspetive, 'far');
-		var angle = this.reader.getFloat(perspetive, 'angle');
-		var from = perspetive.getElementsByTagName('from')[0];
-		var to = perspetive.getElementsByTagName('to')[0];
+		var id = this.reader.getString(perspective, 'id');
+		var near = this.reader.getFloat(perspective, 'near');
+		var far = this.reader.getFloat(perspective, 'far');
+		var angle = this.reader.getFloat(perspective, 'angle');
+		var from = perspective.getElementsByTagName('from')[0];
+		var to = perspective.getElementsByTagName('to')[0];
 
 		//	console.log(from);
 		var fromPoint = this.getPoint3D(from);
 		var toPoint = this.getPoint3D(to);
 		this.views[i] = new CGFcamera(angle, near, far, vec3.fromValues(fromPoint.x, fromPoint.y, fromPoint.z), vec3.fromValues(toPoint.x, toPoint.y, toPoint.z));
-		
+
 		//this.views[i] = new Perspective(id, near, far, angle, this.getPoint3D(from), this.getPoint3D(to));
 
 		//	console.log(this.views[i]);
@@ -437,7 +437,7 @@ MySceneGraph.prototype.parseTransformations = function (rootElement) {
 			var tr = transformation.children[j];
 			var type = tr.tagName;
 			switch (type) {
-				case 'translate':				
+				case 'translate':
 					console.log("Translate");
 					point3d = this.getPoint3D(tr);
 					mat4.translate(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
@@ -558,8 +558,12 @@ MySceneGraph.prototype.parsePrimitives = function (rootElement) {
 	}
 };
 
-MySceneGraph.prototype.parseComponents = function (rootElement) {
-	var components = rootElement.getElementsByTagName('components');
+MySceneGraph.prototype.parseComponents = function (element) {
+	var components = element.children;
+	var cl = components.length;
+	for (var i = 0; i < cl; i++) {
+
+	}
 };
 
 /*
