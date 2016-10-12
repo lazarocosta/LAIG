@@ -197,7 +197,7 @@ MySceneGraph.prototype.parseViews = function (element) {
 
 MySceneGraph.prototype.parseIllumination = function (rootElement) {
 
-	var illumi = rootElement.getElementsByTagName('illumination')[0];
+	var illumi = rootElement;
 
 	if (illumi == null)
 		return "Illumination incomplete";
@@ -209,16 +209,15 @@ MySceneGraph.prototype.parseIllumination = function (rootElement) {
 
 	this.illumination = new Illumination(doublesided, local, this.getRGBAElem(ambient), this.getRGBAElem(background));
 
-	//console.log(this.illumination);
+
 };
 
-MySceneGraph.prototype.parseLights = function (rootElement) {
+MySceneGraph.prototype.parseLights = function (element) {
 
-	var light, omni, spot;
+	var light = element, omni, spot;
 
-	light = rootElement.getElementsByTagName("lights")[0];
-	omni = light.getElementsByTagName("omni");
-	spot = light.getElementsByTagName("spot");
+	omni = light.getElementsByTagName('omni');
+	spot = light.getElementsByTagName('spot');
 
 	if (omni == null && spot == null)
 		return "have not lights";
@@ -273,7 +272,7 @@ MySceneGraph.prototype.parseLights = function (rootElement) {
 MySceneGraph.prototype.parseTextures = function (rootElement) {
 
 	//console.log("textures");
-	var root = rootElement.getElementsByTagName('textures')[0];
+	var root = rootElement;
 
 	if (root == 0)
 		return "have not textures";
@@ -299,7 +298,7 @@ MySceneGraph.prototype.parseTextures = function (rootElement) {
 
 MySceneGraph.prototype.parseMaterials = function (rootElement) {
 
-	var materials = rootElement.getElementsByTagName('materials');
+	var materials = rootElement
 
 	for (var i = 0; i < materials.length; i++) {
 		console.log(materials[i]);
@@ -311,8 +310,11 @@ MySceneGraph.prototype.parseMaterials = function (rootElement) {
 	if (materials.length != 1)
 		return "either zero or more than one 'materials' element found";*/
 
-	var ms = materials[0].children;
+	var ms = materials.children;
 	var ml = ms.length;
+
+	console.log(ms[0]);
+	console.log("-------------------");
 
 	if (ml < 1)
 		return "zero materials found";
@@ -409,7 +411,7 @@ MySceneGraph.prototype.parseMaterials = function (rootElement) {
 MySceneGraph.prototype.parseTransformations = function (rootElement) {
 
 
-	var matrix = mat.create();
+	var matrix = mat4.create();
 
 	var transformations = rootElement.getElementsByTagName('transformations');
 
@@ -558,10 +560,109 @@ MySceneGraph.prototype.parsePrimitives = function (rootElement) {
 	}
 };
 
+MySceneGraph.prototype.readTransformation = function (element) {
+	var transformation = element;
+	var matrix = mat4.create();
+
+	for (var j = 0; j < transformation.children.length; j++) {
+		var tr = transformation.children[j];
+		var type = tr.tagName;
+		switch (type) {
+			case 'translate':
+				console.log("Translate");
+				point3d = this.getPoint3D(tr);
+				mat4.translate(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
+
+				console.log("Tx: " + point3d.x);
+				console.log("Ty: " + point3d.y);
+				console.log("Tz: " + point3d.z);
+
+				break;
+			case 'rotate':
+				console.log("Rotate");
+				var raxis = tr.attributes.getNamedItem('axis').value;
+				var rangle = tr.attributes.getNamedItem('angle').value;
+
+				if (raxis == "x")
+					mat4.rotate(matrix, matrix, rangle, [1, 0, 0]);
+				else if (raxis == "y")
+					mat4.rotate(matrix, matrix, rangle, [0, 1, 0]);
+				else if (raxis == "z")
+					mat4.rotate(matrix, matrix, rangle, [0, 0, 1]);
+
+				console.log("Raxis: " + raxis);
+				console.log("Rangle: " + rangle);
+
+				break;
+			case 'scale':
+				console.log("Scale");
+
+				point3d = this.getPoint3D(tr);
+				mat4.scale(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
+
+				console.log("Tx: " + point3d.x);
+				console.log("Ty: " + point3d.y);
+				console.log("Tz: " + point3d.z);
+
+				break;
+			default:
+				console.error("Unknown '" + type + "' transformation.");
+				break;
+		}
+	}
+
+	console.log(matrix);
+	return matrix;
+}
+
 MySceneGraph.prototype.parseComponents = function (element) {
 	var components = element.children;
 	var cl = components.length;
+	var id, transformation, matrixTransformation, material, materialId, textureId, primitives, compon;
+
+
+	console.log("componetes:" + cl);
 	for (var i = 0; i < cl; i++) {
+
+		id = components[i].attributes.getNamedItem('id').value;
+
+		//transformation
+		transformation = components[i].getElementsByTagName('transformation')[0];
+		if (transformation.children[0].tagName == "transformationref") {
+			matrixTransformation = transformation.children[0].id;
+		}
+		else
+			matrixTransformation = this.readTransformation(transformation);
+
+		//	console.log("transformation");
+		//	console.log(matrixTransformation);
+
+		//material 
+		material = components[i].getElementsByTagName('materials')[0];
+		materialId = material.children[0].id;
+		console.log("materialID: " + materialId);
+
+		//texture
+
+		textureId = components[i].getElementsByTagName('texture')[0].id;
+		console.log(textureId);
+
+		//childrens
+		var primitiveref= [], children;
+		children = components[i].getElementsByTagName('children')[0];
+		primitives = children.getElementsByTagName('primitiveref');
+	//	console.log(primitives[0].id);
+
+		for (var j = 0; j < primitives.length; j++) 
+			primitiveref.push(primitives[j].id);
+
+		var componentref = [] ;
+		compon = children.getElementsByTagName('componentref');
+		for (var j = 0; j < compon.length; j++)
+			componentref.push(compon[j].id);
+
+		this.component.push(new Component(id, matrixTransformation, materialId, componentref, primitiveref));
+		//console.log(this.component[0]);
 
 	}
 };

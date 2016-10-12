@@ -104,6 +104,8 @@ XMLscene.prototype.onGraphLoaded = function () {
 	var backgroundA = this.graph.illumination.background.a;
 
 	this.gl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
+	
+	this.gl.clearColor(0,0.4,0.4,1);
 
 	this.axis = new CGFaxis(this, this.graph.axisLength, 0.1);
 
