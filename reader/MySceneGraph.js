@@ -408,6 +408,9 @@ MySceneGraph.prototype.parseMaterials = function (rootElement) {
 
 MySceneGraph.prototype.parseTransformations = function (rootElement) {
 
+
+	var matrix = mat.create();
+
 	var transformations = rootElement.getElementsByTagName('transformations');
 
 	if (transformations == null)
@@ -427,43 +430,59 @@ MySceneGraph.prototype.parseTransformations = function (rootElement) {
 			console.warn("Invalid tag name for supposed transformation nº " + i + ".");
 			continue;
 		}
-		var id = transformation.id;
+		var id = transformation.id, point3d;
 		console.log("Id: " + id);
 
 		for (var j = 0; j < transformation.children.length; j++) {
 			var tr = transformation.children[j];
 			var type = tr.tagName;
 			switch (type) {
-				case 'translate':
+				case 'translate':				
 					console.log("Translate");
-					var tx = tr.attributes.getNamedItem('x').value;
-					var ty = tr.attributes.getNamedItem('y').value;
-					var tz = tr.attributes.getNamedItem('z').value;
-					console.log("Tx: " + tx);
-					console.log("Ty: " + ty);
-					console.log("Tz: " + tz);
+					point3d = this.getPoint3D(tr);
+					mat4.translate(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
+
+					console.log("Tx: " + point3d.x);
+					console.log("Ty: " + point3d.y);
+					console.log("Tz: " + point3d.z);
+
 					break;
 				case 'rotate':
 					console.log("Rotate");
 					var raxis = tr.attributes.getNamedItem('axis').value;
 					var rangle = tr.attributes.getNamedItem('angle').value;
+					var axis;
+
+					if (raxis == "x")
+						axis = [1, 0, 0];
+					else if (raxis == "y")
+						axis = [0, 1, 0];
+					else if (raxis == "z")
+						axis = [0, 0, 1];
+
+					mat4.rotate(matrix, matrix, rangle, axis);
+
 					console.log("Raxis: " + raxis);
 					console.log("Rangle: " + rangle);
+
 					break;
 				case 'scale':
 					console.log("Scale");
-					var sx = tr.attributes.getNamedItem('x').value;
-					var sy = tr.attributes.getNamedItem('y').value;
-					var sz = tr.attributes.getNamedItem('z').value;
-					console.log("Sx: " + sx);
-					console.log("Sy: " + sy);
-					console.log("Sz: " + sz);
+
+					point3d = this.getPoint3D(tr);
+					mat4.scale(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
+
+					console.log("Tx: " + point3d.x);
+					console.log("Ty: " + point3d.y);
+					console.log("Tz: " + point3d.z);
+
 					break;
 				default:
 					console.error("Unknown '" + type + "' transformation.");
 					break;
 			}
 		}
+		this.transformations.push(matrix);
 	}
 
 };
