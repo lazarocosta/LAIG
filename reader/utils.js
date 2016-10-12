@@ -12,7 +12,6 @@ var Point3D = function(x, y, z) {
   this.z = z;
 }
 
-
 class Illumination {
   constructor(doublesided, local, ambient, background) {
 	  
