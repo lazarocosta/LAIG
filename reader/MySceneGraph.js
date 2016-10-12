@@ -39,7 +39,6 @@ function MySceneGraph(filename, scene) {
 MySceneGraph.prototype.onXMLReady = function () {
 	console.log("XML Loading finished.");
 	var rootElement = this.reader.xmlDoc.documentElement;
-	var n = rootElement.children.length;
 	var error = null;
 
 	// Here should go the calls for different functions to parse the various blocks
@@ -51,33 +50,6 @@ MySceneGraph.prototype.onXMLReady = function () {
 		return;
 	}
 
-	console.log("Parse scene");
-	error = this.parseScene(rootElement);
-
-	console.log("Parse views");
-	error = this.parseViews(rootElement);
-
-	console.log("Parse illumination");
-	error = this.parseIllumination(rootElement);
-
-	console.log("Parse lights");
-	error = this.parseLights(rootElement);
-
-	console.log("Parse textures");
-	error = this.parseTextures(rootElement);
-
-	console.log("Parse materials");
-	error = this.parseMaterials(rootElement);
-
-	console.log("Parse transformations");
-	error = this.parseTransformations(rootElement);
-
-	console.log("Parse primitives");
-	error = this.parsePrimitives(rootElement);
-
-	console.log("Parse components");
-	error = this.parseComponents(rootElement);
-
 	this.loadedOk = true;
 
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
@@ -88,35 +60,72 @@ MySceneGraph.prototype.onXMLReady = function () {
 
 
 MySceneGraph.prototype.parse = function (rootElement) {
-	
+	var check = {};
+	check['scene'] = false;
+	check['views'] = false;
+	check['lights'] = false;
+	check['illumination'] = false;
+	check['lights'] = false;
+	check['textures'] = false;
+	check['materials'] = false;
+	check['transformations'] = false;
+	check['primitives'] = false;
+	check['components'] = false;
+	var n = rootElement.children.length;
 	for (var i = 0; i < n; i++) {
-		var name = rootElement.children[i].tagName;
+		var element = rootElement.children[i];
+		var name = element.tagName;
 		console.log(name);
+		if (check[name]) {
+			return "more than one '" + name + "' element found";
+		} else {
+			check[name] = true;
+		}
 		switch (name) {
 			case 'scene':
+				console.log("Parse scene");
+				this.parseScene(element);
 				break;
 			case 'views':
+				console.log("Parse");
+				this.parseViews(element);
 				break;
 			case 'illumination':
+				console.log("Parse");
+				this.parseIllumination(element);
 				break;
 			case 'lights':
+				console.log("Parse");
+				this.parseLights(element);
 				break;
 			case 'textures':
+				console.log("Parse");
+				this.parseTextures(element);
 				break;
 			case 'materials':
+				console.log("Parse");
+				this.parseMaterials(element);
 				break;
 			case 'transformations':
+				console.log("Parse");
+				this.parseTransformations(element);
 				break;
 			case 'primitives':
+				console.log("Parse");
+				this.parsePrimitives(element);
 				break;
 			case 'components':
+				console.log("Parse");
+				this.parseComponents(element);
 				break;
 			default:
+				check[name] = false;
+				console.warn("ignoring '" + name + "' since it's not a valid element");
 				break;
 		}
 
 	}
-	
+
 };
 
 MySceneGraph.prototype.getRGBAElem = function (rootElement) {
@@ -147,48 +156,39 @@ MySceneGraph.prototype.getPoint3D = function (rootElement) {
 	return point;
 };
 
-MySceneGraph.prototype.parseScene = function (rootElement) {
+MySceneGraph.prototype.parseScene = function (element) {
 
-	var scene = rootElement.getElementsByTagName('scene')[0];
+	//console.log(element);
 
-	//console.log(scene);
-
-	this.root = this.reader.getString(scene, 'root');
-	this.axisLength = this.reader.getFloat(scene, 'axis_length');
+	this.root = this.reader.getString(element, 'root');
+	this.axisLength = this.reader.getFloat(element, 'axis_length');
 
 
 	//console.log(this.root + "---axis:" + this.axisLength);
 };
 
-MySceneGraph.prototype.parseViews = function (rootElement) {
-
-
-	//console.log("perspetives");
-	var list = rootElement.getElementsByTagName('views');
-
-	if (list == null)
-		return "views element is missing.";
-
-	if (list.length < 1)
-		return "zero 'views' elements found.";
-
-	var i = 0, id, near, far, angle, from, to, perspetive;
-
-	for (i; i < list.length; i++) {
-		perspetive = list[i].getElementsByTagName('perspective')[0];
+MySceneGraph.prototype.parseViews = function (element) {
+	var perspectives = element.children;
+	var pl = perspectives.length;
+	for (var i = 0; i < pl; i++) {
+		var perspective = perspectives[i];
+		var name = perspective.tagName;
 
 		//console.log(perspetive);
 
-		id = this.reader.getString(perspetive, 'id');
-		near = this.reader.getFloat(perspetive, 'near');
-		far = this.reader.getFloat(perspetive, 'far');
-		angle = this.reader.getFloat(perspetive, 'angle');
-		from = perspetive.getElementsByTagName('from')[0];
-		to = perspetive.getElementsByTagName('to')[0];
+		var id = this.reader.getString(perspetive, 'id');
+		var near = this.reader.getFloat(perspetive, 'near');
+		var far = this.reader.getFloat(perspetive, 'far');
+		var angle = this.reader.getFloat(perspetive, 'angle');
+		var from = perspetive.getElementsByTagName('from')[0];
+		var to = perspetive.getElementsByTagName('to')[0];
 
 		//	console.log(from);
-
-		this.views[i] = new Perspective(id, near, far, angle, this.getPoint3D(from), this.getPoint3D(to));
+		var fromPoint = this.getPoint3D(from);
+		var toPoint = this.getPoint3D(to);
+		this.views[i] = new CGFcamera(angle, near, far, vec3.fromValues(fromPoint.x, fromPoint.y, fromPoint.z), vec3.fromValues(toPoint.x, toPoint.y, toPoint.z));
+		
+		//this.views[i] = new Perspective(id, near, far, angle, this.getPoint3D(from), this.getPoint3D(to));
 
 		//	console.log(this.views[i]);
 	}
