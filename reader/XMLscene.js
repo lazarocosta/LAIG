@@ -1,6 +1,6 @@
 
 function XMLscene(myInterface) {
-    CGFscene.call(this);
+	CGFscene.call(this);
 	this.interface = myInterface;
 }
 
@@ -21,7 +21,7 @@ XMLscene.prototype.init = function (application) {
 
 	this.axis = new CGFaxis(this);
 
-	this.Index=0;
+	this.Index = 0;
 };
 
 XMLscene.prototype.initLights = function () {
@@ -76,16 +76,14 @@ XMLscene.prototype.initCameras = function () {
     this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 };
 
-/*
+
 XMLscene.prototype.Cameras = function () {
 
-	var cameraGraph = this.graph.views[this.Index];
-    this.camera = cameraGraph;
-	this.interface.setActivateCamera(cameraGraph);
+    this.camera = this.graph.views[this.Index];
+	this.interface.setActiveCamera(this.graph.views[this.Index]);
 
-	 this.Index = (this.Index ++) % this.graph.views.length;
+	this.Index = (this.Index++) % this.graph.views.length;
 };
-*/
 
 XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
@@ -104,13 +102,16 @@ XMLscene.prototype.onGraphLoaded = function () {
 	var backgroundA = this.graph.illumination.background.a;
 
 	this.gl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
-	
-	this.gl.clearColor(0,0.4,0.4,1);
 
 	this.axis = new CGFaxis(this, this.graph.axisLength, 0.1);
 
 	this.initLights();
-	//this.cameras();
+	//console.log(this.interface);
+	this.Cameras();
+
+
+
+
 
 
 
@@ -145,6 +146,7 @@ XMLscene.prototype.display = function () {
 		for (light of this.lights)
 			light.update();
 	};
+
 
 
 

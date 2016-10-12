@@ -190,7 +190,7 @@ MySceneGraph.prototype.parseViews = function (element) {
 
 		//this.views[i] = new Perspective(id, near, far, angle, this.getPoint3D(from), this.getPoint3D(to));
 
-		//	console.log(this.views[i]);
+			console.log(this.views[i]);
 	}
 
 };
