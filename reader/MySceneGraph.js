@@ -651,7 +651,6 @@ MySceneGraph.prototype.parseComponents = function (element) {
 		var primitiveref= [], children;
 		children = components[i].getElementsByTagName('children')[0];
 		primitives = children.getElementsByTagName('primitiveref');
-	//	console.log(primitives[0].id);
 
 		for (var j = 0; j < primitives.length; j++) 
 			primitiveref.push(primitives[j].id);
@@ -662,7 +661,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 			componentref.push(compon[j].id);
 
 		this.component.push(new Component(id, matrixTransformation, materialId, componentref, primitiveref));
-		//console.log(this.component[0]);
+
 
 	}
 };
