@@ -61,16 +61,22 @@ MyInterface.prototype.addLight = function(i, id){
  * processKeyboard
  * @param event {Event}
  */
-/*MyInterface.prototype.processKeyboard = function(event) {
+MyInterface.prototype.processKeyboard = function(event) {
    // call CGFinterface default code (omit if you want to override)
-   CGFinterface.prototype.processKeyboard.call(this, event);
+  // CGFinterface.prototype.processKeyboard.call(this, event);
 
    // Check key codes e.g. here: http://www.asciitable.com/
    // or use String.fromCharCode(event.keyCode) to compare chars
 
    // for better cross-browser support, you may also check suggestions on using event.which in http://www.w3schools.com/jsref/event_key_keycode.asp
-   switch (event.which || event.keyCode) {
+   
 
-    
+   switch ( event.keyCode) {
+             case (86): //letra v
+            case (118): //letra V
+          //   console.log("letra V");
+            this.scene.Cameras();
+            break;  
   
-}; }*/
+};
+ }

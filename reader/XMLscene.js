@@ -79,10 +79,12 @@ XMLscene.prototype.initCameras = function () {
 
 XMLscene.prototype.Cameras = function () {
 
+	console.log(this.Index);
     this.camera = this.graph.views[this.Index];
 	this.interface.setActiveCamera(this.graph.views[this.Index]);
 
-	this.Index = (this.Index++) % this.graph.views.length;
+	this.Index = ++ this.Index;
+	this.Index = this.Index % this.graph.views.length;
 };
 
 XMLscene.prototype.setDefaultAppearance = function () {
@@ -145,7 +147,18 @@ XMLscene.prototype.display = function () {
 
 		for (light of this.lights)
 			light.update();
+
 	};
+
+	     var cilinder= new MyCilinder(this, 0, 1, 1, 10,10);
+		 var triangle = new MyTriangle(this, 0,0,-2, -2,-2,-2,-2,0,-2);
+		 var quadrado = new MyRectangle(this, 3,2,2,3);
+		 var torus = new  MyTorus(this, 1,2,10,10);
+		
+		  cilinder.display();
+		  triangle.display();
+		  quadrado.display();
+		  torus.display();
 
 
 
