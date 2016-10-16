@@ -123,7 +123,6 @@ MySceneGraph.prototype.parse = function (rootElement) {
 				console.warn("ignoring '" + name + "' since it's not a valid element");
 				break;
 		}
-
 	}
 
 };
@@ -159,7 +158,6 @@ MySceneGraph.prototype.getPoint3D = function (rootElement) {
 MySceneGraph.prototype.parseScene = function (element) {
 
 	//console.log(element);
-
 	this.root = this.reader.getString(element, 'root');
 	this.axisLength = this.reader.getFloat(element, 'axis_length');
 
@@ -195,9 +193,9 @@ MySceneGraph.prototype.parseViews = function (element) {
 
 };
 
-MySceneGraph.prototype.parseIllumination = function (rootElement) {
+MySceneGraph.prototype.parseIllumination = function (element) {
 
-	var illumi = rootElement.getElementsByTagName('illumination')[0];
+	var illumi = element;
 
 	if (illumi == null)
 		return "Illumination incomplete";
@@ -212,11 +210,11 @@ MySceneGraph.prototype.parseIllumination = function (rootElement) {
 	//console.log(this.illumination);
 };
 
-MySceneGraph.prototype.parseLights = function (rootElement) {
+MySceneGraph.prototype.parseLights = function (element) {
 
 	var light, omni, spot;
 
-	light = rootElement.getElementsByTagName("lights")[0];
+	light = element;
 	omni = light.getElementsByTagName("omni");
 	spot = light.getElementsByTagName("spot");
 
@@ -270,48 +268,33 @@ MySceneGraph.prototype.parseLights = function (rootElement) {
 
 };
 
-MySceneGraph.prototype.parseTextures = function (rootElement) {
+MySceneGraph.prototype.parseTextures = function (element) {
 
-	//console.log("textures");
-	var root = rootElement.getElementsByTagName('textures')[0];
+	var textures = element.children;
+	var tl = textures.length;
 
-	if (root == 0)
-		return "have not textures";
+	if (tl < 1)
+		return "no textures were found";
 
-	var i = 0;
-	var texture, id, file, length_s, length_t, length;
-	length = root.getElementsByTagName('texture').length;
-
-	for (i; i < length; i++) {
-
-		texture = root.getElementsByTagName('texture')[i];
-
-		id = this.reader.getString(texture, 'id');
-		file = this.reader.getString(texture, 'file');
-		length_s = this.reader.getString(texture, 'length_s');
-		length_t = this.reader.getString(texture, 'length_t');
-
+	for (var i = 0; i < tl; i++) {
+		var texture = textures[i];
+		if (texture.tagName != 'texture') {
+			console.warn("");
+			continue;
+		}
+		var id = texture.id;
+		var file = this.reader.getString(texture, 'file');
+		var length_s = this.reader.getString(texture, 'length_s');
+		var length_t = this.reader.getString(texture, 'length_t');
 		this.textures[i] = new Texture(id, file, length_s, length_t);
-		//console.log(this.textures[i]);
 	}
 
 };
 
-MySceneGraph.prototype.parseMaterials = function (rootElement) {
+MySceneGraph.prototype.parseMaterials = function (element) {
 
-	var materials = rootElement.getElementsByTagName('materials');
-
-	for (var i = 0; i < materials.length; i++) {
-		console.log(materials[i]);
-	}
-
-	/*if (materials == null)
-		return "materials element is missing";
-
-	if (materials.length != 1)
-		return "either zero or more than one 'materials' element found";*/
-
-	var ms = materials[0].children;
+	var materials = element;
+	var ms = materials.children;
 	var ml = ms.length;
 
 	if (ml < 1)
@@ -332,48 +315,30 @@ MySceneGraph.prototype.parseMaterials = function (rootElement) {
 		check['shininess'] = false;
 		for (var j = 0; j < msl; j++) {
 			var name = mspecs[j].tagName;
+			if (check[name]) {
+				console.warn("More than one '" + name + "' element found!");
+				continue;
+			} else {
+				check[name] = true;
+			}
 			switch (name) {
 				case 'emission':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
 
-						check[name] = true;
-					}
 					break;
 				case 'ambient':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
 
-						check[name] = true;
-					}
 					break;
 				case 'diffuse':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
 
-						check[name] = true;
-					}
 					break;
 				case 'specular':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
 
-						check[name] = true;
-					}
 					break;
 				case 'shininess':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
 
-						check[name] = true;
-					}
 					break;
 				default:
+					check[name] = false;
 					console.error("'" + name + "' is not an element of material!");
 					break;
 			}
@@ -406,26 +371,19 @@ MySceneGraph.prototype.parseMaterials = function (rootElement) {
 
 };
 
-MySceneGraph.prototype.parseTransformations = function (rootElement) {
+MySceneGraph.prototype.parseTransformations = function (element) {
 
+	var matrix = mat4.create();
 
-	var matrix = mat.create();
-
-	var transformations = rootElement.getElementsByTagName('transformations');
-
-	if (transformations == null)
-		return "transformations element is missing.";
-
-	if (transformations.length != 1)
-		return "either zero or more than one 'transformations' element found.";
-
-	var tl = transformations[0].children.length;
+	var transformations = element;
+	var ts = transformations.children;
+	var tl = ts.length;
 
 	if (tl < 1)
 		return "zero transformations found";
 
 	for (var i = 0; i < tl; i++) {
-		var transformation = transformations[0].children[i];
+		var transformation = ts[i];
 		if (transformation.tagName != 'transformation') {
 			console.warn("Invalid tag name for supposed transformation nº " + i + ".");
 			continue;
@@ -441,41 +399,39 @@ MySceneGraph.prototype.parseTransformations = function (rootElement) {
 					console.log("Translate");
 					point3d = this.getPoint3D(tr);
 					mat4.translate(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
-
 					console.log("Tx: " + point3d.x);
 					console.log("Ty: " + point3d.y);
 					console.log("Tz: " + point3d.z);
-
 					break;
 				case 'rotate':
 					console.log("Rotate");
 					var raxis = tr.attributes.getNamedItem('axis').value;
 					var rangle = tr.attributes.getNamedItem('angle').value;
 					var axis;
-
-					if (raxis == "x")
-						axis = [1, 0, 0];
-					else if (raxis == "y")
-						axis = [0, 1, 0];
-					else if (raxis == "z")
-						axis = [0, 0, 1];
-
+					switch (raxis) {
+						case 'x':
+							axis = [1, 0, 0];
+							break;
+						case 'y':
+							axis = [0, 1, 0];
+							break;
+						case 'z':
+							axis = [0, 0, 1];
+							break;
+						default:
+							return "'" + raxis + "' is not a valid axis for a rotation";
+					}
 					mat4.rotate(matrix, matrix, rangle, axis);
-
 					console.log("Raxis: " + raxis);
 					console.log("Rangle: " + rangle);
-
 					break;
 				case 'scale':
 					console.log("Scale");
-
 					point3d = this.getPoint3D(tr);
 					mat4.scale(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
-
-					console.log("Tx: " + point3d.x);
-					console.log("Ty: " + point3d.y);
-					console.log("Tz: " + point3d.z);
-
+					console.log("Sx: " + point3d.x);
+					console.log("Sy: " + point3d.y);
+					console.log("Sz: " + point3d.z);
 					break;
 				default:
 					console.error("Unknown '" + type + "' transformation.");
