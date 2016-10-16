@@ -12,6 +12,11 @@ var Point3D = function (x, y, z) {
   this.z = z;
 }
 
+var Point2D = function (x, y) {
+  this.x = x;
+  this.y = y;
+}
+
 class Illumination {
   constructor(doublesided, local, ambient, background) {
     this.doublesided = doublesided;
@@ -81,10 +86,11 @@ class Spot {
 }
 
 class Component {
-  constructor(id, transformationId, materialId, componentref, primitiveref) {
+  constructor(id, matrixTransformation, materialId, textureId, componentref, primitiveref) {
     this.id = id;
-    this.transformationId = transformationId;
+    this.matrixTransformation = matrixTransformation;
     this.materialId = materialId;
+    this.textureId = textureId;
     this.componentref = componentref;
     this.primitiveref = primitiveref;
   }

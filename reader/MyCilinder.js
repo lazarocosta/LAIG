@@ -2,11 +2,19 @@
  * MyCilinder
  * @constructor
  */
-function MyCilinder(scene, slices, stacks) {
+function MyCilinder(scene, base, top, height, slices, stacks) {
 	CGFobject.call(this, scene);
 
 	this.slices = slices;
 	this.stacks = stacks;
+	this.base = base;
+	this.top = top;
+	this.height = height;
+
+	this.circleTop = new MyCircle(this.scene, this.top, this.slices);
+	this.circleBase = new MyCircle(this.scene, this.base, this.slices);
+
+
 
 	this.initBuffers();
 };
@@ -28,21 +36,28 @@ MyCilinder.prototype.initBuffers = function () {
 	this.indices = [];
 	this.texCoords = [];
 
-	this.angle = Math.PI * 2 / this.slices;
+	var angle = Math.PI * 2 / this.slices;
+	var incrementZ = this.height / this.stacks;
+	var deltaRaio = (this.top - this.base) / this.stacks;
 
 	for (j = 0; j <= this.stacks; j++) {
-		for (i = 1; i <= this.slices; i++) {
-			var x = Math.cos(this.angle * i);
-			var y = Math.sin(this.angle * i);
-			var z = (1 / this.stacks) * j;
+
+		var raio = this.top - j * deltaRaio;
+		var z = j * incrementZ;
+
+		for (i = 0; i < this.slices; i++) {
+			var x = raio * Math.cos(angle * i);
+			var y = raio * Math.sin(angle * i);
 			this.vertices.push(x, y, z);
-			var currangle = this.angle * (i - 1) + this.angle / 2;
-			var prevangle = this.angle * (i - 2) + this.angle / 2;
-			this.normals.push(Math.cos(currangle) + Math.cos(prevangle), Math.sin(currangle) + Math.sin(prevangle), 0);
-			var textCS = this.angle*i/(Math.PI*2);
+			this.normals.push(x, y, 0);
+
+			var textCS = angle * i;
 			var textCT = z;
 			this.texCoords.push(textCS, textCT);
+
+
 		}
+
 	}
 
 	//lados de fora
@@ -59,10 +74,22 @@ MyCilinder.prototype.initBuffers = function () {
 		var b = (j + 1) * this.slices;
 		var c = a + this.slices - 1;
 		var d = b + this.slices - 1;
+
 		this.indices.push(d, c, a);
 		this.indices.push(a, b, d);
 	}
 
 	this.primitiveType = this.scene.gl.TRIANGLES;
 	this.initGLBuffers();
+};
+
+MyCilinder.prototype.display = function () {
+
+	CGFobject.prototype.display.call(this);
+
+	this.scene.translate(0, 0, this.height);
+	this.circleBase.display();
+	this.scene.rotate(Math.PI, 1, 0, 0);
+	this.scene.translate(0, 0, this.height);
+	this.circleTop.display();
 };

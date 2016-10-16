@@ -1,6 +1,6 @@
 
 function XMLscene(myInterface) {
-    CGFscene.call(this);
+	CGFscene.call(this);
 	this.interface = myInterface;
 }
 
@@ -21,7 +21,7 @@ XMLscene.prototype.init = function (application) {
 
 	this.axis = new CGFaxis(this);
 
-	this.Index=0;
+	this.Index = 0;
 };
 
 XMLscene.prototype.initLights = function () {
@@ -76,16 +76,16 @@ XMLscene.prototype.initCameras = function () {
     this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
 };
 
-/*
+
 XMLscene.prototype.Cameras = function () {
 
-	var cameraGraph = this.graph.views[this.Index];
-    this.camera = cameraGraph;
-	this.interface.setActivateCamera(cameraGraph);
+	console.log(this.Index);
+    this.camera = this.graph.views[this.Index];
+	this.interface.setActiveCamera(this.graph.views[this.Index]);
 
-	 this.Index = (this.Index ++) % this.graph.views.length;
+	this.Index = ++ this.Index;
+	this.Index = this.Index % this.graph.views.length;
 };
-*/
 
 XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
@@ -108,7 +108,12 @@ XMLscene.prototype.onGraphLoaded = function () {
 	this.axis = new CGFaxis(this, this.graph.axisLength, 0.1);
 
 	this.initLights();
-	//this.cameras();
+	//console.log(this.interface);
+	this.Cameras();
+
+
+
+
 
 
 
@@ -142,7 +147,19 @@ XMLscene.prototype.display = function () {
 
 		for (light of this.lights)
 			light.update();
+
 	};
+
+	     var cilinder= new MyCilinder(this, 0, 1, 1, 10,10);
+		 var triangle = new MyTriangle(this, 0,0,-2, -2,-2,-2,-2,0,-2);
+		 var quadrado = new MyRectangle(this, 3,2,2,3);
+		 var torus = new  MyTorus(this, 1,2,10,10);
+		
+		  cilinder.display();
+		  triangle.display();
+		  quadrado.display();
+		  torus.display();
+
 
 
 
