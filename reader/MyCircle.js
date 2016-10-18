@@ -25,8 +25,6 @@ MyCircle.prototype.initBuffers = function () {
 	this.normals.push(0, 0, 1);
 	this.texCoords.push(0.5, 0.5);
 	
-
-
 	for (i = 1; i <= this.slices + 1; i++) {
 		var x =this.raio * Math.cos(angle * i);
 		var y = this.raio * Math.sin(angle * i);
