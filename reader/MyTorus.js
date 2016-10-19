@@ -26,7 +26,7 @@ MyTorus.prototype.initBuffers = function () {
 	// generate vertices, normals and uvs
 	for (j = 0; j <= this.loops; j++) {
 		for (i = 0; i <= this.slices; i++) {
-			var u = i / this.slices * (Math.PI);
+			var u = i / this.slices * Math.PI * 2;
 			var v = j / this.loops * Math.PI * 2;
 			// vertex
 			var x = (this.outer + this.inner * Math.cos(v)) * Math.cos(u);
