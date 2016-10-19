@@ -462,45 +462,44 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 		//console.log(object);
 		switch (object.tagName) {
 			case 'rectangle':
-				var x1 = object.attributes.getNamedItem('x1').value;
-				var y1 = object.attributes.getNamedItem('y1').value;
-				var x2 = object.attributes.getNamedItem('x2').value;
-				var y2 = object.attributes.getNamedItem('y2').value;
+				var x1 = this.reader.getFloat(object, 'x1');
+				var y1 = this.reader.getFloat(object, 'y1');
+				var x2 = this.reader.getFloat(object, 'x2');
+				var y2 = this.reader.getFloat(object, 'y2');
 				this.primitives[object.tagName] = new MyRectangle(this.scene, x1, y1, x2, y2);
 				break;
 			case 'triangle':
-				var x1 = object.attributes.getNamedItem('x1').value;
-				var y1 = object.attributes.getNamedItem('y1').value;
-				var z1 = object.attributes.getNamedItem('z1').value;
-				var x2 = object.attributes.getNamedItem('x2').value;
-				var y2 = object.attributes.getNamedItem('y2').value;
-				var z2 = object.attributes.getNamedItem('z2').value;
-				var x3 = object.attributes.getNamedItem('x3').value;
-				var y3 = object.attributes.getNamedItem('y3').value;
-				var z3 = object.attributes.getNamedItem('z3').value;
+				var x1 = this.reader.getFloat(object, 'x1');
+				var y1 = this.reader.getFloat(object, 'y1');
+				var z1 = this.reader.getFloat(object, 'z1');
+				var x2 = this.reader.getFloat(object, 'x2');
+				var y2 = this.reader.getFloat(object, 'y2');
+				var z2 = this.reader.getFloat(object, 'z2');
+				var x3 = this.reader.getFloat(object, 'x3');
+				var y3 = this.reader.getFloat(object, 'y3');
+				var z3 = this.reader.getFloat(object, 'z3');
 				this.primitives[object.tagName] = new MyTriangle(this.scene, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 				//console.log(this.primitives[id]);
 				break;
 			case 'cylinder':
-				var base = object.attributes.getNamedItem('base').value;
-				var top = object.attributes.getNamedItem('top').value;
-				var height = object.attributes.getNamedItem('height').value;
-				var slices = object.attributes.getNamedItem('slices').value;
-				var stacks = object.attributes.getNamedItem('stacks').value;
+				var base = this.reader.getFloat(object, 'base');
+				var top = this.reader.getFloat(object, 'top');
+				var height = this.reader.getFloat(object, 'height');
+				var slices = this.reader.getFloat(object, 'slices');
+				var stacks = this.reader.getFloat(object, 'stacks');
 				this.primitives[object.tagName] = new MyCylinder(this.scene, base, top, height, slices, stacks);
-				//console.log(this.primitives[id]);
 				break;
 			case 'sphere':
-				var radius = object.attributes.getNamedItem('radius').value;
-				var slices = object.attributes.getNamedItem('slices').value;
-				var stacks = object.attributes.getNamedItem('stacks').value;
+				var radius = this.reader.getFloat(object, 'radius');
+				var slices = this.reader.getFloat(object, 'slices');
+				var stacks = this.reader.getFloat(object, 'stacks');
 				this.primitives[object.tagName] = new MySphere(this.scene, slices, stacks, radius);
 				break;
 			case 'torus':
-				var inner = object.attributes.getNamedItem('inner').value;
-				var outer = object.attributes.getNamedItem('outer').value;
-				var slices = object.attributes.getNamedItem('slices').value;
-				var loops = object.attributes.getNamedItem('loops').value;
+				var inner = this.reader.getFloat(object, 'inner');
+				var outer = this.reader.getFloat(object, 'outer');
+				var slices = this.reader.getFloat(object, 'slices');
+				var loops = this.reader.getFloat(object, 'loops');
 				this.primitives[object.tagName] = new MyTorus(this.scene, inner, outer, slices, loops);
 				break;
 			default:
@@ -663,6 +662,7 @@ MySceneGraph.prototype.loadGraph = function (rootId, rootMaterial, rootTexture) 
 		var type = root.primitiveref[i];
 		//console.log(root.primitiveref[i]);
 		//console.log(this.primitives[type]);
+		//rootMaterial.apply()
 		this.primitives[type].display();
 
 		//material.setTexture(null);

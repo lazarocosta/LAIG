@@ -164,7 +164,7 @@ XMLscene.prototype.display = function () {
 		 //this.graph.primitives[0].display();
 		 // triangle.display();
 		 // quadrado.display();
-		//  torus.display();
+		  //torus.display();
 /*	this.pushMatrix();
 	this.translate(0, -5, 0);
 		  sphere.display();
