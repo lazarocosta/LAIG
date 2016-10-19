@@ -79,7 +79,6 @@ XMLscene.prototype.initCameras = function () {
 
 XMLscene.prototype.Cameras = function () {
 
-	console.log(this.Index);
 	this.camera = this.graph.views[this.Index];
 	this.interface.setActiveCamera(this.graph.views[this.Index]);
 
@@ -105,13 +104,13 @@ XMLscene.prototype.onGraphLoaded = function () {
 
 	this.gl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
 
-//===================000
+	//===================000
 
-   this.gl.clearDepth(100.0);
-   this.gl.enable(this.gl.DEPTH_TEST);
-   this.gl.enable(this.gl.CULL_FACE);
-   this.gl.depthFunc(this.gl.LEQUAL);
-   //=======================0
+	this.gl.clearDepth(100.0);
+	this.gl.enable(this.gl.DEPTH_TEST);
+	this.gl.enable(this.gl.CULL_FACE);
+	this.gl.depthFunc(this.gl.LEQUAL);
+	//=======================0
 	this.axis = new CGFaxis(this, this.graph.axisLength, 0.1);
 
 	this.initLights();
@@ -120,7 +119,7 @@ XMLscene.prototype.onGraphLoaded = function () {
 	//this.graph.display();
 
 	//this.graph.primitives[0]= new MyCylinder(this, 0, 1, 4, 30, 10);
-		
+
 };
 
 XMLscene.prototype.display = function () {
@@ -152,7 +151,9 @@ XMLscene.prototype.display = function () {
 		for (light of this.lights)
 			light.update();
 
-			this.graph.display();
+
+		this.graph.display();
+
 
 	};
 
@@ -161,14 +162,14 @@ XMLscene.prototype.display = function () {
 	var torus = new MyTorus(this, 1, 2, 10, 10);
 	var sphere = new MySphere(this, 10, 10, 0.7);
 
-		 //this.graph.primitives[0].display();
-		 // triangle.display();
-		 // quadrado.display();
+	//this.graph.primitives[0].display();
+	// triangle.display();
+	// quadrado.display();
 		  //torus.display();
-/*	this.pushMatrix();
-	this.translate(0, -5, 0);
-		  sphere.display();
-		  this.popMatrix();*/
+	/*	this.pushMatrix();
+		this.translate(0, -5, 0);
+			  sphere.display();
+			  this.popMatrix();*/
 
 
 

@@ -466,7 +466,8 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var y1 = this.reader.getFloat(object, 'y1');
 				var x2 = this.reader.getFloat(object, 'x2');
 				var y2 = this.reader.getFloat(object, 'y2');
-				this.primitives[object.tagName] = new MyRectangle(this.scene, x1, y1, x2, y2);
+
+				this.primitives[id] = new MyRectangle(this.scene, x1, y1, x2, y2);
 				break;
 			case 'triangle':
 				var x1 = this.reader.getFloat(object, 'x1');
@@ -478,7 +479,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var x3 = this.reader.getFloat(object, 'x3');
 				var y3 = this.reader.getFloat(object, 'y3');
 				var z3 = this.reader.getFloat(object, 'z3');
-				this.primitives[object.tagName] = new MyTriangle(this.scene, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+				this.primitives[id] = new MyTriangle(this.scene, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 				//console.log(this.primitives[id]);
 				break;
 			case 'cylinder':
@@ -487,20 +488,20 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var height = this.reader.getFloat(object, 'height');
 				var slices = this.reader.getFloat(object, 'slices');
 				var stacks = this.reader.getFloat(object, 'stacks');
-				this.primitives[object.tagName] = new MyCylinder(this.scene, base, top, height, slices, stacks);
+				this.primitives[id] = new MyCylinder(this.scene, base, top, height, slices, stacks);
 				break;
 			case 'sphere':
 				var radius = this.reader.getFloat(object, 'radius');
 				var slices = this.reader.getFloat(object, 'slices');
 				var stacks = this.reader.getFloat(object, 'stacks');
-				this.primitives[object.tagName] = new MySphere(this.scene, slices, stacks, radius);
+				this.primitives[id] = new MySphere(this.scene, slices, stacks, radius);
 				break;
 			case 'torus':
 				var inner = this.reader.getFloat(object, 'inner');
 				var outer = this.reader.getFloat(object, 'outer');
 				var slices = this.reader.getFloat(object, 'slices');
 				var loops = this.reader.getFloat(object, 'loops');
-				this.primitives[object.tagName] = new MyTorus(this.scene, inner, outer, slices, loops);
+				this.primitives[id] = new MyTorus(this.scene, inner, outer, slices, loops);
 				break;
 			default:
 				console.error("You're just dumb, read the instructions you fuck (if you have no instructions then I am sorry - ty braga senpai for this)");
@@ -639,30 +640,34 @@ MySceneGraph.prototype.onXMLError = function (message) {
 };
 
 MySceneGraph.prototype.display = function () {
-	//console.log(this.root);
-	var rootMaterial, rootTexture;
 
-	this.loadGraph(this.root, rootMaterial, rootTexture);
-};
+	var material = this.component[this.root].materialId;
+	var texture = this.component[this.root].textureId;
+	var rootMaterial = this.materials[material];
+	var rootTexture = this.textures[texture];
 
-MySceneGraph.prototype.loadGraph = function (rootId, rootMaterial, rootTexture) {
+	this.scene.multMatrix(this.component[this.root].matrixTransformation);
+	this.init(this.root, rootMaterial, rootMaterial);
+}
+MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
+
+	/*if (rootMaterial == "inherit")
+		return "Material no defined";
+
+	if (rootTexture == "inherit")
+		return "Texture no defined";*/
 
 	var root = this.component[rootId];
 	var componentRoot, transformation;
-
-	rootMaterial = this.materials[root.materialId];
-	rootTexture = this.textures[root.textureId];
-
 
 	for (var i = 0; i < root.primitiveref.length; i++) {
 		/*if (stackTexture.top() != "none")
 			material.setTexture(this.textures[stackTexture.top()].file);
 		*/
-		//rootMaterial.apply();
+
 		var type = root.primitiveref[i];
-		//console.log(root.primitiveref[i]);
-		//console.log(this.primitives[type]);
-		//rootMaterial.apply()
+
+		rootMaterial.apply()
 		this.primitives[type].display();
 
 		//material.setTexture(null);
@@ -678,17 +683,11 @@ MySceneGraph.prototype.loadGraph = function (rootId, rootMaterial, rootTexture) 
 		this.scene.multMatrix(transformation);
 		materialId = this.component[componentRoot].materialId;
 
-		//	console.log(componentRoot);
-
-
 		if (materialId == "inherit") {
 			materialChildren = rootMaterial;
-			//console.log(rootMaterial);
-			//	console.log(root.id);
 		}
 		else {
 			materialChildren = this.materials[materialId];
-			//console.log(materialChildren);
 		}
 
 
@@ -699,8 +698,7 @@ MySceneGraph.prototype.loadGraph = function (rootId, rootMaterial, rootTexture) 
 			textureChildren = this.textures[textureId];
 
 
-		this.loadGraph(componentRoot, materialChildren, textureChildren);
-
+		this.init(componentRoot, materialChildren, textureChildren);
 		this.scene.popMatrix();
 
 	}
