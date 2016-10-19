@@ -129,18 +129,16 @@ MySceneGraph.prototype.parse = function (rootElement) {
 };
 
 MySceneGraph.prototype.getRGBAElem = function (rootElement) {
-
 	var r = this.reader.getFloat(rootElement, 'r');
 	var g = this.reader.getFloat(rootElement, 'g');
 	var b = this.reader.getFloat(rootElement, 'b');
 	var a = this.reader.getFloat(rootElement, 'a');
-
 	var rgba = new RGBA(r, g, b, a);
+
 	return rgba;
 };
 
 MySceneGraph.prototype.getPoint3D = function (rootElement) {
-
 	var x = this.reader.getFloat(rootElement, 'x');
 	var y = this.reader.getFloat(rootElement, 'y');
 	var z = this.reader.getFloat(rootElement, 'z');
@@ -150,14 +148,8 @@ MySceneGraph.prototype.getPoint3D = function (rootElement) {
 };
 
 MySceneGraph.prototype.parseScene = function (element) {
-
-	//	console.log(element);
-
 	this.root = this.reader.getString(element, 'root');
 	this.axisLength = this.reader.getFloat(element, 'axis_length');
-
-
-	//console.log(this.root + "---axis:" + this.axisLength);
 };
 
 MySceneGraph.prototype.parseViews = function (element) {
@@ -167,8 +159,6 @@ MySceneGraph.prototype.parseViews = function (element) {
 		var perspective = perspectives[i];
 		var name = perspective.tagName;
 
-		//console.log(perspetive);
-
 		var id = this.reader.getString(perspective, 'id');
 		var near = this.reader.getFloat(perspective, 'near');
 		var far = this.reader.getFloat(perspective, 'far');
@@ -177,20 +167,13 @@ MySceneGraph.prototype.parseViews = function (element) {
 		var from = perspective.getElementsByTagName('from')[0];
 		var to = perspective.getElementsByTagName('to')[0];
 
-		//	console.log(from);
 		var fromPoint = this.getPoint3D(from);
 		var toPoint = this.getPoint3D(to);
 		this.views[i] = new CGFcamera(angle, near, far, vec3.fromValues(fromPoint.x, fromPoint.y, fromPoint.z), vec3.fromValues(toPoint.x, toPoint.y, toPoint.z));
-
-		//this.views[i] = new Perspective(id, near, far, angle, this.getPoint3D(from), this.getPoint3D(to));
-
-		//console.log(this.views[i]);
 	}
-
 };
 
 MySceneGraph.prototype.parseIllumination = function (element) {
-
 	var illumi = element;
 
 	if (illumi == null)
@@ -202,20 +185,15 @@ MySceneGraph.prototype.parseIllumination = function (element) {
 	var doublesided = this.reader.getBoolean(illumi, 'doublesided');
 
 	this.illumination = new Illumination(doublesided, local, this.getRGBAElem(ambient), this.getRGBAElem(background));
-
 };
 
 MySceneGraph.prototype.parseLights = function (element) {
-
 	var light = element, omni, spot;
-
 	omni = light.getElementsByTagName('omni');
 	spot = light.getElementsByTagName('spot');
 
 	if (omni == null && spot == null)
 		return "have not lights";
-
-	//console.log(omni.length);
 
 	var i, id, enabled, location, ambient, diffuse, specular, root;
 	for (i = 0; i < omni.length; i++) {
@@ -230,16 +208,10 @@ MySceneGraph.prototype.parseLights = function (element) {
 		specular = root.getElementsByTagName('specular')[0];
 
 		this.omni[i] = new Omni(id, enabled, this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
-
-		//console.log("omni");
-		//console.log(this.omni[i]);
-		//console.log(ambient);
 	}
 
 	var angle, exponent, target;
 	for (i = 0; i < spot.length; i++) {
-
-		//console.log("spot");
 		root = spot[i];
 
 		id = this.reader.getString(root, 'id');
@@ -254,21 +226,11 @@ MySceneGraph.prototype.parseLights = function (element) {
 		specular = root.getElementsByTagName('specular')[0];
 
 		this.spot[i] = new Spot(id, enabled, angle, exponent, this.getPoint3D(target), this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
-
-		//console.log(this.spot[i].diffuse);
-		//console.log(this.spot[i].diffuse.g);
 	}
-
-	//	console.log( this.omni.length);
-
 };
 
-
 MySceneGraph.prototype.parseTextures = function (element) {
-
-	//console.log("textures");
 	var root = element;
-	//console.log(element);
 
 	if (root == null)
 		return "have not textures";
@@ -280,33 +242,22 @@ MySceneGraph.prototype.parseTextures = function (element) {
 	for (i; i < length; i++) {
 
 		texture = root.getElementsByTagName('texture')[i];
-		//console.log(texture);
 		id = this.reader.getString(texture, 'id');
 		file = this.reader.getString(texture, 'file');
 		length_s = this.reader.getString(texture, 'length_s');
 		length_t = this.reader.getString(texture, 'length_t');
 
 		this.textures[id] = new Texture(id, file, length_s, length_t);
-		//console.log(this.textures[id]);
 	}
-
 };
 
-
 MySceneGraph.prototype.parseMaterials = function (element) {
-
 	var materials = element;
-
 	if (materials == null)
 		return "materials element is missing";
 
 	var materi = materials.children;
 	var mlength = materi.length;
-
-	/*for (var i = 0; i < materials.length; i++)
-		console.log(materials[i]);*/
-
-
 
 	if (mlength < 1)
 		return "zero materials found";
@@ -317,7 +268,6 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 			continue;
 		}
 		var mspecs = materi[i];
-		//	console.log(mspecs);
 		var msl = mspecs.length;
 		var check = {};
 		check['emission'] = false;
@@ -381,8 +331,6 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 		material = materi[i];
 		id = this.reader.getString(material, 'id');
 
-		//console.log(materi);
-
 		emission = this.getRGBAElem(material.getElementsByTagName('emission')[0]);
 		ambient = this.getRGBAElem(material.getElementsByTagName('ambient')[0]);
 		diffuse = this.getRGBAElem(material.getElementsByTagName('diffuse')[0]);
@@ -396,54 +344,41 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 		material.setDiffuse(diffuse.r, diffuse.g, diffuse.b, diffuse.a);
 		material.setSpecular(specular.r, specular.g, specular.b, specular.a);
 		material.setShininess(shininessValor);
-
 		this.materials[id] = material;
 	}
 
 };
 
 MySceneGraph.prototype.parseTransformations = function (element) {
-
-
 	var matrix = mat4.create();
-
 	var transformations = element.getElementsByTagName('transformation');
 
-	//console.log(transformations);
 	if (transformations == null)
 		return "transformations element is missing.";
 
-
 	var tl = transformations.length;
-	//console.log(tl);
+
 	if (tl < 1)
 		return "zero transformations found";
-	//console.log(transformations[0]);
+
 	for (var i = 0; i < tl; i++) {
 		var transformation = transformations[i];
 
-		//console.log(transformation.tagName);
 		if (transformation.tagName != 'transformation') {
 			console.warn("Invalid tag name for supposed transformation nº " + i + ".");
 			continue;
 		}
 		var id = transformation.id, point3d;
-		//console.log("Id: " + id);
-
 		matrix = this.readTransformation(transformation);
 		this.transformations[id] = matrix;
-		//console.log(this.transformations[id]);
 	}
 
 };
 
 MySceneGraph.prototype.parsePrimitives = function (element) {
-
 	var primitive = element.getElementsByTagName('primitive');
-
 	if (primitive == null)
 		return "primitives element is missing.";
-
 
 	var pl = primitive.length;
 
@@ -452,23 +387,22 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 
 	for (var i = 0; i < pl; i++) {
 		var primi = primitive[i];
-		//console.log(primi);
 		var name = primi.tagName;
+
 		if (name != 'primitive') {
 			console.error("Invalid tag name for supposed primitive nº " + i + ".");
 		}
 		var id = primi.id;
 		var object = primi.children[0];
-		//console.log(object);
 		switch (object.tagName) {
 			case 'rectangle':
 				var x1 = this.reader.getFloat(object, 'x1');
 				var y1 = this.reader.getFloat(object, 'y1');
 				var x2 = this.reader.getFloat(object, 'x2');
 				var y2 = this.reader.getFloat(object, 'y2');
-
 				this.primitives[id] = new MyRectangle(this.scene, x1, y1, x2, y2);
 				break;
+
 			case 'triangle':
 				var x1 = this.reader.getFloat(object, 'x1');
 				var y1 = this.reader.getFloat(object, 'y1');
@@ -480,8 +414,8 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var y3 = this.reader.getFloat(object, 'y3');
 				var z3 = this.reader.getFloat(object, 'z3');
 				this.primitives[id] = new MyTriangle(this.scene, x1, y1, z1, x2, y2, z2, x3, y3, z3);
-				//console.log(this.primitives[id]);
 				break;
+
 			case 'cylinder':
 				var base = this.reader.getFloat(object, 'base');
 				var top = this.reader.getFloat(object, 'top');
@@ -490,12 +424,14 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var stacks = this.reader.getFloat(object, 'stacks');
 				this.primitives[id] = new MyCylinder(this.scene, base, top, height, slices, stacks);
 				break;
+
 			case 'sphere':
 				var radius = this.reader.getFloat(object, 'radius');
 				var slices = this.reader.getFloat(object, 'slices');
 				var stacks = this.reader.getFloat(object, 'stacks');
 				this.primitives[id] = new MySphere(this.scene, slices, stacks, radius);
 				break;
+
 			case 'torus':
 				var inner = this.reader.getFloat(object, 'inner');
 				var outer = this.reader.getFloat(object, 'outer');
@@ -516,28 +452,20 @@ MySceneGraph.prototype.readTransformation = function (element) {
 	if (element.children.length == 0)
 		return "missing transformations";
 
-	//console.log(element);
 	for (var j = 0; j < transformation.children.length; j++) {
 		var tr = transformation.children[j];
-		//console.log(transformation.children[j]);
 		var type = tr.tagName;
 		switch (type) {
+
 			case 'translate':
-				//	console.log("Translate");
 				point3d = this.getPoint3D(tr);
 				mat4.translate(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
-
-				/*console.log("Tx: " + point3d.x);
-				console.log("Ty: " + point3d.y);
-				console.log("Tz: " + point3d.z);*/
-
 				break;
+
 			case 'rotate':
-				//console.log("Rotate");
 				var raxis = tr.attributes.getNamedItem('axis').value;
 				var rangle = tr.attributes.getNamedItem('angle').value;
 				rangle = rangle * Math.PI / 180;
-
 				if (raxis == "x")
 					mat4.rotate(matrix, matrix, rangle, [1, 0, 0]);
 				else if (raxis == "y")
@@ -545,19 +473,10 @@ MySceneGraph.prototype.readTransformation = function (element) {
 				else if (raxis == "z")
 					mat4.rotate(matrix, matrix, rangle, [0, 0, 1]);
 
-				//console.log("Raxis: " + raxis);
-				//console.log("Rangle: " + rangle);
-
 				break;
 			case 'scale':
-				//console.log("Scale");
-
 				point3d = this.getPoint3D(tr);
 				mat4.scale(matrix, matrix, [point3d.x, point3d.y, point3d.z]);
-
-				/*	console.log("Tx: " + point3d.x);
-					console.log("Ty: " + point3d.y);
-					console.log("Tz: " + point3d.z);*/
 
 				break;
 			default:
@@ -697,10 +616,8 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 		else
 			textureChildren = this.textures[textureId];
 
-
 		this.init(componentRoot, materialChildren, textureChildren);
 		this.scene.popMatrix();
-
 	}
 }
 
