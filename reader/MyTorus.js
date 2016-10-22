@@ -35,7 +35,7 @@ MyTorus.prototype.initBuffers = function () {
 			this.vertices.push(x, y, z);
 			// this vector is used to calculate the normal
 			var a = [x, y, z];
-			var b = [this.outer * Math.cos(u), this.outer * Math.sin(u),1];
+			var b = [this.outer * Math.cos(u), this.outer * Math.sin(u), 1];
 			var c = [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 			// normals
 			this.normals.push(c[0], c[1], c[2]);

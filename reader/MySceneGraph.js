@@ -72,6 +72,8 @@ MySceneGraph.prototype.parse = function (rootElement) {
 	check['primitives'] = false;
 	check['components'] = false;
 	var n = rootElement.children.length;
+	var count = 0; //to check the order of the elements
+	var error = null;
 	for (var i = 0; i < n; i++) {
 		var element = rootElement.children[i];
 		var name = element.tagName;
@@ -81,49 +83,82 @@ MySceneGraph.prototype.parse = function (rootElement) {
 		} else {
 			check[name] = true;
 		}
+		order = true;
 		switch (name) {
 			case 'scene':
 				//console.log("Parse scene");
-				this.parseScene(element);
+				error = this.parseScene(element);
+				if (count != 0)
+					order = false;
+				count++;
 				break;
 			case 'views':
 				//console.log("Parse");
-				this.parseViews(element);
+				error = this.parseViews(element);
+				if (count != 1)
+					order = false;
+				count++;
 				break;
 			case 'illumination':
 				//console.log("Parse");
-				this.parseIllumination(element);
+				error = this.parseIllumination(element);
+				if (count != 2)
+					order = false;
+				count++;
 				break;
 			case 'lights':
 				//console.log("Parse");
-				this.parseLights(element);
+				error = this.parseLights(element);
+				if (count != 3)
+					order = false;
+				count++;
 				break;
 			case 'textures':
 				//console.log("Parse");
-				this.parseTextures(element);
+				error = this.parseTextures(element);
+				if (count != 4)
+					order = false;
+				count++;
 				break;
 			case 'materials':
 				//console.log("Parse");
-				this.parseMaterials(element);
+				error = this.parseMaterials(element);
+				if (count != 5)
+					order = false;
+				count++;
 				break;
 			case 'transformations':
 				//console.log("Parse");
-				this.parseTransformations(element);
+				error = this.parseTransformations(element);
+				if (count != 6)
+					order = false;
+				count++;
 				break;
 			case 'primitives':
 				//console.log("Parse");
-				this.parsePrimitives(element);
+				error = this.parsePrimitives(element);
+				if (count != 7)
+					order = false;
+				count++;
 				break;
 			case 'components':
 				//console.log("Parse");
-				this.parseComponents(element);
+				error = this.parseComponents(element);
+				if (count != 8)
+					order = false;
+				count++;
 				break;
 			default:
 				check[name] = false;
 				console.warn("ignoring '" + name + "' since it's not a valid element");
 				break;
 		}
-
+		if (error != null) {
+			this.onXMLError(error);
+			return;
+		}
+		if (!order)
+			console.warn("Element " + name + " is out of place!");
 	}
 
 };
@@ -192,14 +227,45 @@ MySceneGraph.prototype.parseViews = function (element) {
 MySceneGraph.prototype.parseIllumination = function (element) {
 
 	var illumi = element;
+	var components = element.children;
+	var cl = components.length;
 
-	if (illumi == null)
-		return "Illumination incomplete";
+	var check = {};
+	check['background'] = false;
+	check['ambient'] = false;
 
-	var background = illumi.getElementsByTagName('background')[0];
-	var ambient = illumi.getElementsByTagName('ambient')[0];
+	if (cl < 0)
+		return "no illumination components were found!";
+
 	var local = this.reader.getBoolean(illumi, 'local');
 	var doublesided = this.reader.getBoolean(illumi, 'doublesided');
+	var background;
+	var ambient;
+
+	for (var i = 0; i < cl; i++) {
+		var component = components[i];
+		var name = component.tagName;
+		if (check[name]) {
+			return "more than one '" + name + "' element found";
+		} else {
+			check[name] = true;
+		}
+		switch (name) {
+			case 'background':
+				background = component;
+				check[name] = true;
+				break;
+			case 'ambient':
+				ambient = component;
+				console.debug(ambient);
+				check[name] = true;
+				break;
+			default:
+				console.warn(name + " is not a component of illumination!");
+				check[name] = false;
+				break;
+		}
+	}
 
 	this.illumination = new Illumination(doublesided, local, this.getRGBAElem(ambient), this.getRGBAElem(background));
 
@@ -207,59 +273,48 @@ MySceneGraph.prototype.parseIllumination = function (element) {
 
 MySceneGraph.prototype.parseLights = function (element) {
 
-	var light = element, omni, spot;
+	var lights = element.children;
+	var ll = lights.length;
 
-	omni = light.getElementsByTagName('omni');
-	spot = light.getElementsByTagName('spot');
-
-	if (omni == null && spot == null)
-		return "have not lights";
+	if (ll < 1) {
+		return "zero lights found";
+	}
 
 	//console.log(omni.length);
 
-	var i, id, enabled, location, ambient, diffuse, specular, root;
-	for (i = 0; i < omni.length; i++) {
-
-		root = omni[i]
-
-		id = this.reader.getString(root, 'id');
-		enabled = this.reader.getBoolean(root, 'enabled');
-		location = root.getElementsByTagName('location')[0];
-		ambient = root.getElementsByTagName('ambient')[0];
-		diffuse = root.getElementsByTagName('diffuse')[0];
-		specular = root.getElementsByTagName('specular')[0];
-
-		this.omni[i] = new Omni(id, enabled, this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
-
-		//console.log("omni");
-		//console.log(this.omni[i]);
-		//console.log(ambient);
+	for (var i = 0; i < ll; i++) {
+		var light = lights[i];
+		var name = lights[i].tagName;
+		var id, enabled, location, ambient, diffuse, specular, root;
+		var angle, exponent, target;
+		switch (name) {
+			case 'omni':
+				id = this.reader.getString(light, 'id');
+				enabled = this.reader.getBoolean(light, 'enabled');
+				location = light.getElementsByTagName('location')[0];
+				ambient = light.getElementsByTagName('ambient')[0];
+				diffuse = light.getElementsByTagName('diffuse')[0];
+				specular = light.getElementsByTagName('specular')[0];
+				this.omni[i] = new Omni(id, enabled, this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
+				break;
+			case 'spot':
+				id = this.reader.getString(light, 'id');
+				enabled = this.reader.getBoolean(light, 'enabled');
+				angle = this.reader.getFloat(light, 'angle');
+				angle = angle * Math.PI / 180;
+				exponent = this.reader.getFloat(light, 'exponent');
+				target = light.getElementsByTagName('target')[0];
+				location = light.getElementsByTagName('location')[0];
+				ambient = light.getElementsByTagName('ambient')[0];
+				diffuse = light.getElementsByTagName('diffuse')[0];
+				specular = light.getElementsByTagName('specular')[0];
+				this.spot[i] = new Spot(id, enabled, angle, exponent, this.getPoint3D(target), this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
+				break;
+			default:
+				console.warn(name + " is not a type of light!");
+				break;
+		}
 	}
-
-	var angle, exponent, target;
-	for (i = 0; i < spot.length; i++) {
-
-		//console.log("spot");
-		root = spot[i];
-
-		id = this.reader.getString(root, 'id');
-		enabled = this.reader.getBoolean(root, 'enabled');
-		angle = this.reader.getFloat(root, 'angle');
-		angle = angle * Math.PI / 180;
-		exponent = this.reader.getFloat(root, 'exponent');
-		target = root.getElementsByTagName('target')[0];
-		location = root.getElementsByTagName('location')[0];
-		ambient = root.getElementsByTagName('ambient')[0];
-		diffuse = root.getElementsByTagName('diffuse')[0];
-		specular = root.getElementsByTagName('specular')[0];
-
-		this.spot[i] = new Spot(id, enabled, angle, exponent, this.getPoint3D(target), this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
-
-		//console.log(this.spot[i].diffuse);
-		//console.log(this.spot[i].diffuse.g);
-	}
-
-	//	console.log( this.omni.length);
 
 };
 
@@ -294,29 +349,23 @@ MySceneGraph.prototype.parseTextures = function (element) {
 
 
 MySceneGraph.prototype.parseMaterials = function (element) {
-
-	var materials = element;
-
-	if (materials == null)
-		return "materials element is missing";
-
-	var materi = materials.children;
-	var mlength = materi.length;
+	var materials = element.children;
+	var mlength = materials.length;
 
 	/*for (var i = 0; i < materials.length; i++)
 		console.log(materials[i]);*/
-
-
 
 	if (mlength < 1)
 		return "zero materials found";
 
 	for (var i = 0; i < mlength; i++) {
-		if (materi[i].tagName != 'material') {
+		if (materials[i].tagName != 'material') {
 			console.warn("Invalid tag name for supposed material!");
 			continue;
 		}
-		var mspecs = materi[i];
+		var material = materials[i];
+		var mspecs = material.children;
+		var id = material.id;
 		//	console.log(mspecs);
 		var msl = mspecs.length;
 		var check = {};
@@ -325,77 +374,44 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 		check['diffuse'] = false;
 		check['specular'] = false;
 		check['shininess'] = false;
+		var emission, ambient, diffuse, specular, shininess;
 		for (var j = 0; j < msl; j++) {
-			var name = mspecs[j].tagName;
+			var spec = mspecs[j];
+			var name = spec.tagName;
+			if (check[name]) {
+				console.error("More than one '" + name + "' element found!");
+			} else {
+				check[name] = true;
+			}
 			switch (name) {
 				case 'emission':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
-
-						check[name] = true;
-					}
+					emission = this.getRGBAElem(spec);
 					break;
 				case 'ambient':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
-
-						check[name] = true;
-					}
+					ambient = this.getRGBAElem(spec);
 					break;
 				case 'diffuse':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
-
-						check[name] = true;
-					}
+					diffuse = this.getRGBAElem(spec);
 					break;
 				case 'specular':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
-
-						check[name] = true;
-					}
+					specular = this.getRGBAElem(spec);
 					break;
 				case 'shininess':
-					if (check[name]) {
-						console.error("More than one '" + name + "' element found!");
-					} else {
-
-						check[name] = true;
-					}
+					shininess = this.reader.getFloat(spec, 'value');
 					break;
 				default:
-					console.error("'" + name + "' is not an element of material!");
+					console.warning("'" + name + "' is not an element of material!");
+					check[name] = false;
 					break;
 			}
 		}
-	}
-
-	var i, material, id, emission, ambient, diffuse, specular, shininess;
-
-	for (i = 0; i < materi.length; i++) {
-		material = materi[i];
-		id = this.reader.getString(material, 'id');
-
-		//console.log(materi);
-
-		emission = this.getRGBAElem(material.getElementsByTagName('emission')[0]);
-		ambient = this.getRGBAElem(material.getElementsByTagName('ambient')[0]);
-		diffuse = this.getRGBAElem(material.getElementsByTagName('diffuse')[0]);
-		specular = this.getRGBAElem(material.getElementsByTagName('specular')[0]);
-		shininess = material.getElementsByTagName('shininess')[0];
-		shininessValor = this.reader.getFloat(shininess, 'value');
-
 		var material = new CGFappearance(this.scene);
+		
 		material.setEmission(emission.r, emission.g, emission.b, emission.a);
 		material.setAmbient(ambient.r, ambient.g, ambient.b, ambient.a);
 		material.setDiffuse(diffuse.r, diffuse.g, diffuse.b, diffuse.a);
 		material.setSpecular(specular.r, specular.g, specular.b, specular.a);
-		material.setShininess(shininessValor);
+		material.setShininess(shininess);
 
 		this.materials[id] = material;
 	}
@@ -439,12 +455,8 @@ MySceneGraph.prototype.parseTransformations = function (element) {
 
 MySceneGraph.prototype.parsePrimitives = function (element) {
 
-	var primitive = element.getElementsByTagName('primitive');
-
-	if (primitive == null)
-		return "primitives element is missing.";
-
-
+	var primitives = element;
+	var primitive = primitives.getElementsByTagName('primitive');
 	var pl = primitive.length;
 
 	if (pl < 1)
@@ -511,7 +523,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 
 MySceneGraph.prototype.readTransformation = function (element) {
 	var transformation = element;
-	var matrix = mat4.create();
+
 	if (element.children.length == 0)
 		return "missing transformations";
 
@@ -520,6 +532,7 @@ MySceneGraph.prototype.readTransformation = function (element) {
 		var tr = transformation.children[j];
 		//console.log(transformation.children[j]);
 		var type = tr.tagName;
+		var matrix = mat4.create();
 		switch (type) {
 			case 'translate':
 				//	console.log("Translate");
