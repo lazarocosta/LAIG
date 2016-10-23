@@ -17,10 +17,10 @@ function MySceneGraph(filename, scene) {
 	this.views = [];
 	this.omni = [];
 	this.spot = [];
-	this.textures = [];
-	this.materials = [];
-	this.transformations = [];
-	this.primitives = [];
+	this.textures = {};
+	this.materials = {};
+	this.transformations = {};
+	this.primitives = {};
 	this.component = {};
 
 
@@ -338,24 +338,24 @@ MySceneGraph.prototype.parseLights = function (element) {
 };
 
 MySceneGraph.prototype.parseTextures = function (element) {
-	var root = element;
+	var textures = element.children;
+	var tl = textures.length;
 
-	if (root == null)
-		return "have not textures";
-
-	var i = 0;
-	var texture, id, file, length_s, length_t, length;
-	length = root.getElementsByTagName('texture').length;
-
-	for (i; i < length; i++) {
-
-		texture = root.getElementsByTagName('texture')[i];
-		id = this.reader.getString(texture, 'id');
-		file = this.reader.getString(texture, 'file');
-		length_s = this.reader.getString(texture, 'length_s');
-		length_t = this.reader.getString(texture, 'length_t');
-
-		this.textures[id] = new Texture(id, file, length_s, length_t);
+	for (var i = 0;i<tl;i++){
+		var texture = textures[i];
+		var name = texture.tagName;
+		switch (name){
+			case 'texture':
+				var id = texture.id;
+				var file = texture.attributes.getNamedItem('file').value;
+				var length_s = this.reader.getFloat(texture, 'length_s');
+				var length_t = this.reader.getFloat(texture, 'length_t');
+				this.textures[id] = new Texture(id, file, length_s, length_t);
+				break;
+			default:
+				console.warn("");
+				break;
+		}
 	}
 };
 
@@ -437,11 +437,11 @@ MySceneGraph.prototype.readTransformation = function (element) {
 		console.error("missing transformations");
 		return null;
 	}
+	var matrix = mat4.create();
 
 	for (var j = 0; j < length; j++) {
 		var tr = transformation[j];
 		var type = tr.tagName;
-		var matrix = mat4.create();
 		switch (type) {
 			case 'translate':
 				point3d = this.getPoint3D(tr);
