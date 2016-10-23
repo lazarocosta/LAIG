@@ -430,11 +430,13 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 
 MySceneGraph.prototype.readTransformation = function (element) {
 	var transformation = element.children;
-	console.debug(element);
+	//console.debug(element);
 	var length = transformation.length;
 
-	if (length < 1)
-		return "missing transformations";
+	if (length < 1) {
+		console.error("missing transformations");
+		return null;
+	}
 
 	for (var j = 0; j < length; j++) {
 		var tr = transformation[j];
@@ -461,7 +463,8 @@ MySceneGraph.prototype.readTransformation = function (element) {
 						rmatrix = [0, 0, 1];
 						break;
 					default:
-						return "invalid axis for rotation";
+						console.error("invalid axis for rotation");
+						return;
 				}
 				mat4.rotate(matrix, matrix, rangle, rmatrix);
 				break;
@@ -570,17 +573,18 @@ MySceneGraph.prototype.parseComponents = function (element) {
 	var components = element.children;
 	var cl = components.length;
 
-	console.debug(cl);
+	//console.debug(cl);
 
 	for (var i = 0; i < cl; i++) {
 		var component = components[i];
-		console.debug(component);
+		//console.debug(component);
 		var id = component.id;
 		var settings = component.children;
 		var n = settings.length;
 		var primitiveref = [];
 		var componentref = [];
-		var matrixTransformation, materialId, textureId;
+		var matrixTransformation, textureId;
+		var materialsId = [];
 		for (var j = 0; j < n; j++) {
 			var temp = settings[j];
 			var name = temp.tagName;
@@ -608,7 +612,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 								Tnormal = true;
 								break;
 							case 'transformationref':
-								if(Tref){
+								if (Tref) {
 									return "you can only use one transformationref for a component";
 								}
 								Tref = true;
@@ -628,9 +632,10 @@ MySceneGraph.prototype.parseComponents = function (element) {
 				case 'materials':
 					var materials = temp.children;
 					var ml = materials.length;
-					for (var k = 0;k<ml;k++){
+					for (var k = 0; k < ml; k++) {
 						var material = materials[k];
-						materialId = material.id;
+						var materialId = material.id;
+						materialsId.push(materialId);
 					}
 					break;
 				case 'texture':
@@ -661,8 +666,8 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					break;
 			}
 		}
-		this.component[id] = new Component(id, matrixTransformation, materialId, textureId, componentref, primitiveref);
-		console.debug(this.component[id]);
+		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref);
+		//console.debug(this.component[id]);
 	}
 };
 
