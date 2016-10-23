@@ -59,7 +59,7 @@ MyTorus.prototype.initBuffers = function () {
 		}
 	}
 
-	/*for (j = 0; j <= this.loops; j++) {
+	for (j = 0; j <= this.loops; j++) {
 		for (i = 1; i <= this.slices; i++) {
 			var zangle = this.angle * i;
 			var hangle = j * (Math.PI * 2) / this.loops;
@@ -94,7 +94,7 @@ MyTorus.prototype.initBuffers = function () {
 		var d = b + this.slices - 1;
 		this.indices.push(d, c, a);
 		this.indices.push(a, b, d);
-	}*/
+	}
 
 	this.primitiveType = this.scene.gl.TRIANGLES;
 	this.initGLBuffers();

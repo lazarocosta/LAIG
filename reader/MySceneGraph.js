@@ -128,7 +128,7 @@ MySceneGraph.prototype.parse = function (rootElement) {
 				count++;
 				break;
 			case 'transformations':
-				//console.log("Parse");
+				console.log("Parse");
 				error = this.parseTransformations(element);
 				if (count != 6)
 					order = false;
@@ -351,7 +351,7 @@ MySceneGraph.prototype.parseTextures = function (element) {
 
 		texture = root.getElementsByTagName('texture')[i];
 		id = this.reader.getString(texture, 'id');
-		file = this.reader.getString(texture, 'file');
+		file = new CGFtexture(this.scene, this.reader.getString(texture, 'file'));
 		length_s = this.reader.getString(texture, 'length_s');
 		length_t = this.reader.getString(texture, 'length_t');
 
@@ -423,6 +423,7 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 		material.setDiffuse(diffuse.r, diffuse.g, diffuse.b, diffuse.a);
 		material.setSpecular(specular.r, specular.g, specular.b, specular.a);
 		material.setShininess(shininess);
+		material.setTextureWrap('REPEAT', 'REPEAT');
 		this.materials[id] = material;
 	}
 
@@ -437,11 +438,11 @@ MySceneGraph.prototype.readTransformation = function (element) {
 		console.error("missing transformations");
 		return null;
 	}
-
+		var matrix = mat4.create();
 	for (var j = 0; j < length; j++) {
 		var tr = transformation[j];
 		var type = tr.tagName;
-		var matrix = mat4.create();
+
 		switch (type) {
 			case 'translate':
 				point3d = this.getPoint3D(tr);
@@ -489,6 +490,7 @@ MySceneGraph.prototype.parseTransformations = function (element) {
 	if (tl < 1)
 		return "zero transformations found";
 
+
 	for (var i = 0; i < tl; i++) {
 		var transformation = transformations[i];
 		if (transformation.tagName != 'transformation') {
@@ -499,6 +501,7 @@ MySceneGraph.prototype.parseTransformations = function (element) {
 		matrix = this.readTransformation(transformation);
 		this.transformations[id] = matrix;
 	}
+
 };
 
 MySceneGraph.prototype.parsePrimitives = function (element) {
@@ -601,6 +604,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					var tn = transformations.length;
 					matrixTransformation = mat4.create();
 					var Tref = false;
+			
 					var Tnormal = false;
 					for (var k = 0; k < tn; k++) {
 						var transformation = transformations[k];
@@ -667,7 +671,6 @@ MySceneGraph.prototype.parseComponents = function (element) {
 			}
 		}
 		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref);
-		//console.debug(this.component[id]);
 	}
 };
 
@@ -685,6 +688,7 @@ MySceneGraph.prototype.display = function () {
 
 	this.scene.multMatrix(this.component[this.root].matrixTransformation);
 	this.init(this.root, rootMaterial, rootMaterial);
+
 }
 
 MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
@@ -695,14 +699,16 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 	if (rootTexture == "inherit")
 		return "Texture no defined";*/
 
+
 	var root = this.component[rootId];
 
 	var componentRoot, transformation;
 
 	for (var i = 0; i < root.primitiveref.length; i++) {
-		/*if (stackTexture.top() != "none")
-			material.setTexture(this.textures[stackTexture.top()].file);
-		*/
+		/*if (stackTexture.top() != "none")*/
+		//rootMaterial.setTexture(rootTexture);
+		console.log(rootMaterial);
+		
 
 		var type = root.primitiveref[i];
 
@@ -722,12 +728,14 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 		this.scene.multMatrix(transformation);
 		materialId = this.component[componentRoot].materialId;
 
+
 		if (materialId == "inherit") {
 			materialChildren = rootMaterial;
 		}
 		else {
 			materialChildren = this.materials[materialId];
 		}
+		  materialChildren.setTexture(null);
 
 
 		textureId = this.component[componentRoot].textureId;
