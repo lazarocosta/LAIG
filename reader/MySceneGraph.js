@@ -387,7 +387,7 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 		material.setSpecular(specular.r, specular.g, specular.b, specular.a);
 		material.setShininess(shininess);
 		material.setTextureWrap('REPEAT', 'REPEAT');
-		if (this.material[id] != null) {
+		if (this.materials[id] != null) {
 			console.error("There's already a material with id='" + id + "'!");
 			continue;
 		}
