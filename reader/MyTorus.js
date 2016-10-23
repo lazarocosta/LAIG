@@ -67,7 +67,7 @@ MyTorus.prototype.initBuffers = function () {
 			var x = (1 + Math.cos(hangle)) * Math.cos(zangle);
 			var y = (1 + Math.cos(hangle)) * Math.sin(zangle);
 			var z = Math.cos(hangle);
-			console.debug("x: %f y: %f z: %f\n", x, y, z);
+			//console.debug("x: %f y: %f z: %f\n", x, y, z);
 			this.vertices.push(x, y, z);
 			var currangle = this.angle * (i - 1) + this.angle / 2;
 			var prevangle = this.angle * (i - 2) + this.angle / 2;

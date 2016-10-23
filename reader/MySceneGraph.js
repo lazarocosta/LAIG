@@ -86,63 +86,63 @@ MySceneGraph.prototype.parse = function (rootElement) {
 		order = true;
 		switch (name) {
 			case 'scene':
-				//console.log("Parse scene");
+				console.log("Parse scene");
 				error = this.parseScene(element);
 				if (count != 0)
 					order = false;
 				count++;
 				break;
 			case 'views':
-				//console.log("Parse");
+				console.log("Parse views");
 				error = this.parseViews(element);
 				if (count != 1)
 					order = false;
 				count++;
 				break;
 			case 'illumination':
-				//console.log("Parse");
+				console.log("Parse illumination");
 				error = this.parseIllumination(element);
 				if (count != 2)
 					order = false;
 				count++;
 				break;
 			case 'lights':
-				//console.log("Parse");
+				console.log("Parse lights");
 				error = this.parseLights(element);
 				if (count != 3)
 					order = false;
 				count++;
 				break;
 			case 'textures':
-				//console.log("Parse");
+				console.log("Parse textures");
 				error = this.parseTextures(element);
 				if (count != 4)
 					order = false;
 				count++;
 				break;
 			case 'materials':
-				//console.log("Parse");
+				console.log("Parse materials");
 				error = this.parseMaterials(element);
 				if (count != 5)
 					order = false;
 				count++;
 				break;
 			case 'transformations':
-				//console.log("Parse");
+				console.log("Parse");
 				error = this.parseTransformations(element);
 				if (count != 6)
 					order = false;
 				count++;
 				break;
 			case 'primitives':
-				//console.log("Parse");
+				console.log("Parse primitives");
 				error = this.parsePrimitives(element);
 				if (count != 7)
 					order = false;
 				count++;
 				break;
 			case 'components':
-				//console.log("Parse");
+				console.log("Parse components");
 				error = this.parseComponents(element);
 				if (count != 8)
 					order = false;
@@ -268,7 +268,7 @@ MySceneGraph.prototype.parseLights = function (element) {
 		var angle, exponent, target;
 		switch (name) {
 			case 'omni':
-				id = this.reader.getString(light, 'id');
+				id = light.id;
 				enabled = this.reader.getBoolean(light, 'enabled');
 				location = light.getElementsByTagName('location')[0];
 				ambient = light.getElementsByTagName('ambient')[0];
@@ -277,7 +277,7 @@ MySceneGraph.prototype.parseLights = function (element) {
 				this.omni[o++] = new Omni(id, enabled, this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
 				break;
 			case 'spot':
-				id = this.reader.getString(light, 'id');
+				id = light.id;
 				enabled = this.reader.getBoolean(light, 'enabled');
 				angle = this.reader.getFloat(light, 'angle');
 				angle = angle * Math.PI / 180;
@@ -294,62 +294,25 @@ MySceneGraph.prototype.parseLights = function (element) {
 				break;
 		}
 	}
-
-	/*
-	var light = element, omni, spot;
-	omni = light.getElementsByTagName('omni');
-	spot = light.getElementsByTagName('spot');
-
-	if (omni == null && spot == null)
-		return "have not lights";
-
-	var i, id, enabled, location, ambient, diffuse, specular, root;
-	for (i = 0; i < omni.length; i++) {
-
-		root = omni[i]
-
-		id = this.reader.getString(root, 'id');
-		enabled = this.reader.getBoolean(root, 'enabled');
-		location = root.getElementsByTagName('location')[0];
-		ambient = root.getElementsByTagName('ambient')[0];
-		diffuse = root.getElementsByTagName('diffuse')[0];
-		specular = root.getElementsByTagName('specular')[0];
-
-		this.omni[i] = new Omni(id, enabled, this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
-	}
-
-	var angle, exponent, target;
-	for (i = 0; i < spot.length; i++) {
-		root = spot[i];
-
-		id = this.reader.getString(root, 'id');
-		enabled = this.reader.getBoolean(root, 'enabled');
-		angle = this.reader.getFloat(root, 'angle');
-		angle = angle * Math.PI / 180;
-		exponent = this.reader.getFloat(root, 'exponent');
-		target = root.getElementsByTagName('target')[0];
-		location = root.getElementsByTagName('location')[0];
-		ambient = root.getElementsByTagName('ambient')[0];
-		diffuse = root.getElementsByTagName('diffuse')[0];
-		specular = root.getElementsByTagName('specular')[0];
-
-		this.spot[i] = new Spot(id, enabled, angle, exponent, this.getPoint3D(target), this.getPoint3D(location), this.getRGBAElem(ambient), this.getRGBAElem(diffuse), this.getRGBAElem(specular));
-	}*/
 };
 
 MySceneGraph.prototype.parseTextures = function (element) {
 	var textures = element.children;
 	var tl = textures.length;
 
-	for (var i = 0;i<tl;i++){
+	for (var i = 0; i < tl; i++) {
 		var texture = textures[i];
 		var name = texture.tagName;
-		switch (name){
+		switch (name) {
 			case 'texture':
 				var id = texture.id;
 				var file = texture.attributes.getNamedItem('file').value;
 				var length_s = this.reader.getFloat(texture, 'length_s');
 				var length_t = this.reader.getFloat(texture, 'length_t');
+				if (this.textures[id] != null) {
+					console.error("There's already a texture with id='" + id + "'!");
+					continue;
+				}
 				this.textures[id] = new Texture(id, file, length_s, length_t);
 				break;
 			default:
@@ -423,6 +386,11 @@ MySceneGraph.prototype.parseMaterials = function (element) {
 		material.setDiffuse(diffuse.r, diffuse.g, diffuse.b, diffuse.a);
 		material.setSpecular(specular.r, specular.g, specular.b, specular.a);
 		material.setShininess(shininess);
+		material.setTextureWrap('REPEAT', 'REPEAT');
+		if (this.material[id] != null) {
+			console.error("There's already a material with id='" + id + "'!");
+			continue;
+		}
 		this.materials[id] = material;
 	}
 
@@ -489,6 +457,7 @@ MySceneGraph.prototype.parseTransformations = function (element) {
 	if (tl < 1)
 		return "zero transformations found";
 
+
 	for (var i = 0; i < tl; i++) {
 		var transformation = transformations[i];
 		if (transformation.tagName != 'transformation') {
@@ -497,8 +466,13 @@ MySceneGraph.prototype.parseTransformations = function (element) {
 		}
 		var id = transformation.id;
 		matrix = this.readTransformation(transformation);
+		if (this.transformations[id] != null) {
+			console.error("There's already a transformation with id='" + id + "'!");
+			continue;
+		}
 		this.transformations[id] = matrix;
 	}
+
 };
 
 MySceneGraph.prototype.parsePrimitives = function (element) {
@@ -512,15 +486,17 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 	for (var i = 0; i < pl; i++) {
 		var primi = primitive[i];
 		var name = primi.tagName;
-
 		if (name != 'primitive') {
 			console.warn("Invalid tag name for supposed primitive nº " + i + ".");
 			continue;
 		}
-
 		var id = primi.id;
 		var object = primi.children[0];
 		var objname = object.tagName;
+		if (this.primitives[id] != null) {
+			console.error("There's already a primitive with id='" + id + "'!");
+			continue;
+		}
 		switch (objname) {
 			case 'rectangle':
 				var x1 = this.reader.getFloat(object, 'x1');
@@ -601,6 +577,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					var tn = transformations.length;
 					matrixTransformation = mat4.create();
 					var Tref = false;
+
 					var Tnormal = false;
 					for (var k = 0; k < tn; k++) {
 						var transformation = transformations[k];
@@ -667,7 +644,6 @@ MySceneGraph.prototype.parseComponents = function (element) {
 			}
 		}
 		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref);
-		//console.debug(this.component[id]);
 	}
 };
 
@@ -685,6 +661,7 @@ MySceneGraph.prototype.display = function () {
 
 	this.scene.multMatrix(this.component[this.root].matrixTransformation);
 	this.init(this.root, rootMaterial, rootMaterial);
+
 }
 
 MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
@@ -695,14 +672,15 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 	if (rootTexture == "inherit")
 		return "Texture no defined";*/
 
+
 	var root = this.component[rootId];
 
 	var componentRoot, transformation;
 
 	for (var i = 0; i < root.primitiveref.length; i++) {
-		/*if (stackTexture.top() != "none")
-			material.setTexture(this.textures[stackTexture.top()].file);
-		*/
+		/*if (stackTexture.top() != "none")*/
+		//rootMaterial.setTexture(rootTexture);
+		//console.log(rootMaterial);
 
 		var type = root.primitiveref[i];
 
@@ -722,12 +700,14 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 		this.scene.multMatrix(transformation);
 		materialId = this.component[componentRoot].materialId;
 
+
 		if (materialId == "inherit") {
 			materialChildren = rootMaterial;
 		}
 		else {
 			materialChildren = this.materials[materialId];
 		}
+		materialChildren.setTexture(null);
 
 
 		textureId = this.component[componentRoot].textureId;
