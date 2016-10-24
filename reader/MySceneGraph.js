@@ -712,6 +712,8 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 			case 'inherit':
 				materialChildren = rootMaterial;
 				break;
+			case 'none':
+				break;
 			default:
 				materialChildren = this.materials[materialId];
 				break;
