@@ -38,9 +38,9 @@ class Material {
 }
 
 class Texture {
-  constructor(id, file, length_s, length_t) {
+  constructor(id, texture, length_s, length_t) {
     this.id = id;
-    this.file = file;
+    this.texture = texture;
     this.length_s = length_s;
     this.length_t = length_t;
   }
