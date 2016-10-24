@@ -316,7 +316,7 @@ MySceneGraph.prototype.parseTextures = function (element) {
 				this.textures[id] = new Texture(id, file, length_s, length_t);
 				break;
 			default:
-				console.warn("Invalid element name '"+ name+ "' for supposed transformation!");
+				console.warn("Invalid element name '" + name + "' for supposed transformation!");
 				break;
 		}
 	}
@@ -593,7 +593,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 									return "you can only use one transformationref for a component";
 								}
 								Tref = true;
-								if (this.transformations[transformation.id]==null){
+								if (this.transformations[transformation.id] == null) {
 									return "no transformation '" + transformation.id + "' was found!";
 								}
 								matrixTransformation = this.transformations[transformation.id];
@@ -615,8 +615,8 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					for (var k = 0; k < ml; k++) {
 						var material = materials[k];
 						var materialId = material.id;
-						if (this.materials[material.id]==null){
-							return "no material '" + material.id + "' was found for component id='" + id +"'!";
+						if (materialId != 'inherit' && this.materials[materialId] == null) {
+							return "no material '" + materialId + "' was found for component id='" + id + "'!";
 						}
 						materialsId.push(materialId);
 					}
@@ -624,8 +624,8 @@ MySceneGraph.prototype.parseComponents = function (element) {
 				case 'texture':
 					texture = temp;
 					textureId = texture.id;
-					if (this.textures[textureId] == null){
-						return "no texture '" + textureId + "' was found for component id='" + id +"'!";
+					if (textureId != 'inherit' && textureId != 'none' && this.textures[textureId] == null) {
+						return "no texture '" + textureId + "' was found for component id='" + id + "'!";
 					}
 					break;
 				case 'children':
@@ -674,7 +674,7 @@ MySceneGraph.prototype.display = function () {
 }
 
 MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
-	
+
 	/*if (rootMaterial == "inherit")
 		return "Material no defined";
 
@@ -708,7 +708,7 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 		//material
 		var mlength = this.component[componentRoot].materialsId.length;
 		materialId = this.component[componentRoot].materialsId[this.scene.matIndex % mlength];
-		switch (materialId){
+		switch (materialId) {
 			case 'inherit':
 				materialChildren = rootMaterial;
 				break;
@@ -719,7 +719,7 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 		materialChildren.setTexture(null);
 		//texture
 		textureId = this.component[componentRoot].textureId;
-		switch (textureId){
+		switch (textureId) {
 			case 'inherit':
 				textureChildren = rootTexture;
 				break;
