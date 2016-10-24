@@ -18,11 +18,18 @@ XMLscene.prototype.init = function (application) {
 	this.gl.enable(this.gl.DEPTH_TEST);
 	this.gl.enable(this.gl.CULL_FACE);
 	this.gl.depthFunc(this.gl.LEQUAL);
-	 this.enableTextures(true);
+
+	this.enableTextures(true);
 
 	this.axis = new CGFaxis(this);
 
 	this.Index = 0;
+
+	this.matIndex = 0;
+
+	this.lightsId = {};
+	this.lightsStatus = {};
+	this.indexToId = [];
 };
 
 XMLscene.prototype.initLights = function () {
@@ -44,6 +51,11 @@ XMLscene.prototype.initLights = function () {
 			this.lights[i].disable();
 			this.lights[i].setVisible(false);
 		}
+		var id = omni.id;
+		this.lightsId[id] = this.lights[i];
+		this.lightsStatus[id] = omni.enable;
+		this.indexToId[i] = id;
+		this.interface.addLight(id, 'omni');
 
 		i++;
 	}
@@ -67,11 +79,35 @@ XMLscene.prototype.initLights = function () {
 			this.lights[i].disable();
 			this.lights[i].setVisible(false);
 		}
+		var id = spot.id;
+		this.lightsId[id] = this.lights[i];
+		this.lightsStatus[id] = spot.enable;
+		this.indexToId[i] = id;
+		this.interface.addLight(id, 'spot');
 
 		i++;
 	}
 
 };
+
+XMLscene.prototype.updateLights = function () {
+
+	for (var i = 0;i<this.lights.length;i++) {
+		var j = this.indexToId[i];
+		if (this.lightsStatus[j])
+			this.lights[i].enable();
+		else
+			this.lights[i].disable();
+	}
+
+	for (light of this.lights)
+		light.update();
+
+}
+
+XMLscene.prototype.changeMaterial = function () {
+	this.matIndex++;
+}
 
 XMLscene.prototype.initCameras = function () {
 	this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
@@ -83,8 +119,7 @@ XMLscene.prototype.Cameras = function () {
 	this.camera = this.graph.views[this.Index];
 	this.interface.setActiveCamera(this.graph.views[this.Index]);
 
-	this.Index = ++this.Index;
-	this.Index = this.Index % this.graph.views.length;
+	this.Index = (++this.Index) % this.graph.views.length;
 };
 
 XMLscene.prototype.setDefaultAppearance = function () {
@@ -158,10 +193,10 @@ XMLscene.prototype.display = function () {
 
 	};
 
-	var triangle = new MyTriangle(this, 0, 0, -2, -2, -2, -2, -2, 0, -2);
+	/*var triangle = new MyTriangle(this, 0, 0, -2, -2, -2, -2, -2, 0, -2);
 	var quadrado = new MyRectangle(this, 3, 2, 2, 3);
 	var torus = new MyTorus(this, 1, 2, 10, 10);
-	var sphere = new MySphere(this, 10, 10, 0.7);
+	var sphere = new MySphere(this, 10, 10, 0.7);*/
 
 	//this.graph.primitives[0].display();
 	// triangle.display();
@@ -172,7 +207,7 @@ XMLscene.prototype.display = function () {
 			  sphere.display();
 			  this.popMatrix();*/
 
-
+	this.updateLights();
 
 
 };

@@ -316,7 +316,7 @@ MySceneGraph.prototype.parseTextures = function (element) {
 				this.textures[id] = new Texture(id, file, length_s, length_t);
 				break;
 			default:
-				console.warn("");
+				console.warn("Invalid element name '"+ name+ "' for supposed transformation!");
 				break;
 		}
 	}
@@ -593,6 +593,9 @@ MySceneGraph.prototype.parseComponents = function (element) {
 									return "you can only use one transformationref for a component";
 								}
 								Tref = true;
+								if (this.transformations[transformation.id]==null){
+									return "no transformation '" + transformation.id + "' was found!";
+								}
 								matrixTransformation = this.transformations[transformation.id];
 								break;
 							default:
@@ -612,12 +615,18 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					for (var k = 0; k < ml; k++) {
 						var material = materials[k];
 						var materialId = material.id;
+						if (this.materials[material.id]==null){
+							return "no material '" + material.id + "' was found for component id='" + id +"'!";
+						}
 						materialsId.push(materialId);
 					}
 					break;
 				case 'texture':
 					texture = temp;
 					textureId = texture.id;
+					if (this.textures[textureId] == null){
+						return "no texture '" + textureId + "' was found for component id='" + id +"'!";
+					}
 					break;
 				case 'children':
 					var children = temp.children;
@@ -638,7 +647,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					}
 					break;
 				default:
-					console.warn("");
+					console.warn("Invalid element '" + name + "' for a supposed component!");
 					check[name] = false;
 					break;
 			}
@@ -654,7 +663,7 @@ MySceneGraph.prototype.onXMLError = function (message) {
 
 MySceneGraph.prototype.display = function () {
 
-	var material = this.component[this.root].materialId;
+	var material = this.component[this.root].materialsId[this.scene.matIndex % this.component[this.root].materialsId.length];
 	var texture = this.component[this.root].textureId;
 	var rootMaterial = this.materials[material];
 	var rootTexture = this.textures[texture];
@@ -665,7 +674,7 @@ MySceneGraph.prototype.display = function () {
 }
 
 MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
-
+	
 	/*if (rootMaterial == "inherit")
 		return "Material no defined";
 
@@ -683,8 +692,7 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 		//console.log(rootMaterial);
 
 		var type = root.primitiveref[i];
-
-		rootMaterial.apply()
+		rootMaterial.apply();
 		this.primitives[type].display();
 
 		//material.setTexture(null);
@@ -692,30 +700,33 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 
 	var materialId, textureId, materialChildren, textureChildren
 	for (var i = 0; i < root.componentref.length; i++) {
-
 		this.scene.pushMatrix();
-
 		componentRoot = root.componentref[i];
+		//transformation
 		transformation = this.component[componentRoot].matrixTransformation;
 		this.scene.multMatrix(transformation);
-		materialId = this.component[componentRoot].materialId;
-
-
-		if (materialId == "inherit") {
-			materialChildren = rootMaterial;
-		}
-		else {
-			materialChildren = this.materials[materialId];
+		//material
+		var mlength = this.component[componentRoot].materialsId.length;
+		materialId = this.component[componentRoot].materialsId[this.scene.matIndex % mlength];
+		switch (materialId){
+			case 'inherit':
+				materialChildren = rootMaterial;
+				break;
+			default:
+				materialChildren = this.materials[materialId];
+				break;
 		}
 		materialChildren.setTexture(null);
-
-
+		//texture
 		textureId = this.component[componentRoot].textureId;
-		if (textureId == "inherit")
-			textureChildren = rootTexture;
-		else
-			textureChildren = this.textures[textureId];
-
+		switch (textureId){
+			case 'inherit':
+				textureChildren = rootTexture;
+				break;
+			default:
+				textureChildren = this.textures[textureId];
+				break;
+		}
 		this.init(componentRoot, materialChildren, textureChildren);
 		this.scene.popMatrix();
 	}
