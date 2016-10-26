@@ -44,7 +44,10 @@ MyTriangle.prototype.initBuffers = function () {
     ];
 
     this.texCoords = [
-    ]
+        this.minS, this.minT,
+        this.minS, this.maxT,
+        this.maxS/2, this.maxT,
+    ];
 
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
