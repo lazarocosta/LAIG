@@ -42,7 +42,7 @@ MyCylinder.prototype.initBuffers = function () {
 
 	for (j = 0; j <= this.stacks; j++) {
 
-		var raio = this.top - j * deltaRaio;
+		var raio = this.base + j * deltaRaio;
 		var z = j * incrementZ;
 
 		for (i = 0; i < this.slices; i++) {
@@ -84,8 +84,7 @@ MyCylinder.prototype.initBuffers = function () {
 MyCylinder.prototype.display = function () {
 
 	CGFobject.prototype.display.call(this);
-
-	this.scene.translate(0, 0, this.height);
+	this.scene.rotate(Math.PI, 1, 0, 0);
 	this.circleBase.display();
 	this.scene.rotate(Math.PI, 1, 0, 0);
 	this.scene.translate(0, 0, this.height);

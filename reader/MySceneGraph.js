@@ -306,7 +306,7 @@ MySceneGraph.prototype.parseTextures = function (element) {
 		switch (name) {
 			case 'texture':
 				var id = texture.id;
-				var file = texture.attributes.getNamedItem('file').value;
+				var file = new CGFtexture(this.scene, this.reader.getString(texture, 'file'));
 				var length_s = this.reader.getFloat(texture, 'length_s');
 				var length_t = this.reader.getFloat(texture, 'length_t');
 				if (this.textures[id] != null) {
@@ -666,32 +666,24 @@ MySceneGraph.prototype.display = function () {
 	var material = this.component[this.root].materialsId[this.scene.matIndex % this.component[this.root].materialsId.length];
 	var texture = this.component[this.root].textureId;
 	var rootMaterial = this.materials[material];
-	var rootTexture = this.textures[texture];
 
+console.log(rootMaterial);
 	this.scene.multMatrix(this.component[this.root].matrixTransformation);
-	this.init(this.root, rootMaterial, rootMaterial);
+	this.init(this.root, rootMaterial, texture);
 
 }
 
-MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
-
-	/*if (rootMaterial == "inherit")
-		return "Material no defined";
-
-	if (rootTexture == "inherit")
-		return "Texture no defined";*/
-
+MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 
 	var root = this.component[rootId];
 
 	var componentRoot, transformation;
 
 	for (var i = 0; i < root.primitiveref.length; i++) {
-		/*if (stackTexture.top() != "none")*/
-		//rootMaterial.setTexture(rootTexture);
-		//console.log(rootMaterial);
 
 		var type = root.primitiveref[i];
+		var t = this.textures[texture];
+		rootMaterial.setTexture(texture.file);
 		rootMaterial.apply();
 		this.primitives[type].display();
 
@@ -723,7 +715,7 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, rootTexture) {
 		textureId = this.component[componentRoot].textureId;
 		switch (textureId) {
 			case 'inherit':
-				textureChildren = rootTexture;
+				textureChildren = texture;
 				break;
 			default:
 				textureChildren = this.textures[textureId];
