@@ -23,8 +23,6 @@ MyInterface.prototype.init = function (application) {
 	// init GUI. For more information on the methods, check:
 	//  http://workshop.chromeexperiments.com/examples/gui
 	this.gui = new dat.GUI();
-	this.omni = [];
-	this.spot = [];
 
 	// add a button:
 	// the first parameter is the object that is being controlled (in this case the scene)
@@ -34,28 +32,25 @@ MyInterface.prototype.init = function (application) {
 	//this.gui.add(this.scene, 'UpdateTime');
 
 	// add a group of controls (and open/expand by defult)
-	//var ligths = this.gui.addFolder("Ligths");
-	var omni = this.gui.addFolder("Omni");
+	this.lights = this.gui.addFolder("Ligths");
+	this.omni = this.lights.addFolder("Omni");
+	this.spot = this.lights.addFolder("Spot");
 
-	var spot = this.gui.addFolder("Spot");
-
+	this.views = this.gui.addFolder("Views");
 	return true;
 };
 
 MyInterface.prototype.addLight = function (id, type) {
 	switch (type) {
-		case 'Omni':
-			this.omni.add(this.lightClicked(id),id);
+		case 'omni':
+			this.omni.add(this.scene.lightsStatus,id,this.scene.lightsStatus[id]).name(id);
 			break;
-		case 'Spot':
+		case 'spot':
+			this.spot.add(this.scene.lightsStatus,id,this.scene.lightsStatus[id]).name(id);
 			break;
 		default:
 			break;
 	}
-}
-
-MyInterface.prototype.lightClicked = function (id) {
-	
 }
 
 /**
@@ -82,13 +77,14 @@ MyInterface.prototype.processKeyboard = function (event) {
 
 	// for better cross-browser support, you may also check suggestions on using event.which in http://www.w3schools.com/jsref/event_key_keycode.asp
 
-
 	switch (event.keyCode) {
 		case (86): //letra v
 		case (118): //letra V
-			//   console.log("letra V");
 			this.scene.Cameras();
 			break;
-
+		case (77):
+		case (109):
+			this.scene.changeMaterial();
+			break;
 	};
 }
