@@ -68,6 +68,7 @@ XMLscene.prototype.initLights = function () {
 		this.lights[i].setPosition(spot.location.x, spot.location.y, spot.location.z, 1);
 		this.lights[i].setSpotExponent(spot.exponent);
 		this.lights[i].setSpotDirection(spot.target.x, spot.target.y, spot.target.z);
+		this.lights[i].setSpotDirection(spot.direction.x, spot.direction.y, spot.direction.z);
 
 		this.lights[i].update();
 

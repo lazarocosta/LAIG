@@ -81,6 +81,7 @@ class Spot {
     this.ambient = ambient;
     this.diffuse = diffuse;
     this.specular = specular;
+    this.direction =  new Point3D(target.x - location.x, target.y - location.y, target.z - location.z);
 
   }
 }

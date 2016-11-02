@@ -258,10 +258,11 @@ MySceneGraph.prototype.parseLights = function (element) {
 	if (ll < 1) {
 		return "zero lights found";
 	}
+			var o = 0;
+			var s = 0;
 
 	for (var i = 0; i < ll; i++) {
-		var o = 0;
-		var s = 0;
+
 		var light = lights[i];
 		var name = lights[i].tagName;
 		var id, enabled, location, ambient, diffuse, specular, root;
@@ -306,7 +307,7 @@ MySceneGraph.prototype.parseTextures = function (element) {
 		switch (name) {
 			case 'texture':
 				var id = texture.id;
-				var file = new CGFtexture(this.scene, this.reader.getString(texture, 'file'));
+				var file = new CGFtexture(this.scene, this.reader.getString(texture,'file'));
 				var length_s = this.reader.getFloat(texture, 'length_s');
 				var length_t = this.reader.getFloat(texture, 'length_t');
 				if (this.textures[id] != null) {
@@ -667,7 +668,6 @@ MySceneGraph.prototype.display = function () {
 	var texture = this.component[this.root].textureId;
 	var rootMaterial = this.materials[material];
 
-console.log(rootMaterial);
 	this.scene.multMatrix(this.component[this.root].matrixTransformation);
 	this.init(this.root, rootMaterial, texture);
 
@@ -676,17 +676,16 @@ console.log(rootMaterial);
 MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 
 	var root = this.component[rootId];
-
 	var componentRoot, transformation;
 
 	for (var i = 0; i < root.primitiveref.length; i++) {
 
 		var type = root.primitiveref[i];
 		var t = this.textures[texture];
-		rootMaterial.setTexture(texture.file);
-		rootMaterial.apply();
-		this.primitives[type].display();
 
+		rootMaterial.setTexture(t.file);
+		rootMaterial.apply();	
+		this.primitives[type].display();
 		//material.setTexture(null);
 	}
 
@@ -718,7 +717,7 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 				textureChildren = texture;
 				break;
 			default:
-				textureChildren = this.textures[textureId];
+				textureChildren = textureId;
 				break;
 		}
 		this.init(componentRoot, materialChildren, textureChildren);
