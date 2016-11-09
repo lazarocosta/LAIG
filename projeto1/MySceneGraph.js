@@ -522,21 +522,21 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var base = this.reader.getFloat(object, 'base');
 				var top = this.reader.getFloat(object, 'top');
 				var height = this.reader.getFloat(object, 'height');
-				var slices = this.reader.getFloat(object, 'slices');
-				var stacks = this.reader.getFloat(object, 'stacks');
+				var slices = this.reader.getInteger(object, 'slices');
+				var stacks = this.reader.getInteger(object, 'stacks');
 				this.primitives[id] = new MyCylinder(this.scene, base, top, height, slices, stacks);
 				break;
 			case 'sphere':
 				var radius = this.reader.getFloat(object, 'radius');
-				var slices = this.reader.getFloat(object, 'slices');
-				var stacks = this.reader.getFloat(object, 'stacks');
+				var slices = this.reader.getInteger(object, 'slices');
+				var stacks = this.reader.getInteger(object, 'stacks');
 				this.primitives[id] = new MySphere(this.scene, slices, stacks, radius);
 				break;
 			case 'torus':
 				var inner = this.reader.getFloat(object, 'inner');
 				var outer = this.reader.getFloat(object, 'outer');
-				var slices = this.reader.getFloat(object, 'slices');
-				var loops = this.reader.getFloat(object, 'loops');
+				var slices = this.reader.getInteger(object, 'slices');
+				var loops = this.reader.getInteger(object, 'loops');
 				this.primitives[id] = new MyTorus(this.scene, inner, outer, slices, loops);
 				break;
 			default:
@@ -681,12 +681,15 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 	for (var i = 0; i < root.primitiveref.length; i++) {
 
 		var type = root.primitiveref[i];
+	
+		if(texture !='none'){
 		var t = this.textures[texture];
-
 		rootMaterial.setTexture(t.file);
+		}
+
 		rootMaterial.apply();	
 		this.primitives[type].display();
-		//material.setTexture(null);
+		rootMaterial.setTexture(null);
 	}
 
 	var materialId, textureId, materialChildren, textureChildren
