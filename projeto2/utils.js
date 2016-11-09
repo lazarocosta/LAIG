@@ -87,13 +87,14 @@ class Spot {
 }
 
 class Component {
-  constructor(id, matrixTransformation, materialsId, textureId, componentref, primitiveref) {
+  constructor(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, animationref) {
     this.id = id;
     this.matrixTransformation = matrixTransformation;
     this.materialsId = materialsId;
     this.textureId = textureId;
     this.componentref = componentref;
     this.primitiveref = primitiveref;
+    this.animationref = animationref;
   }
 
 }
