@@ -513,16 +513,16 @@ MySceneGraph.prototype.parseAnimations = function (element) {
 				for (var j = 0; j < pl; j++) {
 					var cpoint = points[j];
 					var cpname = cpoint.tagName;
-					if (cpname != 'controlpoint'){
+					if (cpname != 'controlpoint') {
 						console.warn("Invalid tag name for control point in animation '" + id + "'.");
 						continue;
 					}
 					var px = this.reader.getFloat(cpoint, 'xx');
 					var py = this.reader.getFloat(cpoint, 'yy');
 					var pz = this.reader.getFloat(cpoint, 'zz');
-					cpoints.push(new Point3D(px,py,pz));
+					cpoints.push(new Point3D(px, py, pz));
 				}
-				this.animations[id] = new LinearAnimation(span,cpoints);
+				this.animations[id] = new LinearAnimation(span, cpoints);
 				break;
 			case 'circular':
 				var cx = this.reader.getFloat(animation, 'centerx');
@@ -632,6 +632,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 			var name = temp.tagName;
 			var check = {};
 			var texture;
+			var animations = [];
 			if (check[name]) {
 				return "More than one '" + name + "' element found!";
 			} else {
@@ -673,6 +674,20 @@ MySceneGraph.prototype.parseComponents = function (element) {
 						return "you must only use transformationref or define a transformation in component id='" + id + "'";
 					} else if (Tnormal) {
 						matrixTransformation = this.readTransformation(temp);
+					}
+					break;
+				case 'animation':
+					var animations = temp.children;
+					var al = animations.length;
+					for (var k = 0; k < al; k++) {
+						var animation = animations[i];
+						var aname = animation.tagName;
+						if (aname != 'animationref'){
+							console.warn("Invalid tag name '" + aname + "'! Tag name should be 'animationref'!");
+							continue;
+						}
+						var id = animation.id;
+						animations.push(id);
 					}
 					break;
 				case 'materials':
@@ -718,7 +733,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					break;
 			}
 		}
-		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref);
+		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref,animations);
 	}
 };
 
