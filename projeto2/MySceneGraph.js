@@ -603,10 +603,10 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var slices = this.reader.getFloat(object, 'slices');
 				var loops = this.reader.getFloat(object, 'loops');
 				this.primitives[id] = new MyTorus(this.scene, inner, outer, slices, loops);
-				break;
+				break; 
 			default:
 				console.warn("No such primitive named '" + objname + "'!");
-				break;
+				break;  
 		}
 	}
 };
