@@ -17,6 +17,8 @@ function MyCylinder(scene, base, top, height, slices, stacks) {
 
 
 
+
+
 	this.initBuffers();
 };
 
