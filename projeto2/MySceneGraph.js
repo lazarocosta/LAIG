@@ -20,6 +20,7 @@ function MySceneGraph(filename, scene) {
 	this.textures = {};
 	this.materials = {};
 	this.transformations = {};
+	this.animations = {};
 	this.primitives = {};
 	this.component = {};
 
@@ -128,23 +129,30 @@ MySceneGraph.prototype.parse = function (rootElement) {
 				count++;
 				break;
 			case 'transformations':
-				console.log("Parse");
+				console.log("Parse transformations");
 				error = this.parseTransformations(element);
 				if (count != 6)
+					order = false;
+				count++;
+				break;
+			case 'animations':
+				console.log("Parse animations");
+				error = this.parseAnimations(element);
+				if (count != 7)
 					order = false;
 				count++;
 				break;
 			case 'primitives':
 				console.log("Parse primitives");
 				error = this.parsePrimitives(element);
-				if (count != 7)
+				if (count != 8)
 					order = false;
 				count++;
 				break;
 			case 'components':
 				console.log("Parse components");
 				error = this.parseComponents(element);
-				if (count != 8)
+				if (count != 9)
 					order = false;
 				count++;
 				break;
@@ -258,8 +266,8 @@ MySceneGraph.prototype.parseLights = function (element) {
 	if (ll < 1) {
 		return "zero lights found";
 	}
-			var o = 0;
-			var s = 0;
+	var o = 0;
+	var s = 0;
 
 	for (var i = 0; i < ll; i++) {
 
@@ -307,7 +315,7 @@ MySceneGraph.prototype.parseTextures = function (element) {
 		switch (name) {
 			case 'texture':
 				var id = texture.id;
-				var file = new CGFtexture(this.scene, this.reader.getString(texture,'file'));
+				var file = new CGFtexture(this.scene, this.reader.getString(texture, 'file'));
 				var length_s = this.reader.getFloat(texture, 'length_s');
 				var length_t = this.reader.getFloat(texture, 'length_t');
 				if (this.textures[id] != null) {
@@ -475,6 +483,63 @@ MySceneGraph.prototype.parseTransformations = function (element) {
 	}
 
 };
+
+MySceneGraph.prototype.parseAnimations = function (element) {
+	var animations = element.children;
+	var al = animations.length;
+
+	if (al < 1)
+		return "no animations found";
+
+	for (var i = 0; i < al; i++) {
+		var animation = animations[i];
+		var name = animation.tagName;
+		if (name != 'animation') {
+			console.warn("Invalid tag name for supposed animation nº " + i + ".");
+			continue;
+		}
+		var id = animation.id;
+		var span = this.reader.getFloat(animation, 'span');
+		var type = animation.attributes.getNamedItem('type');
+		switch (type) {
+			case 'linear':
+				var points = animation.children;
+				var pl = points.length;
+				if (pl < 1) {
+					console.warn("No control points found for animation '" + id + "'.");
+					continue;
+				}
+				var cpoints = [];
+				for (var j = 0; j < pl; j++) {
+					var cpoint = points[j];
+					var cpname = cpoint.tagName;
+					if (cpname != 'controlpoint'){
+						console.warn("Invalid tag name for control point in animation '" + id + "'.");
+						continue;
+					}
+					var px = this.reader.getFloat(cpoint, 'xx');
+					var py = this.reader.getFloat(cpoint, 'yy');
+					var pz = this.reader.getFloat(cpoint, 'zz');
+					cpoints.push(new Point3D(px,py,pz));
+				}
+				this.animations[id] = new LinearAnimation(span,cpoints);
+				break;
+			case 'circular':
+				var cx = this.reader.getFloat(animation, 'centerx');
+				var cy = this.reader.getFloat(animation, 'centery');
+				var cz = this.reader.getFloat(animation, 'centerz');
+				var center = new Point3D(cx, cy, cz);
+				var radius = this.reader.getFloat(animation, 'radius');
+				var sang = this.reader.getFloat(animation, 'startang');
+				var rang = this.reader.getFloat(animation, 'rotang');
+				this.animations[id] = new CircularAnimation(span, center, radius, sang, rang);
+				break;
+			default:
+				console.warn("Invalid animation type for animation '" + id + "'.");
+				break;
+		}
+	}
+}
 
 MySceneGraph.prototype.parsePrimitives = function (element) {
 	var primitives = element;
@@ -679,14 +744,14 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 	var componentRoot, transformation;
 
 	for (var i = 0; i < root.primitiveref.length; i++) {
-		
-		var type = root.primitiveref[i];	
-		if(texture !='none'){
-		var t = this.textures[texture];
-		rootMaterial.setTexture(t.file);
+
+		var type = root.primitiveref[i];
+		if (texture != 'none') {
+			var t = this.textures[texture];
+			rootMaterial.setTexture(t.file);
 		}
 
-		rootMaterial.apply();	
+		rootMaterial.apply();
 		this.primitives[type].display();
 		rootMaterial.setTexture(null);
 	}
