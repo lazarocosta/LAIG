@@ -81,7 +81,7 @@ class Spot {
     this.ambient = ambient;
     this.diffuse = diffuse;
     this.specular = specular;
-    this.direction =  new Point3D(target.x - location.x, target.y - location.y, target.z - location.z);
+    this.direction = new Point3D(target.x - location.x, target.y - location.y, target.z - location.z);
 
   }
 }
@@ -98,3 +98,31 @@ class Component {
 
 }
 
+class Animation {
+  constructor(time) {
+    if (new.target === Animation) {
+      throw new TypeError("Cannot construct Animation instances directly");
+    }
+    this.time = time; //Time of the animation
+  }
+}
+
+class LinearAnimation extends Animation {
+  constructor(time,points){
+    super(time);
+    this.controlPoints = points; //Has to be an array
+  }
+}
+
+class CircularAnimation extends Animation {
+  constructor(time,center,radius,iAngle,rAngle){
+    super(time);
+    if (!(center instanceof Point3D)){
+      throw new TypeError("Center of circular animation must be of type Point3D");
+    }
+    this.center = center; //Center of the animation as Point3D
+    this.radius = radius; //Radius of the animation as int
+    this.iAngle = iAngle; //Initial angle
+    this.rAngle = rAngle; //Rotation angle
+  }
+}
