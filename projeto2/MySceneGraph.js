@@ -23,6 +23,7 @@ function MySceneGraph(filename, scene) {
 	this.animations = {};
 	this.primitives = {};
 	this.component = {};
+	this.chessboard;
 
 
 	/*
@@ -541,6 +542,24 @@ MySceneGraph.prototype.parseAnimations = function (element) {
 	}
 }
 
+MySceneGraph.prototype.readControlPoint = function (element, orderU, orderV){
+
+	var points= element.children;
+	if(points == null )
+	return "No control points";
+
+	var length = points.length;
+	if((orderU+1)*(orderV+1) != length)
+		return "Number of invalid control points";
+	
+	var controlPoints = {};
+	for(var i=0; i < length; i++){
+		controlPoints[i]= this.getPoint3D(points[i]);
+	}
+
+	return controlPoints;
+}
+
 MySceneGraph.prototype.parsePrimitives = function (element) {
 	var primitives = element;
 	var primitive = primitives.getElementsByTagName('primitive');
@@ -603,10 +622,60 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var slices = this.reader.getFloat(object, 'slices');
 				var loops = this.reader.getFloat(object, 'loops');
 				this.primitives[id] = new MyTorus(this.scene, inner, outer, slices, loops);
-				break;
+				break; 
+			case 'plane':
+				var dimX = this.reader.getFloat(object, 'dimX');
+				var dimY = this.reader.getFloat(object, 'dimY');
+				var partsX = this.reader.getInteger(object, 'partsX');
+				var partsY = this.reader.getInteger(object, 'partsY');
+					//this.primitives[id] = new MyPlane(this.scene, dimX, dimY, partsX, partsY);
+				break; 
+			case 'patch':
+				var orderU = this.reader.getInteger(object, 'orderU');
+				var orderV = this.reader.getInteger(object, 'orderV');
+				var partsU = this.reader.getInteger(object, 'partsU');
+				var partsV = this.reader.getInteger(object, 'partsV');
+				var controlPoints = this.readControlpoint(object,orderU,orderV);
+					//this.primitives[id] = new MyPatch(this.scene,orderU, orderV, partsU, partsV, controlPoints);
+				break; 
+			case 'chessboard':
+				var du = this.reader.getInteger(object, 'du');
+				var dv = this.reader.getInteger(object, 'dv');
+				var textureref= this.reader.getString(object, 'textureref');
+				var su = this.reader.getInteger(object, 'su');
+				var sv = this.reader.getInteger(object, 'sv');
+				
+				if(oject.children.length !=3)
+					return "invalid number of color";
+
+					for(var i=0; i <3; i++)
+					{
+						var colorLine= oject.children[i];
+						var name = colorLine.tagName;
+						var color1, color2, color3;
+
+						switch (objname) {
+							case 'c1': 
+									color1= this.getRGBAElem(colorLine);
+									break;
+							case 'c2': 
+									color2= this.getRGBAElem(colorLine);
+									break;
+							case 'c3': 
+									color3= this.getRGBAElem(colorLine);
+									break;
+							default:
+							console.warn("Invalid color name");
+								break;
+						}
+						this.chessboard= new Board (color1, color2, color3, textureref);
+					}
+
+					//this.primitives[id] = new MyChessboard(this.scene,du, dv, su, sv);
+				break; 
 			default:
 				console.warn("No such primitive named '" + objname + "'!");
-				break;
+				break;  
 		}
 	}
 };

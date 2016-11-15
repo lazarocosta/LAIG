@@ -127,3 +127,13 @@ class CircularAnimation extends Animation {
     this.rAngle = rAngle; //Rotation angle
   }
 }
+
+class Board {
+  constructor(color1, color2, color3, textureref) {
+    this.color1 = color1;
+    this.color2 = color2;
+    this.color3 = color3;
+    this.textureref = textureref;
+  }
+
+}

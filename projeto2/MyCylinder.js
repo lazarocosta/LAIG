@@ -14,8 +14,6 @@ function MyCylinder(scene, base, top, height, slices, stacks) {
 	this.circleTop = new MyCircle(this.scene, this.top, this.slices);
 	this.circleBase = new MyCircle(this.scene, this.base, this.slices);
 
-
-
 	this.initBuffers();
 };
 
