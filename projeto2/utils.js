@@ -111,7 +111,7 @@ class Animation {
 class LinearAnimation extends Animation {
   constructor(time,points){
     super(time);
-    this.controlPoints = points; //Has to be an array
+    this.controlPoints = points; //Has to be an array of Point3D
   }
 }
 

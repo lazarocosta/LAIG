@@ -683,8 +683,8 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 		var type = root.primitiveref[i];
 	
 		if(texture !='none'){
-		var t = this.textures[texture];
-		rootMaterial.setTexture(t.file);
+			var t = this.textures[texture];
+			rootMaterial.setTexture(t.file);
 		}
 
 		rootMaterial.apply();	
