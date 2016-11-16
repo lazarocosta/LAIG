@@ -22,8 +22,7 @@ function Plane(scene, dimX, dimY, partsX, partsY) {
                          [ (dimX/2), -(dimY/2), 0.0, 1 ],
                          [ (dimX/2),  (dimY/2), 0.0, 1 ]
                     ]
-				]);
-	this.plane = new CGFnurbsObject(this, Func, partsX, partsY);
+				]); 
 	CGFnurbsObject.call(this,scene,Func,partsX,partsY);
 };
 
@@ -55,6 +54,3 @@ Plane.prototype.getKnotsVector = function(deg) {
     return v;
 }
 
-Plane.prototype.display = function(){
-	this.plane.display();
-}

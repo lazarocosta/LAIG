@@ -189,7 +189,7 @@ XMLscene.prototype.display = function () {
 			light.update();
 
 
-		this.graph.display();
+		//this.graph.display();
 
 
 	};
@@ -203,29 +203,41 @@ XMLscene.prototype.display = function () {
 	// triangle.display();
 	// quadrado.display();
 		  //torus.display();
-	/*	this.pushMatrix();
-		this.translate(0, -5, 0);
-			  sphere.display();
-			  this.popMatrix();*/
+	/*this.pushMatrix();
+	this.translate(0, -5, 0);
+	sphere.display();
+	this.popMatrix();*/
 
 
-	//var este =new Plane(this.scene, 10, 10, 10, 10);
+	var este =new Plane(this, 10, 10, 10, 10);
 	//este.display();
 
 
-var array = [// U = 0
-				 // V = 0..1;
-					[-2.0, -2.0, 0.0, 1 ],
-					[-2.0,  2.0, 0.0, 1 ],
-			
+	var array = [ // V = 0..3;
+								[ -2.0, -2.0, 1.0, 1 ],
+								[ -2.0, -1.0, -2.0, 1 ],
+								[ -2.0, 1.0, 5.0, 1 ],
+								[ -2.0, 2.0, -1.0, 1 ],
+						
+							// U = 1
+							// V = 0..3
+								[ 0, -2.0, 0, 1 ],
+								[ 0, -1.0, -1.0, 1 ],
+								[ 0, 1.0, 1.5, 1 ],
+								[ 0, 2.0, 0, 1 ],
+							
+							// U = 2
+							// V = 0..3
+								[ 2.0, -2.0, -1.0, 1 ],
+								[ 2.0, -1.0, 2.0, 1 ],
+								[ 2.0, 1.0, -5.0, 1 ],
+								[ 2.0, 2.0, 1.0, 1 ]
+	];
 
-					[ 2.0, -2.0, 0.0, 1 ],
-					[ 2.0,  2.0, 0.0, 1 ]
-	
-			];
+	//var este= new Patch(this, 2, 3, 40, 40, array);
+	//este.display();
 
-			//var este= new Patch(this.scene, 1, 1, 1, 1, array);
-		//	este.display();
+
 	this.updateLights();
 
 

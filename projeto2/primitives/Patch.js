@@ -2,28 +2,23 @@
 * Patch
 * @constructor
 */
-function  Patch(scene, orderU, orderV, partsU, partsV, controlPoints) {
+function Patch(scene, orderU, orderV, partsU, partsV, controlPoints) {
 
     this.orderU = orderU;
     this.orderV = orderV;
-    this.controlPoints = controlPoints;
+    this.controlP = controlPoints;
 
-    var points= new Array();
-
-    for(var u=0; u <= this.orderU; u++){
-        var pointsv= new Array();
-        for(var v=0; v <= this.orderV; v++){
-            var i= u*(this.orderU+1) + v;
-
-            pointsv.push(this.controlPoints[i][0], this.controlPoints[i][1], this.controlPoints[i][2]);
-
-            points.push(pointsv);
+    var points = new Array();
+    for(var u = 0; u <= this.orderU; u++){
+        var controlVerts = new Array();
+        for(var v = 0; v <= this.orderV; v++){
+            var i = v + u * (this.orderV + 1);
+            controlVerts.push([this.controlP[i][0],this.controlP[i][1],this.controlP[i][2],1]);
         }
+       points.push(controlVerts);
     }
-
-	Func = this.makeFunc(this.orderU, this.orderV, this.points);
+	Func = this.makeFunc(this.orderU, this.orderV, points);
 	CGFnurbsObject.call(this,scene,Func,partsU,partsV);
-
 };
 
 Patch.prototype = Object.create(CGFnurbsObject.prototype);
@@ -39,7 +34,6 @@ Patch.prototype.makeFunc = function (degree1, degree2, controlvertexes) {
 	  return function(u, v) { 
 		  return nurbsSurface.getPoint(u, v);
 		};
-
 }
 
 Patch.prototype.getKnotsVector = function(deg) {
