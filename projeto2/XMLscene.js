@@ -194,10 +194,10 @@ XMLscene.prototype.display = function () {
 
 	};
 
-	/*var triangle = new MyTriangle(this, 0, 0, -2, -2, -2, -2, -2, 0, -2);
-	var quadrado = new MyRectangle(this, 3, 2, 2, 3);
-	var torus = new MyTorus(this, 1, 2, 10, 10);
-	var sphere = new MySphere(this, 10, 10, 0.7);*/
+	//var triangle = new Triangle(this, 0, 0, -2, -2, -2, -2, -2, 0, -2);
+	/*var quadrado = new Rectangle(this, 3, 2, 2, 3);
+	var torus = new Torus(this, 1, 2, 10, 10);
+	var sphere = new Sphere(this, 10, 10, 0.7);*/
 
 	//this.graph.primitives[0].display();
 	// triangle.display();
@@ -208,6 +208,24 @@ XMLscene.prototype.display = function () {
 			  sphere.display();
 			  this.popMatrix();*/
 
+
+	//var este =new Plane(this.scene, 10, 10, 10, 10);
+	//este.display();
+
+
+var array = [// U = 0
+				 // V = 0..1;
+					[-2.0, -2.0, 0.0, 1 ],
+					[-2.0,  2.0, 0.0, 1 ],
+			
+
+					[ 2.0, -2.0, 0.0, 1 ],
+					[ 2.0,  2.0, 0.0, 1 ]
+	
+			];
+
+			//var este= new Patch(this.scene, 1, 1, 1, 1, array);
+		//	este.display();
 	this.updateLights();
 
 

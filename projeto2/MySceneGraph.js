@@ -554,7 +554,7 @@ MySceneGraph.prototype.readControlPoint = function (element, orderU, orderV){
 	
 	var controlPoints = {};
 	for(var i=0; i < length; i++){
-		controlPoints[i]= this.getPoint3D(points[i]);
+		controlPoints[i] = this.getPoint3D(points[i]);
 	}
 
 	return controlPoints;
@@ -588,7 +588,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var y1 = this.reader.getFloat(object, 'y1');
 				var x2 = this.reader.getFloat(object, 'x2');
 				var y2 = this.reader.getFloat(object, 'y2');
-				this.primitives[id] = new MyRectangle(this.scene, x1, y1, x2, y2);
+				this.primitives[id] = new Rectangle(this.scene, x1, y1, x2, y2);
 				break;
 			case 'triangle':
 				var x1 = this.reader.getFloat(object, 'x1');
@@ -600,7 +600,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var x3 = this.reader.getFloat(object, 'x3');
 				var y3 = this.reader.getFloat(object, 'y3');
 				var z3 = this.reader.getFloat(object, 'z3');
-				this.primitives[id] = new MyTriangle(this.scene, x1, y1, z1, x2, y2, z2, x3, y3, z3);
+				this.primitives[id] = new Triangle(this.scene, x1, y1, z1, x2, y2, z2, x3, y3, z3);
 				break;
 			case 'cylinder':
 				var base = this.reader.getFloat(object, 'base');
@@ -608,27 +608,27 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var height = this.reader.getFloat(object, 'height');
 				var slices = this.reader.getFloat(object, 'slices');
 				var stacks = this.reader.getFloat(object, 'stacks');
-				this.primitives[id] = new MyCylinder(this.scene, base, top, height, slices, stacks);
+				this.primitives[id] = new Cylinder(this.scene, base, top, height, slices, stacks);
 				break;
 			case 'sphere':
 				var radius = this.reader.getFloat(object, 'radius');
 				var slices = this.reader.getFloat(object, 'slices');
 				var stacks = this.reader.getFloat(object, 'stacks');
-				this.primitives[id] = new MySphere(this.scene, slices, stacks, radius);
+				this.primitives[id] = new Sphere(this.scene, slices, stacks, radius);
 				break;
 			case 'torus':
 				var inner = this.reader.getFloat(object, 'inner');
 				var outer = this.reader.getFloat(object, 'outer');
 				var slices = this.reader.getFloat(object, 'slices');
 				var loops = this.reader.getFloat(object, 'loops');
-				this.primitives[id] = new MyTorus(this.scene, inner, outer, slices, loops);
+				this.primitives[id] = new Torus(this.scene, inner, outer, slices, loops);
 				break; 
 			case 'plane':
 				var dimX = this.reader.getFloat(object, 'dimX');
 				var dimY = this.reader.getFloat(object, 'dimY');
 				var partsX = this.reader.getInteger(object, 'partsX');
 				var partsY = this.reader.getInteger(object, 'partsY');
-					//this.primitives[id] = new MyPlane(this.scene, dimX, dimY, partsX, partsY);
+				this.primitives[id] = new Plane(this.scene, dimX, dimY, partsX, partsY);
 				break; 
 			case 'patch':
 				var orderU = this.reader.getInteger(object, 'orderU');
@@ -636,7 +636,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var partsU = this.reader.getInteger(object, 'partsU');
 				var partsV = this.reader.getInteger(object, 'partsV');
 				var controlPoints = this.readControlpoint(object,orderU,orderV);
-					//this.primitives[id] = new MyPatch(this.scene,orderU, orderV, partsU, partsV, controlPoints);
+				//this.primitives[id] = new Patch(this.scene,orderU, orderV, partsU, partsV, controlPoints);
 				break; 
 			case 'chessboard':
 				var du = this.reader.getInteger(object, 'du');
@@ -671,7 +671,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 						this.chessboard= new Board (color1, color2, color3, textureref);
 					}
 
-					//this.primitives[id] = new MyChessboard(this.scene,du, dv, su, sv);
+					//this.primitives[id] = new Chessboard(this.scene,du, dv, su, sv);
 				break; 
 			default:
 				console.warn("No such primitive named '" + objname + "'!");

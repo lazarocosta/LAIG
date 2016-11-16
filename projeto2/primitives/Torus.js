@@ -1,8 +1,8 @@
 /**
- * MyTorus
+ * Torus
  * @constructor
  */
-function MyTorus(scene, inner, outer, slices, loops) {
+function Torus(scene, inner, outer, slices, loops) {
 	CGFobject.call(this, scene);
 	this.outer = outer;
 	this.inner = inner;
@@ -12,10 +12,10 @@ function MyTorus(scene, inner, outer, slices, loops) {
 	this.initBuffers();
 };
 
-MyTorus.prototype = Object.create(CGFobject.prototype);
-MyTorus.prototype.constructor = MyTorus;
+Torus.prototype = Object.create(CGFobject.prototype);
+Torus.prototype.constructor = Torus;
 
-MyTorus.prototype.initBuffers = function () {
+Torus.prototype.initBuffers = function () {
 	this.vertices = [];
 	this.normals = [];
 	this.indices = [];

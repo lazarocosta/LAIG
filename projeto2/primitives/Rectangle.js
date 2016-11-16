@@ -1,8 +1,8 @@
 /**
- * MyRectangle
+ * Rectangle
  * @constructor
  */
-function MyRectangle(scene, x1, y1, x2, y2, minS, maxS, minT, maxT) {
+function Rectangle(scene, x1, y1, x2, y2, minS, maxS, minT, maxT) {
     CGFobject.call(this, scene);
 
     this.minS = minS || 0;
@@ -18,10 +18,10 @@ function MyRectangle(scene, x1, y1, x2, y2, minS, maxS, minT, maxT) {
     this.initBuffers();
 };
 
-MyRectangle.prototype = Object.create(CGFobject.prototype);
-MyRectangle.prototype.constructor = MyRectangle;
+Rectangle.prototype = Object.create(CGFobject.prototype);
+Rectangle.prototype.constructor = Rectangle;
 
-MyRectangle.prototype.initBuffers = function () {
+Rectangle.prototype.initBuffers = function () {
     this.vertices = [
         this.x1, this.y1, 0,
         this.x2, this.y1, 0,

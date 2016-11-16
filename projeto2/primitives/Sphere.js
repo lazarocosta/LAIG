@@ -1,8 +1,8 @@
 /**
- * MySphere
+ * Sphere
  * @constructor
  */
-function MySphere(scene, slices, stacks, radius) {
+function Sphere(scene, slices, stacks, radius) {
   CGFobject.call(this, scene);
 
   this.slices = slices;
@@ -12,10 +12,10 @@ function MySphere(scene, slices, stacks, radius) {
   this.initBuffers();
 }
 
-MySphere.prototype = Object.create(CGFobject.prototype);
-MySphere.prototype.constructor = MySphere;
+Sphere.prototype = Object.create(CGFobject.prototype);
+Sphere.prototype.constructor = Sphere;
 
-MySphere.prototype.initBuffers = function () {
+Sphere.prototype.initBuffers = function () {
   /*
    * TODO:
    * Replace the following lines in order to build a prism with a **single mesh**.

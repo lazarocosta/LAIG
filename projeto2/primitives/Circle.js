@@ -1,8 +1,8 @@
 /**
-* MyCircle
+* Circle
 * @constructor
 */
-function MyCircle(scene, raio, slices) {
+function Circle(scene, raio, slices) {
 	CGFobject.call(this, scene);
 
 	this.slices = slices;
@@ -11,10 +11,10 @@ function MyCircle(scene, raio, slices) {
 	this.initBuffers();
 };
 
-MyCircle.prototype = Object.create(CGFobject.prototype);
-MyCircle.prototype.constructor = MyCircle;
+Circle.prototype = Object.create(CGFobject.prototype);
+Circle.prototype.constructor = Circle;
 
-MyCircle.prototype.initBuffers = function () {
+Circle.prototype.initBuffers = function () {
 	this.vertices = [];
 	this.normals = [];
 	this.indices = [];

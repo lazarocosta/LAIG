@@ -1,8 +1,8 @@
 /**
- * MyCylinder
+ * Cylinder
  * @constructor
  */
-function MyCylinder(scene, base, top, height, slices, stacks) {
+function Cylinder(scene, base, top, height, slices, stacks) {
 	CGFobject.call(this, scene);
 
 	this.slices = slices;
@@ -11,16 +11,16 @@ function MyCylinder(scene, base, top, height, slices, stacks) {
 	this.top = top;
 	this.height = height;
 
-	this.circleTop = new MyCircle(this.scene, this.top, this.slices);
-	this.circleBase = new MyCircle(this.scene, this.base, this.slices);
+	this.circleTop = new Circle(this.scene, this.top, this.slices);
+	this.circleBase = new Circle(this.scene, this.base, this.slices);
 
 	this.initBuffers();
 };
 
-MyCylinder.prototype = Object.create(CGFobject.prototype);
-MyCylinder.prototype.constructor = MyCylinder;
+Cylinder.prototype = Object.create(CGFobject.prototype);
+Cylinder.prototype.constructor = Cylinder;
 
-MyCylinder.prototype.initBuffers = function () {
+Cylinder.prototype.initBuffers = function () {
 	/*
 	* TODO:
 	* Replace the following lines in order to build a prism with a **single mesh**.
@@ -79,7 +79,7 @@ MyCylinder.prototype.initBuffers = function () {
 	this.initGLBuffers();
 };
 
-MyCylinder.prototype.display = function () {
+Cylinder.prototype.display = function () {
 
 	CGFobject.prototype.display.call(this);
 	this.scene.rotate(Math.PI, 1, 0, 0);
