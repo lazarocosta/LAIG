@@ -191,6 +191,13 @@ XMLscene.prototype.display = function() {
 
         //this.graph.display();
 
+var color1=  [0.0, 0.0, 0.4,1.0];
+var color2=  [0.4, 0.4, 1.0, 1.0];
+var colorMark=[1.0, 0.0, 0.0, 1.0];
+
+	var board = new Chessboard(this,8,8, "casa1",color1, color2, colorMark, 3,3);
+	board.display();
+
 
     };
 
@@ -208,9 +215,8 @@ XMLscene.prototype.display = function() {
 	sphere.display();
 	this.popMatrix();*/
 
-
-    var este = new Plane(this, 10, 10, 10, 10);
-    //este.display();
+	//var este =new Plane(this, 10, 10, 10, 10);
+	//este.display();
 
 
     var array = [ // V = 0..3;
