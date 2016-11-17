@@ -43,6 +43,8 @@ MySceneGraph.prototype.onXMLReady = function () {
 	var rootElement = this.reader.xmlDoc.documentElement;
 	var error = null;
 
+	this.loadedOk = true;
+
 	// Here should go the calls for different functions to parse the various blocks
 
 	error = this.parse(rootElement);
@@ -52,11 +54,8 @@ MySceneGraph.prototype.onXMLReady = function () {
 		return;
 	}
 
-	this.loadedOk = true;
-
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
 	this.scene.onGraphLoaded();
-
 
 };
 
@@ -163,13 +162,11 @@ MySceneGraph.prototype.parse = function (rootElement) {
 				break;
 		}
 		if (error != null) {
-			this.onXMLError(error);
-			return;
+			return error;
 		}
 		if (!order)
 			console.warn("Element " + name + " is out of place!");
 	}
-
 };
 
 MySceneGraph.prototype.getRGBAElem = function (rootElement) {
@@ -543,18 +540,18 @@ MySceneGraph.prototype.parseAnimations = function (element) {
 	}
 }
 
-MySceneGraph.prototype.readControlPoint = function (element, orderU, orderV){
+MySceneGraph.prototype.readControlPoint = function (element, orderU, orderV) {
 
-	var points= element.children;
-	if(points == null )
-	return "No control points";
+	var points = element.children;
+	if (points == null)
+		return "No control points";
 
 	var length = points.length;
-	if((orderU+1)*(orderV+1) != length)
+	if ((orderU + 1) * (orderV + 1) != length)
 		return "Number of invalid control points";
-	
+
 	var controlPoints = {};
-	for(var i=0; i < length; i++){
+	for (var i = 0; i < length; i++) {
 		controlPoints[i] = this.getPoint3D(points[i]);
 	}
 
@@ -623,16 +620,16 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var slices = this.reader.getFloat(object, 'slices');
 				var loops = this.reader.getFloat(object, 'loops');
 				this.primitives[id] = new Torus(this.scene, inner, outer, slices, loops);
-				break; 
+				break;
 			case 'plane':
 				var dimX = this.reader.getFloat(object, 'dimX');
 				var dimY = this.reader.getFloat(object, 'dimY');
 				var partsX = this.reader.getInteger(object, 'partsX');
 				var partsY = this.reader.getInteger(object, 'partsY');
 				this.primitives[id] = new Plane(this.scene, dimX, dimY, partsX, partsY);
-				break; 
+				break;
 			case 'patch':
-			console.log(object);
+				console.log(object);
 				var orderU = this.reader.getInteger(object, 'orderU');
 				var orderV = this.reader.getInteger(object, 'orderV');
 				var partsU = this.reader.getInteger(object, 'partsU');
@@ -640,63 +637,61 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var points = object.children;
 				var pl = points.length;
 				var controlPoints = [];
-				for (var i = 0;i<pl;i++){
+				for (var i = 0; i < pl; i++) {
 					var pname = points[i].tagName;
-					if (pname != 'controlpoint'){
+					if (pname != 'controlpoint') {
 						console.warn("Invalid tag name '" + pname + "'! ");
 						continue;
 					}
 					var px = this.reader.getFloat(points[i], 'x');
 					var py = this.reader.getFloat(points[i], 'y');
 					var pz = this.reader.getFloat(points[i], 'z');
-					var point = [px,py,pz,1];
+					var point = [px, py, pz, 1];
 					controlPoints.push(point);
-					console.log(point);
 				}
-				var npoints = (orderU+1)*(orderV+1);
-				if (npoints != i){
+				var npoints = (orderU + 1) * (orderV + 1);
+				if (npoints != i) {
 					return "number of points for primitive patch invalid!";
 				}
-				this.primitives[id] = new Patch(this.scene,orderU, orderV, partsU, partsV, controlPoints);
-				break; 
+				this.primitives[id] = new Patch(this.scene, orderU, orderV, partsU, partsV, controlPoints);
+				break;
 			case 'chessboard':
 				var du = this.reader.getInteger(object, 'du');
 				var dv = this.reader.getInteger(object, 'dv');
-				var textureref= this.reader.getString(object, 'textureref');
+				var textureref = this.reader.getString(object, 'textureref');
 				var su = this.reader.getInteger(object, 'su');
 				var sv = this.reader.getInteger(object, 'sv');
-				
-				if(oject.children.length !=3)
+
+				if (oject.children.length != 3)
 					return "invalid number of color";
 
-					for(var i=0; i <3; i++)
-					{
-						var colorLine= oject.children[i];
-						var name = colorLine.tagName;
-						var color1, color2, color3;
+				for (var i = 0; i < 3; i++) {
+					var colorLine = oject.children[i];
+					var name = colorLine.tagName;
+					var color1, color2, color3;
 
-						switch (objname) {
-							case 'c1': 
-									color1= this.getRGBAElem(colorLine);
-									break;
-							case 'c2': 
-									color2= this.getRGBAElem(colorLine);
-									break;
-							case 'c3': 
-									color3= this.getRGBAElem(colorLine);
-									break;
-							default:
+					switch (objname) {
+						case 'c1':
+							color1 = this.getRGBAElem(colorLine);
+							break;
+						case 'c2':
+							color2 = this.getRGBAElem(colorLine);
+							break;
+						case 'c3':
+							color3 = this.getRGBAElem(colorLine);
+							break;
+						default:
 							console.warn("Invalid color name");
-								break;
-						}
-						//this.chessboard= new Board (color1, color2, color3, textureref);
+							break;
 					}
+					//this.chessboard= new Board (color1, color2, color3, textureref);
+				}
 
-					//this.primitives[id] = new Chessboard(this.scene,du, dv, su, sv);
-				break; 
+				//this.primitives[id] = new Chessboard(this.scene,du, dv, su, sv);
+				break;
 			default:
 				console.warn("No such primitive named '" + objname + "'!");
-				break;  
+				break;
 		}
 	}
 };
@@ -772,7 +767,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					for (var k = 0; k < al; k++) {
 						var animation = animations[i];
 						var aname = animation.tagName;
-						if (aname != 'animationref'){
+						if (aname != 'animationref') {
 							console.warn("Invalid tag name '" + aname + "'! Tag name should be 'animationref'!");
 							continue;
 						}
@@ -823,7 +818,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					break;
 			}
 		}
-		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref,animations);
+		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, animations);
 	}
 };
 
@@ -833,14 +828,15 @@ MySceneGraph.prototype.onXMLError = function (message) {
 };
 
 MySceneGraph.prototype.display = function () {
+	if (this.loadedOk) {
+		var mati = this.scene.matIndex % this.component[this.root].materialsId.length;
+		var material = this.component[this.root].materialsId[mati];
+		var texture = this.component[this.root].textureId;
+		var rootMaterial = this.materials[material];
 
-	var material = this.component[this.root].materialsId[this.scene.matIndex % this.component[this.root].materialsId.length];
-	var texture = this.component[this.root].textureId;
-	var rootMaterial = this.materials[material];
-
-	this.scene.multMatrix(this.component[this.root].matrixTransformation);
-	this.init(this.root, rootMaterial, texture);
-
+		this.scene.multMatrix(this.component[this.root].matrixTransformation);
+		this.init(this.root, rootMaterial, texture);
+	}
 }
 
 MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
@@ -858,7 +854,13 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 
 
 		rootMaterial.apply();
-		this.primitives[type].display();
+		var err;
+		try{
+			this.primitives[type].display();
+		} catch(err){
+			console.error(err);
+			console.debug(type);
+		}
 		rootMaterial.setTexture(null);
 	}
 
@@ -897,7 +899,3 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 		this.scene.popMatrix();
 	}
 }
-
-
-
-
