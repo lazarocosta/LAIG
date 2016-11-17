@@ -13,7 +13,7 @@ function Patch(scene, orderU, orderV, partsU, partsV, controlPoints) {
         var controlVerts = new Array();
         for(var v = 0; v <= this.orderV; v++){
             var i = v + u * (this.orderV + 1);
-            controlVerts.push([this.controlP[i][0],this.controlP[i][1],this.controlP[i][2],1]);
+            controlVerts.push([this.controlP[i][0],this.controlP[i][1],this.controlP[i][2],this.controlP[i][3]]);
         }
        points.push(controlVerts);
     }
