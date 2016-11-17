@@ -635,8 +635,26 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var orderV = this.reader.getInteger(object, 'orderV');
 				var partsU = this.reader.getInteger(object, 'partsU');
 				var partsV = this.reader.getInteger(object, 'partsV');
-				var controlPoints = this.readControlpoint(object,orderU,orderV);
-				//this.primitives[id] = new Patch(this.scene,orderU, orderV, partsU, partsV, controlPoints);
+				var points = object.children;
+				var pl = points.length;
+				var controlPoints = [];
+				for (var i = 0;i<pl;i++){
+					var pname = points[i].tagName;
+					if (pname != 'controlpoint'){
+						console.warn("Invalid tag name '" + pname + "'! ");
+						continue;
+					}
+					var px = this.reader.getFloat(object, 'x');
+					var py = this.reader.getFloat(object, 'y');
+					var pz = this.reader.getFloat(object, 'z');
+					var point = [px,py,pz,1];
+					controlPoints.push(point);
+				}
+				var npoints = (orderU+1)*(orderV+1);
+				if (npoinst != (i+1)){
+					return "number of points for primitive patch invalid!";
+				}
+				this.primitives[id] = new Patch(this.scene,orderU, orderV, partsU, partsV, controlPoints);
 				break; 
 			case 'chessboard':
 				var du = this.reader.getInteger(object, 'du');
