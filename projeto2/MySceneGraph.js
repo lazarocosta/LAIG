@@ -668,7 +668,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 							console.warn("Invalid color name");
 								break;
 						}
-						this.chessboard= new Board (color1, color2, color3, textureref);
+						//this.chessboard= new Board (color1, color2, color3, textureref);
 					}
 
 					//this.primitives[id] = new Chessboard(this.scene,du, dv, su, sv);
