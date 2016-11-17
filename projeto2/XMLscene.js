@@ -189,14 +189,14 @@ XMLscene.prototype.display = function() {
             light.update();
 
 
-        //this.graph.display();
+        this.graph.display();
 
-var color1=  [0.0, 0.0, 0.4,1.0];
-var color2=  [0.4, 0.4, 1.0, 1.0];
-var colorMark=[1.0, 0.0, 0.0, 1.0];
+//var color1=  [0.0, 0.0, 0.4,1.0];
+//var color2=  [0.4, 0.4, 1.0, 1.0];
+//var colorMark=[1.0, 0.0, 0.0, 1.0];
 
-	var board = new Chessboard(this,8,8, "casa1",color1, color2, colorMark, 3,3);
-	board.display();
+	//var board = new Chessboard(this,8,8, "casa1",color1, color2, colorMark, 3,3);
+	//board.display();
 
 
     };
@@ -240,8 +240,8 @@ var colorMark=[1.0, 0.0, 0.0, 1.0];
         [2.0, 2.0, 1.0, 1]
     ];
 
-    //var este= new Patch(this, 2, 3, 40, 40, array);
-    //este.display();
+    var este= new Patch(this, 2, 3, 40, 40, array);
+    este.display();
 
 
     this.updateLights();

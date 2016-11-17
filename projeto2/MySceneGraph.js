@@ -501,7 +501,8 @@ MySceneGraph.prototype.parseAnimations = function (element) {
 		}
 		var id = animation.id;
 		var span = this.reader.getFloat(animation, 'span');
-		var type = animation.attributes.getNamedItem('type');
+		var type = this.reader.getString(animation, 'type');
+
 		switch (type) {
 			case 'linear':
 				var points = animation.children;
@@ -631,6 +632,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				this.primitives[id] = new Plane(this.scene, dimX, dimY, partsX, partsY);
 				break; 
 			case 'patch':
+			console.log(object);
 				var orderU = this.reader.getInteger(object, 'orderU');
 				var orderV = this.reader.getInteger(object, 'orderV');
 				var partsU = this.reader.getInteger(object, 'partsU');
@@ -644,14 +646,15 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 						console.warn("Invalid tag name '" + pname + "'! ");
 						continue;
 					}
-					var px = this.reader.getFloat(object, 'x');
-					var py = this.reader.getFloat(object, 'y');
-					var pz = this.reader.getFloat(object, 'z');
+					var px = this.reader.getFloat(points[i], 'x');
+					var py = this.reader.getFloat(points[i], 'y');
+					var pz = this.reader.getFloat(points[i], 'z');
 					var point = [px,py,pz,1];
 					controlPoints.push(point);
+					console.log(point);
 				}
 				var npoints = (orderU+1)*(orderV+1);
-				if (npoinst != (i+1)){
+				if (npoints != i){
 					return "number of points for primitive patch invalid!";
 				}
 				this.primitives[id] = new Patch(this.scene,orderU, orderV, partsU, partsV, controlPoints);
@@ -852,6 +855,7 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 			var t = this.textures[texture];
 			rootMaterial.setTexture(t.file);
 		}
+
 
 		rootMaterial.apply();
 		this.primitives[type].display();
