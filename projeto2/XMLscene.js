@@ -240,8 +240,8 @@ XMLscene.prototype.display = function() {
         [2.0, 2.0, 1.0, 1]
     ];
 
-    var este= new Patch(this, 2, 3, 40, 40, array);
-    este.display();
+    //var este= new Patch(this, 2, 3, 40, 40, array);
+    //este.display();
 
 
     this.updateLights();

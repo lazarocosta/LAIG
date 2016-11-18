@@ -46,10 +46,10 @@ Chessboard.prototype.updateMark = function (){
 Chessboard.prototype.display = function () {
 
 	//this.updateMark();
-	this.shader.setUniformsValues({ 
+	/*this.shader.setUniformsValues({ 
 								  seleU:this.seleU*1.0,
 								  seleV:this.seleV*1.0
-								});
+								});*/
 	this.texture.bind(0);
 	 this.scene.setActiveShader(this.shader);
 	this.plane.display();
