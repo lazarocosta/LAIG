@@ -252,7 +252,6 @@ XMLscene.prototype.display = function() {
 };
 
 XMLscene.prototype.update = function(currTime){
-
 	this.graph.update();
 
 

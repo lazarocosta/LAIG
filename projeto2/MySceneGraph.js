@@ -539,24 +539,6 @@ MySceneGraph.prototype.parseAnimations = function (element) {
 	}
 }
 
-MySceneGraph.prototype.readControlPoint = function (element, orderU, orderV) {
-
-	var points = element.children;
-	if (points == null)
-		return "No control points";
-
-	var length = points.length;
-	if ((orderU + 1) * (orderV + 1) != length)
-		return "Number of invalid control points";
-
-	var controlPoints = {};
-	for (var i = 0; i < length; i++) {
-		controlPoints[i] = this.getPoint3D(points[i]);
-	}
-
-	return controlPoints;
-}
-
 MySceneGraph.prototype.parsePrimitives = function (element) {
 	var primitives = element;
 	var primitive = primitives.getElementsByTagName('primitive');
@@ -623,7 +605,6 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				this.primitives[id] = new Torus(this.scene, inner, outer, slices, loops);
 				break;
 			case 'plane':
-				console.debug('aqui');
 				var dimX = this.reader.getFloat(object, 'dimX');
 				var dimY = this.reader.getFloat(object, 'dimY');
 				var partsX = this.reader.getInteger(object, 'partsX');
@@ -865,7 +846,6 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 			rootMaterial.setTexture(t.file);
 		}
 		
-
 		rootMaterial.apply();
 		var err;
 		try{
@@ -915,5 +895,8 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 }
 
 MySceneGraph.prototype.update= function () {
-		this.primitives['chessboard'].updateMark();
+			for(var key in this.primitives){
+				if(this.primitives[key] instanceof Chessboard)
+					this.primitives[key].updateMark();
+				}
 }
