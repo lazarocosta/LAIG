@@ -10,6 +10,8 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
+    this.setUpdatePeriod(500);
+
     this.initCameras();
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -249,6 +251,9 @@ XMLscene.prototype.display = function() {
 
 };
 
-XMLscene.prototype.update = function(dtime) {
+XMLscene.prototype.update = function(currTime){
+
+	this.graph.update();
+
 
 }

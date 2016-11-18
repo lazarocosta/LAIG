@@ -566,6 +566,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 		return "zero primitives found";
 
 	for (var i = 0; i < pl; i++) {
+
 		var primi = primitive[i];
 		var name = primi.tagName;
 		if (name != 'primitive') {
@@ -705,6 +706,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				break;
 		}
 	}
+
 };
 
 MySceneGraph.prototype.parseComponents = function (element) {
@@ -909,4 +911,9 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 		this.init(componentRoot, materialChildren, textureChildren);
 		this.scene.popMatrix();
 	}
+	
+}
+
+MySceneGraph.prototype.update= function () {
+		this.primitives['chessboard'].updateMark();
 }
