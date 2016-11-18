@@ -567,7 +567,6 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 
 	for (var i = 0; i < pl; i++) {
 		var primi = primitive[i];
-		console.log(primitive[i]);
 		var name = primi.tagName;
 		if (name != 'primitive') {
 			console.warn("Invalid tag name for supposed primitive nº " + i + ".");
@@ -576,7 +575,6 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 		var id = primi.id;
 		var object = primi.children[0];
 		var objname = object.tagName;
-		console.log(id);
 		if (this.primitives[id] != null) {
 			console.error("There's already a primitive with id='" + id + "'!");
 			continue;
@@ -632,7 +630,6 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				this.primitives[id] = new Plane(this.scene, dimX, dimY, partsX, partsY);
 				break;
 			case 'chessboard':
-				console.debug(object);
 				var du = this.reader.getInteger(object, 'du');
 				var dv = this.reader.getInteger(object, 'dv');
 				var textureref = this.reader.getString(object, 'textureref');
@@ -681,25 +678,24 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var partsU = this.reader.getInteger(object, 'partsU');
 				var partsV = this.reader.getInteger(object, 'partsV');
 				var points = object.children;
-				var pl = points.length;
+				var pointsLength = points.length;
 				var controlPoints = [];
-				for (var j = 0; j < pl; j++) {
-					var pname = points[j].tagName;
+				for (var h = 0; h < pointsLength; h++) {
+					var pname = points[h].tagName;
 					if (pname != 'controlpoint') {
 						console.warn("Invalid tag name '" + pname + "'! ");
 						continue;
 					}
-					var px = this.reader.getFloat(points[j], 'x');
-					var py = this.reader.getFloat(points[j], 'y');
-					var pz = this.reader.getFloat(points[j], 'z');
+					var px = this.reader.getFloat(points[h], 'x');
+					var py = this.reader.getFloat(points[h], 'y');
+					var pz = this.reader.getFloat(points[h], 'z');
 					var point = [px, py, pz, 1];
 					controlPoints.push(point);
-						console.log(point);
 					
 				}
 			
 				var npoints = (orderU + 1) * (orderV + 1);
-				if (npoints != j) {
+				if (npoints != h) {
 					return "number of points for primitive patch invalid!";
 				}
 				this.primitives[id] = new Patch(this.scene, orderU, orderV, partsU, partsV, controlPoints);
