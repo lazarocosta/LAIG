@@ -567,6 +567,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 
 	for (var i = 0; i < pl; i++) {
 		var primi = primitive[i];
+		console.log(primitive[i]);
 		var name = primi.tagName;
 		if (name != 'primitive') {
 			console.warn("Invalid tag name for supposed primitive nº " + i + ".");
@@ -582,7 +583,6 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 		}
 	
 		switch (objname) {
-
 			case 'rectangle':
 				var x1 = this.reader.getFloat(object, 'x1');
 				var y1 = this.reader.getFloat(object, 'y1');
@@ -642,8 +642,8 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				if (object.children.length != 3)
 					return "invalid number of color";
 
-				for (var i = 0; i < 3; i++) {
-					var colorLine = object.children[i];
+				for (var f = 0; f < 3; f++) {
+					var colorLine = object.children[f];
 					var color = colorLine.tagName;
 					var color1, color2, colorMark;
 					switch (color) {
