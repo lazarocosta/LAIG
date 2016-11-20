@@ -682,6 +682,9 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				}
 				this.primitives[id] = new Patch(this.scene, orderU, orderV, partsU, partsV, controlPoints);
 				break;
+			case 'vehicle':
+				this.primitives[id] =new Vehicle(this.scene);
+				break;
 			default:
 				console.warn("No such primitive named '" + objname + "'!");
 				break;
@@ -896,7 +899,11 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 
 MySceneGraph.prototype.update= function () {
 			for(var key in this.primitives){
-				if(this.primitives[key] instanceof Chessboard)
-					this.primitives[key].updateMark();
+					if(this.primitives[key] instanceof Chessboard)
+						this.primitives[key].updateMark();
+					
+					if(this.primitives[key] instanceof Vehicle)
+						this.primitives[key].update();
+						
 				}
 }

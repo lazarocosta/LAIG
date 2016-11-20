@@ -193,14 +193,6 @@ XMLscene.prototype.display = function() {
 
         this.graph.display();
 
-//var color1=  [0.0, 0.0, 0.4,1.0];
-//var color2=  [0.4, 0.4, 1.0, 1.0];
-//var colorMark=[1.0, 0.0, 0.0, 1.0];
-
-	//var board = new Chessboard(this,8,8, "casa1",color1, color2, colorMark, 3,3);
-	//board.display();
-
-
     };
 
     //var triangle = new Triangle(this, 0, 0, -2, -2, -2, -2, -2, 0, -2);
@@ -220,34 +212,7 @@ XMLscene.prototype.display = function() {
 	//var este =new Plane(this, 10, 10, 10, 10);
 	//este.display();
 
-
-    var array = [ // V = 0..3;
-        [-2.0, -2.0, 1.0, 1],
-        [-2.0, -1.0, -2.0, 1],
-        [-2.0, 1.0, 5.0, 1],
-        [-2.0, 2.0, -1.0, 1],
-
-        // U = 1
-        // V = 0..3
-        [0, -2.0, 0, 1],
-        [0, -1.0, -1.0, 1],
-        [0, 1.0, 1.5, 1],
-        [0, 2.0, 0, 1],
-
-        // U = 2
-        // V = 0..3
-        [2.0, -2.0, -1.0, 1],
-        [2.0, -1.0, 2.0, 1],
-        [2.0, 1.0, -5.0, 1],
-        [2.0, 2.0, 1.0, 1]
-    ];
-
-    //var este= new Patch(this, 2, 3, 40, 40, array);
-    //este.display();
-
-
     this.updateLights();
-
 
 };
 
