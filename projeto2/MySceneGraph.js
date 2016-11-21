@@ -519,9 +519,11 @@ MySceneGraph.prototype.parseAnimations = function(element) {
                     var px = this.reader.getFloat(cpoint, 'xx');
                     var py = this.reader.getFloat(cpoint, 'yy');
                     var pz = this.reader.getFloat(cpoint, 'zz');
-                    cpoints.push(new Point3D(px, py, pz));
+					var point = new Point3D(px, py, pz);
+                    cpoints.push(point);
                 }
                 this.animations[id] = new LinearAnimation(span, cpoints);
+				console.debug(this.animations);
                 break;
             case 'circular':
                 var cx = this.reader.getFloat(animation, 'centerx');
@@ -710,12 +712,12 @@ MySceneGraph.prototype.parseComponents = function(element) {
         var componentref = [];
         var matrixTransformation, textureId;
         var materialsId = [];
+        var canimations = [];
         for (var j = 0; j < n; j++) {
             var temp = settings[j];
             var name = temp.tagName;
             var check = {};
             var texture;
-            var canimations = [];
             if (check[name]) {
                 return "More than one '" + name + "' element found!";
             } else {
@@ -763,13 +765,17 @@ MySceneGraph.prototype.parseComponents = function(element) {
                     var animations = temp.children;
                     var al = animations.length;
                     for (var k = 0; k < al; k++) {
-                        var animation = animations[i];
+                        var animation = animations[k];
                         var aname = animation.tagName;
                         if (aname != 'animationref') {
                             console.warn("Invalid tag name '" + aname + "'! Tag name should be 'animationref'!");
                             continue;
                         }
                         var aid = animation.id;
+                        if (this.animations[aid] == null) {
+                            console.error("Animation with id '" + aid + "' doesn't exist!");
+                            continue;
+                        }
                         canimations.push(this.animations[aid]);
                     }
                     break;
@@ -840,11 +846,6 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
     var root = this.components[rootId];
     var componentRoot, transformation;
 
-    var animation = this.components[rootId].getCurrentAnimation();
-    if (animation != null) {
-        animation.apply(this.scene);
-    }
-
     for (var i = 0; i < root.primitiveref.length; i++) {
 
         var type = root.primitiveref[i];
@@ -863,6 +864,11 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
         this.scene.pushMatrix();
         componentRoot = root.componentref[i];
         var component = this.components[componentRoot];
+        var animation = component.getCurrentAnimation();
+        if (animation != null) {
+			//console.debug(animation);
+            animation.apply(this.scene);
+        }
         //transformation
         transformation = component.matrixTransformation;
         this.scene.multMatrix(transformation);

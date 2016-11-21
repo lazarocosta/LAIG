@@ -1,4 +1,13 @@
 
+clone = function (array) {
+	var newArray = [];
+	for (var i = 0; i < array.length; i++) {
+		newArray.push(array[i].clone());
+	}
+	console.debug(newArray);
+	return newArray;
+}
+
 var RGBA = function (r, g, b, a) {
 	this.r = r;
 	this.g = g;
@@ -6,10 +15,16 @@ var RGBA = function (r, g, b, a) {
 	this.a = a;
 }
 
-var Point3D = function (x, y, z) {
-	this.x = x;
-	this.y = y;
-	this.z = z;
+class Point3D {
+	constructor(x, y, z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	clone() {
+		var newPoint = new Point3D(this.x, this.y, this.z);
+		return newPoint;
+	}
 }
 
 var Point2D = function (x, y) {
@@ -94,9 +109,13 @@ class Component {
 		this.textureId = textureId;
 		this.componentref = componentref;
 		this.primitiveref = primitiveref;
-		this.animations = animations.slice();
+		this.animations = clone(animations);
+		if (animations.length > 0) {
+			console.debug(animations);
+			console.debug(this.animations);
+		}
 		this.animationIndex = 0;
-		this.currAnimation = animations[0];
+		this.currAnimation = this.animations[0];
 	}
 	update(dtime) {
 		if (this.currAnimation != undefined) {
@@ -122,7 +141,7 @@ class Component {
 			this.currAnimation.update(dtime);
 		}
 	}
-	getCurrentAnimation(){
+	getCurrentAnimation() {
 		if (this.currAnimation != undefined) {
 			return this.currAnimation;
 		}
@@ -152,12 +171,14 @@ class Animation {
 class LinearAnimation extends Animation {
 	constructor(time, points) {
 		super(time);
-		this.controlPoints = points.slice(); //Has to be an array of Point3D
-		this.currentPosition = points[0];
+		console.debug(points);
+		this.controlPoints = clone(points); //Has to be an array of Point3D
+		console.log(this.controlPoints);
+		this.currentPosition = this.controlPoints[0];
 		this.point = 1;
 		this.dp;
 		for (var i = 0; i < this.controlPoints.length; i++) {
-			this.dp += Math.sqrt(Math.pow(points[i].x, 2) + Math.pow(points[i].y, 2) + Math.pow(points[i].z, 2));
+			this.dp += Math.sqrt(Math.pow(this.controlPoints[i].x, 2) + Math.pow(this.controlPoints[i].y, 2) + Math.pow(this.controlPoints[i].z, 2));
 		}
 		this.v = this.dp / this.controlPoints.length;
 		this.angles = [0, 0, 0];
@@ -165,14 +186,14 @@ class LinearAnimation extends Animation {
 	update(time) {
 		if (this.isOver()) {
 			return;
-		} 
+		}
 		if (this.currentPosition == this.controlPoints[this.point]) {
 			this.point++;
 		}
 		var curr = this.currentPosition;
 		var npoint = this.controlPoints[this.point];
 		var vec = [npoint.x - curr.x, npoint.y - curr.y, npoint.z - curr.z];
-		var norm = Math.sqrt(Math.pow(vec[0],2),Math.pow(vec[1],2),Math.pow(vec[2],2))
+		var norm = Math.sqrt(Math.pow(vec[0], 2), Math.pow(vec[1], 2), Math.pow(vec[2], 2))
 		this.angles[0] = Math.acos(vec[0] / norm);
 		this.angles[1] = Math.acos(vec[1] / norm);
 		this.angles[2] = Math.acos(vec[2] / norm);
@@ -182,16 +203,15 @@ class LinearAnimation extends Animation {
 		this.currentPosition.x += vx * time;
 		this.currentPosition.y += vy * time;
 		this.currentPosition.z += vz * time;
+		//console.debug(this.currentPosition);
 		super.update(time);
 	}
 	apply(scene) {
-		scene.rotate(this.angles[0], 1, 0, 0);
-		scene.rotate(this.angles[1], 0, 1, 0);
-		scene.rotate(this.angles[2], 0, 0, 1);
-		scene.translate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
+		scene.translate(this.currentPosition.x, this.currentPosition.z, this.currentPosition.y);
+		scene.rotate(this.angles[3],0,1,0);
 	}
-	clone(){
-		var newAnimation = new LinearAnimation(this.time,this.controlPoints);
+	clone() {
+		var newAnimation = new LinearAnimation(this.time, this.controlPoints);
 		return newAnimation;
 	}
 }
@@ -208,20 +228,44 @@ class CircularAnimation extends Animation {
 		this.iAngle = iAngle * degToRad; //Initial angle
 		this.rAngle = rAngle * degToRad; //Rotation angle
 		this.angle = this.iAngle;
+		this.sAngle = this.rAngle/this.time;
 		this.dAngle = this.rAngle / this.time;
-		this.currentPosition = center;
+		this.currentPosition = new Point3D(0,0,0);
+		this.updatePosition();
+	}
+	updatePosition(){
+		this.currentPosition.x = this.center.x + this.radius*Math.cos(this.angle);
+		this.currentPosition.y = this.center.y;
+		this.currentPosition.z = this.center.z + this.radius*Math.sin(this.angle);
 	}
 	update(time) {
-		if (this.isOver()){
+		if (this.isOver()) {
 			return;
 		}
+		this.angle += this.sAngle * time;
+		this.updatePosition();
 		super.update(time);
 	}
 	apply(scene) {
-
+		scene.translate(this.currentPosition.x,this.currentPosition.y,this.currentPosition.z);
+		scene.rotate(this.angle,0,1,0);
 	}
-	clone(){
-		var newAnimation = new CircularAnimation(this.time,this.center,this.radius,this.iAngle,this.rAngle);
+	clone() {
+		var newAnimation = new CircularAnimation(this.time, this.center, this.radius, this.iAngle, this.rAngle);
 		return newAnimation;
 	}
 }
+/*
+var LinearAnimationInfo = function(time,points){
+	this.time = time;
+	this.points = points
+}
+
+var CircularAnimationInfo = function(time,center,radius,iAngle,rAngle){
+	this.time = time;
+	this.center = center;
+	this.radius = radius;
+	this.iAngle = iAngle;
+	this.rAngle = rAngle;
+}
+*/
