@@ -22,7 +22,7 @@ void main() {
 
 	if((aTextureCoord.s >=(seleU/divU) &&  aTextureCoord.s <=(seleU+1.0)/divU) && 
 		(aTextureCoord.t>=(seleV/divV) &&  aTextureCoord.t <=(seleV+1.0)/divV))
-	  		 gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition.x, aVertexPosition.y , aVertexPosition.z+0.5, 1.0);
+	  		 gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition.x, aVertexPosition.y , aVertexPosition.z+0.3, 1.0);
   else
 	gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 
