@@ -32,7 +32,14 @@ XMLscene.prototype.init = function(application) {
     this.lightsId = {};
     this.lightsStatus = {};
     this.indexToId = [];
+
+    this.currTime = -1;
+    this.dTime = 0;
 };
+
+XMLscene.prototype.initGraph = function(graph) {
+    this.graph = graph;
+}
 
 XMLscene.prototype.initLights = function() {
 
@@ -252,7 +259,10 @@ XMLscene.prototype.display = function() {
 };
 
 XMLscene.prototype.update = function(currTime){
-	this.graph.update();
+    if(this.currTime != -1){
+        this.dTime = currTime - this.currTime;
+    }
+    this.currTime = currTime;
 
-
+    this.graph.update();
 }

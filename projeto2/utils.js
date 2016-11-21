@@ -87,16 +87,47 @@ class Spot {
 }
 
 class Component {
-	constructor(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, animationref) {
+	constructor(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, animations) {
 		this.id = id;
 		this.matrixTransformation = matrixTransformation;
 		this.materialsId = materialsId;
 		this.textureId = textureId;
 		this.componentref = componentref;
 		this.primitiveref = primitiveref;
-		this.animationref = animationref;
+		this.animations = animations.slice();
+		this.animationIndex = 0;
+		this.currAnimation = animations[0];
 	}
-
+	update(dtime) {
+		if (this.currAnimation != undefined) {
+			if (this.currAnimation.isOver()) {
+				this.nextAnimation();
+			}
+			this.updateAnimation(dtime);
+		}
+	}
+	nextAnimation() {
+		if (this.animationIndex != this.animations.length - 1) {
+			this.animationIndex += 1;
+			this.currAnimation = this.animations[this.animationIndex];
+		}
+	}
+	applyAnimation() {
+		if (this.currAnimation != undefined) {
+			this.currAnimation.apply();
+		}
+	}
+	updateAnimation(dtime) {
+		if (this.currAnimation != undefined) {
+			this.currAnimation.update(dtime);
+		}
+	}
+	getCurrentAnimation(){
+		if (this.currAnimation != undefined) {
+			return this.currAnimation;
+		}
+		return null;
+	}
 }
 
 class Animation {
@@ -105,11 +136,10 @@ class Animation {
 			throw new TypeError("Cannot construct Animation instances directly");
 		}
 		this.time = time; //Time of the animation
-		this.ctime = 0; //Time this animation has been running for~
-		this.transformation = mat4.create();
+		this.cTime = 0; //Time this animation has been running for
 	}
 	update(time) {
-		this.ctime += time;
+		this.cTime += time;
 	}
 	isOver() {
 		if (this.currentTime >= this.time) {
@@ -122,30 +152,47 @@ class Animation {
 class LinearAnimation extends Animation {
 	constructor(time, points) {
 		super(time);
-		this.controlPoints = points; //Has to be an array of Point3D
-		this.currentPosition = points[0].slice;
+		this.controlPoints = points.slice(); //Has to be an array of Point3D
+		this.currentPosition = points[0];
 		this.point = 1;
 		this.dp;
-		for (var i = 1;i< this.controlPoints.length;i++){
-			this.dp += Math.sqrt(Math.pow(this.points[i].x,2) + Math.pow(this.points[i].y,2) + Math.pow(this.points[i].z,2));
+		for (var i = 0; i < this.controlPoints.length; i++) {
+			this.dp += Math.sqrt(Math.pow(points[i].x, 2) + Math.pow(points[i].y, 2) + Math.pow(points[i].z, 2));
 		}
-		this.v = this.dp/this.controlPoints.length;
+		this.v = this.dp / this.controlPoints.length;
+		this.angles = [0, 0, 0];
 	}
 	update(time) {
-		if (this.currentTime >= this.time) {
+		if (this.isOver()) {
 			return;
-		}
-		if (this.currentPosition == this.points[this.point]) {
+		} 
+		if (this.currentPosition == this.controlPoints[this.point]) {
 			this.point++;
 		}
-		var angle = Math.dot(this.currentPosition, this.points[this.point])/(Math.norm(this.currentPosition)*Math.norm(this.points[this.point]));
-		var vx = this.v;
-		var vy = this.v;
-		var vz = this.v;
-		this.currentPosition.x += vx*time;
-		this.currentPosition.y += vy*time;
-		this.currentPosition.z += vz*time;
+		var curr = this.currentPosition;
+		var npoint = this.controlPoints[this.point];
+		var vec = [npoint.x - curr.x, npoint.y - curr.y, npoint.z - curr.z];
+		var norm = Math.sqrt(Math.pow(vec[0],2),Math.pow(vec[1],2),Math.pow(vec[2],2))
+		this.angles[0] = Math.acos(vec[0] / norm);
+		this.angles[1] = Math.acos(vec[1] / norm);
+		this.angles[2] = Math.acos(vec[2] / norm);
+		var vx = this.v * Math.cos(this.angles[0]);
+		var vy = this.v * Math.cos(this.angles[1]);
+		var vz = this.v * Math.cos(this.angles[2]);
+		this.currentPosition.x += vx * time;
+		this.currentPosition.y += vy * time;
+		this.currentPosition.z += vz * time;
 		super.update(time);
+	}
+	apply(scene) {
+		scene.rotate(this.angle[0], 1, 0, 0);
+		scene.rotate(this.angle[1], 0, 1, 0);
+		scene.rotate(this.angle[2], 0, 0, 1);
+		scene.tranlate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
+	}
+	clone(){
+		var newAnimation = new LinearAnimation(this.time,this.controlPoints);
+		return newAnimation;
 	}
 }
 
@@ -155,13 +202,26 @@ class CircularAnimation extends Animation {
 		if (!(center instanceof Point3D)) {
 			throw new TypeError("Center of circular animation must be of type Point3D");
 		}
+		var degToRad = Math.PI / 180;
 		this.center = center; //Center of the animation as Point3D
 		this.radius = radius; //Radius of the animation as int
-		this.iAngle = iAngle; //Initial angle
-		this.rAngle = rAngle; //Rotation angle
+		this.iAngle = iAngle * degToRad; //Initial angle
+		this.rAngle = rAngle * degToRad; //Rotation angle
+		this.angle = this.iAngle;
+		this.dAngle = this.rAngle / this.time;
+		this.currentPosition = center;
 	}
 	update(time) {
-		
+		if (this.isOver()){
+			return;
+		}
 		super.update(time);
+	}
+	apply(scene) {
+
+	}
+	clone(){
+		var newAnimation = new CircularAnimation(this.time,this.center,this.radius,this.iAngle,this.rAngle);
+		return newAnimation;
 	}
 }

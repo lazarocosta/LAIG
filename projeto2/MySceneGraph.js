@@ -4,7 +4,8 @@ function MySceneGraph(filename, scene) {
 
 	// Establish bidirectional references between scene and graph
 	this.scene = scene;
-	scene.graph = this;
+
+	this.scene.initGraph(this);
 
 
 	// File reading 
@@ -22,7 +23,7 @@ function MySceneGraph(filename, scene) {
 	this.transformations = {};
 	this.animations = {};
 	this.primitives = {};
-	this.component = {};
+	this.components = {};
 
 
 	/*
@@ -157,7 +158,7 @@ MySceneGraph.prototype.parse = function (rootElement) {
 				break;
 			default:
 				check[name] = false;
-				console.warn("ignoring '" + name + "' since it's not a valid element");
+				console.warn("Ignoring '" + name + "' since it's not a valid element");
 				break;
 		}
 		if (error != null) {
@@ -562,7 +563,7 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 			console.error("There's already a primitive with id='" + id + "'!");
 			continue;
 		}
-	
+
 		switch (objname) {
 			case 'rectangle':
 				var x1 = this.reader.getFloat(object, 'x1');
@@ -617,12 +618,12 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 				var textureref = this.reader.getString(object, 'textureref');
 				var su = this.reader.getInteger(object, 'su');
 				var sv = this.reader.getInteger(object, 'sv');
-		
+
 				if (object.children.length != 3)
 					return "invalid number of color";
 
-				for (var f = 0; f < 3; f++) {
-					var colorLine = object.children[f];
+				for (var j = 0; j < 3; j++) {
+					var colorLine = object.children[j];
 					var color = colorLine.tagName;
 					var color1, color2, colorMark;
 					switch (color) {
@@ -630,22 +631,22 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 							var r = this.reader.getFloat(colorLine, 'r');
 							var g = this.reader.getFloat(colorLine, 'g');
 							var b = this.reader.getFloat(colorLine, 'b');
-							var a = this.reader.getFloat(colorLine,'a');
-							 color1= [r,g,b,a];
+							var a = this.reader.getFloat(colorLine, 'a');
+							color1 = [r, g, b, a];
 							break;
 						case 'c2':
 							var r = this.reader.getFloat(colorLine, 'r');
 							var g = this.reader.getFloat(colorLine, 'g');
 							var b = this.reader.getFloat(colorLine, 'b');
-							var a = this.reader.getFloat(colorLine,'a');
-							color2= [r,g,b,a];
+							var a = this.reader.getFloat(colorLine, 'a');
+							color2 = [r, g, b, a];
 							break;
 						case 'cs':
 							var r = this.reader.getFloat(colorLine, 'r');
 							var g = this.reader.getFloat(colorLine, 'g');
 							var b = this.reader.getFloat(colorLine, 'b');
-							var a = this.reader.getFloat(colorLine,'a');
-							 colorMark= [r,g,b,a];
+							var a = this.reader.getFloat(colorLine, 'a');
+							colorMark = [r, g, b, a];
 							break;
 						default:
 							console.warn("Invalid color name");
@@ -673,9 +674,9 @@ MySceneGraph.prototype.parsePrimitives = function (element) {
 					var pz = this.reader.getFloat(points[h], 'z');
 					var point = [px, py, pz, 1];
 					controlPoints.push(point);
-					
+
 				}
-			
+
 				var npoints = (orderU + 1) * (orderV + 1);
 				if (npoints != h) {
 					return "number of points for primitive patch invalid!";
@@ -711,7 +712,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 			var name = temp.tagName;
 			var check = {};
 			var texture;
-			var animations = [];
+			var canimations = [];
 			if (check[name]) {
 				return "More than one '" + name + "' element found!";
 			} else {
@@ -765,8 +766,8 @@ MySceneGraph.prototype.parseComponents = function (element) {
 							console.warn("Invalid tag name '" + aname + "'! Tag name should be 'animationref'!");
 							continue;
 						}
-						var id = animation.id;
-						animations.push(id);
+						var aid = animation.id;
+						canimations.push(this.animations[aid]);
 					}
 					break;
 				case 'materials':
@@ -812,7 +813,7 @@ MySceneGraph.prototype.parseComponents = function (element) {
 					break;
 			}
 		}
-		this.component[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, animations);
+		this.components[id] = new Component(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, canimations);
 	}
 };
 
@@ -823,19 +824,23 @@ MySceneGraph.prototype.onXMLError = function (message) {
 
 MySceneGraph.prototype.display = function () {
 	if (this.loadedOk) {
-		var mati = this.scene.matIndex % this.component[this.root].materialsId.length;
-		var material = this.component[this.root].materialsId[mati];
-		var texture = this.component[this.root].textureId;
-		var rootMaterial = this.materials[material];
+		try {
+			var mati = this.scene.matIndex % this.components[this.root].materialsId.length;
+			var material = this.components[this.root].materialsId[mati];
+			var texture = this.components[this.root].textureId;
+			var rootMaterial = this.materials[material];
+			this.scene.multMatrix(this.components[this.root].matrixTransformation);
+			this.init(this.root, rootMaterial, texture);
+		}
+		catch (err) {
 
-		this.scene.multMatrix(this.component[this.root].matrixTransformation);
-		this.init(this.root, rootMaterial, texture);
+		}
 	}
 }
 
 MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 
-	var root = this.component[rootId];
+	var root = this.components[rootId];
 	var componentRoot, transformation;
 
 	for (var i = 0; i < root.primitiveref.length; i++) {
@@ -845,15 +850,9 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 			var t = this.textures[texture];
 			rootMaterial.setTexture(t.file);
 		}
-		
+
 		rootMaterial.apply();
-		var err;
-		try{
-			this.primitives[type].display();
-		} catch(err){
-			console.error(err);
-			console.debug(type);
-		}
+		this.primitives[type].display();
 		rootMaterial.setTexture(null);
 	}
 
@@ -861,12 +860,17 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 	for (var i = 0; i < root.componentref.length; i++) {
 		this.scene.pushMatrix();
 		componentRoot = root.componentref[i];
+		var component = this.components[componentRoot];
 		//transformation
-		transformation = this.component[componentRoot].matrixTransformation;
+		transformation = component.matrixTransformation;
 		this.scene.multMatrix(transformation);
+		var animation = component.getCurrentAnimation();
+		if (animation != null) {
+			animation.apply(this.scene);
+		}
 		//material
-		var mlength = this.component[componentRoot].materialsId.length;
-		materialId = this.component[componentRoot].materialsId[this.scene.matIndex % mlength];
+		var mlength = this.components[componentRoot].materialsId.length;
+		materialId = this.components[componentRoot].materialsId[this.scene.matIndex % mlength];
 		switch (materialId) {
 			case 'inherit':
 				materialChildren = rootMaterial;
@@ -879,7 +883,7 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 		}
 		materialChildren.setTexture(null);
 		//texture
-		textureId = this.component[componentRoot].textureId;
+		textureId = this.components[componentRoot].textureId;
 		switch (textureId) {
 			case 'inherit':
 				textureChildren = texture;
@@ -891,12 +895,31 @@ MySceneGraph.prototype.init = function (rootId, rootMaterial, texture) {
 		this.init(componentRoot, materialChildren, textureChildren);
 		this.scene.popMatrix();
 	}
-	
+
 }
 
-MySceneGraph.prototype.update= function () {
-			for(var key in this.primitives){
-				if(this.primitives[key] instanceof Chessboard)
-					this.primitives[key].updateMark();
-				}
+MySceneGraph.prototype.update = function (dtime) {
+	for (var key in this.primitives) {
+		if (this.primitives[key] instanceof Chessboard) {
+			this.primitives[key].updateMark();
+		}
+	}
+	for (var component in this.components) {
+		try {
+			this.components[component].update(dtime);
+		}
+		catch (err) {
+			console.debug(this.components[component]);
+			console.error(err);
+		}
+	}
+	/*for (var animation in this.animations) {
+		try{
+			this.animations[animation].update(dtime);
+		}
+		catch(err){
+			console.debug(this.animations[animation]);
+			console.error(err);
+		}
+	}*/
 }
