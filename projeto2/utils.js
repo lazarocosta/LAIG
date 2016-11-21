@@ -185,10 +185,10 @@ class LinearAnimation extends Animation {
 		super.update(time);
 	}
 	apply(scene) {
-		scene.rotate(this.angle[0], 1, 0, 0);
-		scene.rotate(this.angle[1], 0, 1, 0);
-		scene.rotate(this.angle[2], 0, 0, 1);
-		scene.tranlate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
+		scene.rotate(this.angles[0], 1, 0, 0);
+		scene.rotate(this.angles[1], 0, 1, 0);
+		scene.rotate(this.angles[2], 0, 0, 1);
+		scene.translate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
 	}
 	clone(){
 		var newAnimation = new LinearAnimation(this.time,this.controlPoints);

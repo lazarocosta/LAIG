@@ -827,24 +827,23 @@ MySceneGraph.prototype.onXMLError = function(message) {
 
 MySceneGraph.prototype.display = function() {
     if (this.loadedOk) {
-        try {
-            var mati = this.scene.matIndex % this.components[this.root].materialsId.length;
-            var material = this.components[this.root].materialsId[mati];
-            var texture = this.components[this.root].textureId;
-            var rootMaterial = this.materials[material];
-            this.scene.multMatrix(this.components[this.root].matrixTransformation);
-            this.init(this.root, rootMaterial, texture);
-        }
-        catch (err) {
-
-        }
+        var mati = this.scene.matIndex % this.components[this.root].materialsId.length;
+        var material = this.components[this.root].materialsId[mati];
+        var texture = this.components[this.root].textureId;
+        var rootMaterial = this.materials[material];
+        this.scene.multMatrix(this.components[this.root].matrixTransformation);
+        this.init(this.root, rootMaterial, texture);
     }
 }
 
 MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
-
     var root = this.components[rootId];
     var componentRoot, transformation;
+
+    var animation = this.components[rootId].getCurrentAnimation();
+    if (animation != null) {
+        animation.apply(this.scene);
+    }
 
     for (var i = 0; i < root.primitiveref.length; i++) {
 
@@ -867,10 +866,6 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
         //transformation
         transformation = component.matrixTransformation;
         this.scene.multMatrix(transformation);
-        var animation = component.getCurrentAnimation();
-        if (animation != null) {
-            animation.apply(this.scene);
-        }
         //material
         var mlength = this.components[componentRoot].materialsId.length;
         materialId = this.components[componentRoot].materialsId[this.scene.matIndex % mlength];
@@ -911,21 +906,6 @@ MySceneGraph.prototype.update = function(dtime) {
 
     }
     for (var component in this.components) {
-        try {
-            this.components[component].update(dtime);
-        }
-        catch (err) {
-            console.debug(this.components[component]);
-            console.error(err);
-        }
+        this.components[component].update(dtime);
     }
-	/*for (var animation in this.animations) {
-		try{
-			this.animations[animation].update(dtime);
-		}
-		catch(err){
-			console.debug(this.animations[animation]);
-			console.error(err);
-		}
-	}*/
 }
