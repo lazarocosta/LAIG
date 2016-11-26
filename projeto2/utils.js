@@ -1,8 +1,13 @@
+var degToRad = Math.PI / 180;
+var radToDeg = 1 / degToRad;
 
 clone = function (array) {
 	var newArray = [];
+	var newObject;
+	console.debug(array);
 	for (var i = 0; i < array.length; i++) {
-		newArray.push(array[i].clone());
+		newObject = array[i].clone();
+		newArray.push(newObject);
 	}
 	console.debug(newArray);
 	return newArray;
@@ -102,26 +107,25 @@ class Spot {
 }
 
 class Component {
-	constructor(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, animations) {
+	constructor(id, matrixTransformation, materialsId, textureId, componentref, primitiveref, inanimations) {
 		this.id = id;
 		this.matrixTransformation = matrixTransformation;
 		this.materialsId = materialsId;
 		this.textureId = textureId;
 		this.componentref = componentref;
 		this.primitiveref = primitiveref;
-		this.animations = clone(animations);
-		if (animations.length > 0) {
-			console.debug(animations);
-			console.debug(this.animations);
-		}
+		console.debug(inanimations);
+		this.animations = clone(inanimations);
+		console.debug(this.animations);
 		this.animationIndex = 0;
-		this.currAnimation = this.animations[0];
+		this.currAnimation = this.animations[this.animationIndex];
 	}
 	update(dtime) {
 		if (this.currAnimation != undefined) {
 			if (this.currAnimation.isOver()) {
 				this.nextAnimation();
 			}
+			//console.log("UPDATE");
 			this.updateAnimation(dtime);
 		}
 	}
@@ -161,7 +165,7 @@ class Animation {
 		this.cTime += time;
 	}
 	isOver() {
-		if (this.currentTime >= this.time) {
+		if (this.cTime >= this.time) {
 			return true;
 		}
 		return false;
@@ -171,44 +175,55 @@ class Animation {
 class LinearAnimation extends Animation {
 	constructor(time, points) {
 		super(time);
-		console.debug(points);
 		this.controlPoints = clone(points); //Has to be an array of Point3D
-		console.log(this.controlPoints);
-		this.currentPosition = this.controlPoints[0];
+		this.currentPosition = this.controlPoints[0].clone();
 		this.point = 1;
-		this.dp;
-		for (var i = 0; i < this.controlPoints.length; i++) {
-			this.dp += Math.sqrt(Math.pow(this.controlPoints[i].x, 2) + Math.pow(this.controlPoints[i].y, 2) + Math.pow(this.controlPoints[i].z, 2));
+		this.dp = 0;
+		for (var i = 0; i < this.controlPoints.length - 1; i++) {
+			this.dp += Math.sqrt(Math.pow(this.controlPoints[i + 1].x - this.controlPoints[i].x, 2) + Math.pow(this.controlPoints[i + 1].y - this.controlPoints[i].y, 2) + Math.pow(this.controlPoints[i + 1].z - this.controlPoints[i].z, 2));
 		}
-		this.v = this.dp / this.controlPoints.length;
+		this.v = this.dp / this.time;
 		this.angles = [0, 0, 0];
+		this.timePerPoint = this.time/(this.controlPoints.length-1);
+		this.pTime = 0;
+		this.ready = true;
+	}
+	nextPoint(){
+		this.currentPosition = this.controlPoints[this.point].clone();
+		this.point++;
+		this.pTime = 0;
 	}
 	update(time) {
-		if (this.isOver()) {
-			return;
+		if (this.ready) {
+			if (this.isOver()) {
+				return;
+			}
+			if (this.pTime >= this.timePerPoint) {
+				this.nextPoint();
+			}
+			var curr = this.currentPosition;
+			var npoint = this.controlPoints[this.point];
+			var vec = [npoint.x - curr.x, npoint.y - curr.y, npoint.z - curr.z];
+			var norm = Math.sqrt(Math.pow(vec[0], 2) + Math.pow(vec[1], 2) + Math.pow(vec[2], 2));
+			var v = [(vec[0] / norm),(vec[1] / norm),(vec[2] / norm)];
+			this.angles[0] = Math.acos(v[0]);
+			this.angles[1] = Math.acos(v[1]);
+			this.angles[2] = Math.acos(v[2]);
+			var vx = this.v * v[0];
+			var vy = this.v * v[1];
+			var vz = this.v * v[2];
+			this.currentPosition.x += vx * time;
+			this.currentPosition.y += vy * time;
+			this.currentPosition.z += vz * time;
+			//console.debug(this);
+			this.pTime += time;
+			super.update(time);
 		}
-		if (this.currentPosition == this.controlPoints[this.point]) {
-			this.point++;
-		}
-		var curr = this.currentPosition;
-		var npoint = this.controlPoints[this.point];
-		var vec = [npoint.x - curr.x, npoint.y - curr.y, npoint.z - curr.z];
-		var norm = Math.sqrt(Math.pow(vec[0], 2), Math.pow(vec[1], 2), Math.pow(vec[2], 2))
-		this.angles[0] = Math.acos(vec[0] / norm);
-		this.angles[1] = Math.acos(vec[1] / norm);
-		this.angles[2] = Math.acos(vec[2] / norm);
-		var vx = this.v * Math.cos(this.angles[0]);
-		var vy = this.v * Math.cos(this.angles[1]);
-		var vz = this.v * Math.cos(this.angles[2]);
-		this.currentPosition.x += vx * time;
-		this.currentPosition.y += vy * time;
-		this.currentPosition.z += vz * time;
-		//console.debug(this.currentPosition);
-		super.update(time);
 	}
 	apply(scene) {
-		scene.translate(this.currentPosition.x, this.currentPosition.z, this.currentPosition.y);
-		scene.rotate(this.angles[3],0,1,0);
+		scene.translate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
+		scene.rotate(this.angles[1], 0, 1, 0);
+		//console.debug(this.currentPosition);
 	}
 	clone() {
 		var newAnimation = new LinearAnimation(this.time, this.controlPoints);
@@ -222,36 +237,45 @@ class CircularAnimation extends Animation {
 		if (!(center instanceof Point3D)) {
 			throw new TypeError("Center of circular animation must be of type Point3D");
 		}
-		var degToRad = Math.PI / 180;
-		this.center = center; //Center of the animation as Point3D
+		this.center = center.clone(); //Center of the animation as Point3D
 		this.radius = radius; //Radius of the animation as int
 		this.iAngle = iAngle * degToRad; //Initial angle
 		this.rAngle = rAngle * degToRad; //Rotation angle
 		this.angle = this.iAngle;
-		this.sAngle = this.rAngle/this.time;
+		this.sAngle = this.rAngle / this.time;
 		this.dAngle = this.rAngle / this.time;
-		this.currentPosition = new Point3D(0,0,0);
+		this.currentPosition = new Point3D(0, 0, 0);
 		this.updatePosition();
+		this.ready = true;
 	}
-	updatePosition(){
-		this.currentPosition.x = this.center.x + this.radius*Math.cos(this.angle);
+	updatePosition() {
+		this.currentPosition.x = this.center.x + this.radius * Math.cos(this.angle);
 		this.currentPosition.y = this.center.y;
-		this.currentPosition.z = this.center.z + this.radius*Math.sin(this.angle);
+		this.currentPosition.z = this.center.z + this.radius * Math.sin(this.angle);
+		//console.debug(this.currentPosition);
 	}
 	update(time) {
-		if (this.isOver()) {
-			return;
+		if (this.ready) {
+			if (this.isOver()) {
+				return;
+			}
+			this.angle += this.sAngle * time;
+			this.updatePosition();
+			super.update(time);
 		}
-		this.angle += this.sAngle * time;
-		this.updatePosition();
-		super.update(time);
 	}
 	apply(scene) {
-		scene.translate(this.currentPosition.x,this.currentPosition.y,this.currentPosition.z);
-		scene.rotate(this.angle,0,1,0);
+		scene.rotate(this.angle, 0, 1, 0);
+		scene.translate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
+		
 	}
 	clone() {
-		var newAnimation = new CircularAnimation(this.time, this.center, this.radius, this.iAngle, this.rAngle);
+		var time = this.time;
+		var center = this.center;
+		var radius = this.radius;
+		var iAngle = this.iAngle * radToDeg;
+		var rAngle = this.rAngle * radToDeg;
+		var newAnimation = new CircularAnimation(time, center, radius, iAngle, rAngle);
 		return newAnimation;
 	}
 }

@@ -523,7 +523,7 @@ MySceneGraph.prototype.parseAnimations = function(element) {
                     cpoints.push(point);
                 }
                 this.animations[id] = new LinearAnimation(span, cpoints);
-				console.debug(this.animations);
+				//console.debug(this.animations);
                 break;
             case 'circular':
                 var cx = this.reader.getFloat(animation, 'centerx');
@@ -864,6 +864,7 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
         this.scene.pushMatrix();
         componentRoot = root.componentref[i];
         var component = this.components[componentRoot];
+        //animation
         var animation = component.getCurrentAnimation();
         if (animation != null) {
 			//console.debug(animation);
@@ -904,11 +905,11 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
 
 MySceneGraph.prototype.update = function(dtime) {
     for (var key in this.primitives) {
-        if (this.primitives[key] instanceof Chessboard)
+        /*if (this.primitives[key] instanceof Chessboard)
             this.primitives[key].updateMark();
 
-        if (this.primitives[key] instanceof Vehicle)
-            this.primitives[key].update();
+        /*if (this.primitives[key] instanceof Vehicle)
+            this.primitives[key].update();*/
 
     }
     for (var component in this.components) {

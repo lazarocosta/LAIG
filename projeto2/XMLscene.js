@@ -10,7 +10,7 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
-    this.setUpdatePeriod(500);
+    this.setUpdatePeriod(1/120);
 
     this.initCameras();
 
@@ -229,5 +229,5 @@ XMLscene.prototype.update = function(currTime){
     }
     this.currTime = currTime;
 
-    this.graph.update();
+    this.graph.update(this.dTime/1000);
 }

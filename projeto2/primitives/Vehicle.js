@@ -102,8 +102,8 @@ Vehicle.prototype.update = function () {
 Vehicle.prototype.display = function () {
     this.scene.pushMatrix();
 
-    this.scene.rotate(this.angle, 0,1,0);
-    this.scene.translate(5,5,0);
+    //this.scene.rotate(this.angle, 0,1,0);
+    //this.scene.translate(5,5,0);
 
     this.scene.pushMatrix();
     this.vermelhoAppear.apply();
