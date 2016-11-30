@@ -182,13 +182,12 @@ class LinearAnimation extends Animation {
 		this.point = 1;
 		this.dp = 0;
 		for (var i = 0; i < this.controlPoints.length - 1; i++) {
-			this.dp += Math.sqrt(Math.pow(this.controlPoints[i + 1].x - this.controlPoints[i].x, 2) +
-					  			 Math.pow(this.controlPoints[i + 1].y - this.controlPoints[i].y, 2) +
-					  			 Math.pow(this.controlPoints[i + 1].z - this.controlPoints[i].z, 2));
+			this.dp += this.distance(i);
 		}
 		this.v = this.dp / this.time;
 		this.angles = [0, 0, 0];
-		this.timePerPoint = this.time / (this.controlPoints.length - 1);
+		//this.timePerPoint = this.time / (this.controlPoints.length - 1);
+		this.timePerPoint= this.timePoint();
 		this.pTime = 0;
 		this.ready = true;
 	}
@@ -196,7 +195,21 @@ class LinearAnimation extends Animation {
 		this.currentPosition = this.controlPoints[this.point].clone();
 		this.point++;
 		this.pTime = 0;
+		this.timePerPoint= this.timePoint();
 	}
+
+	distance(indexPoint){
+		var distance = Math.sqrt(Math.pow(this.controlPoints[indexPoint + 1].x - this.controlPoints[indexPoint].x, 2) +
+					  			 Math.pow(this.controlPoints[indexPoint + 1].y - this.controlPoints[indexPoint].y, 2) +
+			       			 	 Math.pow(this.controlPoints[indexPoint + 1].z - this.controlPoints[indexPoint].z, 2));			
+		return distance;
+	}
+
+	timePoint(){
+		var timePerPoint= this.distance(this.point-1) / this.v;
+		return timePerPoint;
+	}
+
 	update(time) {
 		if (this.ready) {
 			if (this.isOver()) {
@@ -254,7 +267,6 @@ class CircularAnimation extends Animation {
 		this.rAngle = rAngle * degToRad; //Rotation angle
 		this.angle = this.iAngle;
 		this.dAngle = this.rAngle / this.time;
-		//this.sAngle = this.rAngle / this.time;
 		this.currentPosition = new Point3D(0, 0, 0);
 		this.updatePosition();
 		this.ready = true;
@@ -263,7 +275,7 @@ class CircularAnimation extends Animation {
 		this.currentPosition.x = this.center.x + this.radius * Math.sin(this.angle);
 		this.currentPosition.y = this.center.y;
 		this.currentPosition.z = this.center.z + this.radius * Math.cos(this.angle);
-		console.debug( this.center);
+		//console.debug( this.center);
 	}
 	update(time) {
 		if (this.ready) {
@@ -277,10 +289,11 @@ class CircularAnimation extends Animation {
 		}
 	}
 	apply(scene) {
-		console.debug(this.currentPosition);
+		//console.debug(this.currentPosition);
 		//scene.rotate(this.angle, 0, 1, 0);
 		scene.translate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
-		scene.rotate(this.angle, 0, 1, 0);
+		var angle = this.angle - Math.PI/2;
+		scene.rotate(angle, 0, 1, 0);
 	
 	}
 	clone() {
