@@ -4,12 +4,12 @@ var radToDeg = 1 / degToRad;
 clone = function (array) {
 	var newArray = [];
 	var newObject;
-	console.debug(array);
+	//console.debug(array);
 	for (var i = 0; i < array.length; i++) {
 		newObject = array[i].clone();
 		newArray.push(newObject);
 	}
-	console.debug(newArray);
+	//console.debug(newArray);
 	return newArray;
 }
 
@@ -114,11 +114,12 @@ class Component {
 		this.textureId = textureId;
 		this.componentref = componentref;
 		this.primitiveref = primitiveref;
-		console.debug(inanimations);
+		//console.debug(inanimations);
 		this.animations = clone(inanimations);
-		console.debug(this.animations);
+		//console.debug(this.animations);
 		this.animationIndex = 0;
 		this.currAnimation = this.animations[this.animationIndex];
+		//console.debug(this.currAnimation);
 	}
 	update(dtime) {
 		if (this.currAnimation != undefined) {
@@ -131,15 +132,16 @@ class Component {
 	}
 	nextAnimation() {
 		if (this.animationIndex != this.animations.length - 1) {
-			this.animationIndex += 1;
+			this.animationIndex++;
 			this.currAnimation = this.animations[this.animationIndex];
 		}
 	}
-	applyAnimation() {
+	/*applyAnimation() {
 		if (this.currAnimation != undefined) {
+			console.log('aqui');
 			this.currAnimation.apply();
 		}
-	}
+	}*/
 	updateAnimation(dtime) {
 		if (this.currAnimation != undefined) {
 			this.currAnimation.update(dtime);
@@ -180,15 +182,17 @@ class LinearAnimation extends Animation {
 		this.point = 1;
 		this.dp = 0;
 		for (var i = 0; i < this.controlPoints.length - 1; i++) {
-			this.dp += Math.sqrt(Math.pow(this.controlPoints[i + 1].x - this.controlPoints[i].x, 2) + Math.pow(this.controlPoints[i + 1].y - this.controlPoints[i].y, 2) + Math.pow(this.controlPoints[i + 1].z - this.controlPoints[i].z, 2));
+			this.dp += Math.sqrt(Math.pow(this.controlPoints[i + 1].x - this.controlPoints[i].x, 2) +
+					  			 Math.pow(this.controlPoints[i + 1].y - this.controlPoints[i].y, 2) +
+					  			 Math.pow(this.controlPoints[i + 1].z - this.controlPoints[i].z, 2));
 		}
 		this.v = this.dp / this.time;
 		this.angles = [0, 0, 0];
-		this.timePerPoint = this.time/(this.controlPoints.length-1);
+		this.timePerPoint = this.time / (this.controlPoints.length - 1);
 		this.pTime = 0;
 		this.ready = true;
 	}
-	nextPoint(){
+	nextPoint() {
 		this.currentPosition = this.controlPoints[this.point].clone();
 		this.point++;
 		this.pTime = 0;
@@ -205,13 +209,20 @@ class LinearAnimation extends Animation {
 			var npoint = this.controlPoints[this.point];
 			var vec = [npoint.x - curr.x, npoint.y - curr.y, npoint.z - curr.z];
 			var norm = Math.sqrt(Math.pow(vec[0], 2) + Math.pow(vec[1], 2) + Math.pow(vec[2], 2));
-			var v = [(vec[0] / norm),(vec[1] / norm),(vec[2] / norm)];
+			//console.log(norm);
+			//console.log(vec);
+			var v = [(vec[0] / norm), (vec[1] / norm), (vec[2] / norm)];
+			//console.debug(v);
 			this.angles[0] = Math.acos(v[0]);
 			this.angles[1] = Math.acos(v[1]);
 			this.angles[2] = Math.acos(v[2]);
 			var vx = this.v * v[0];
 			var vy = this.v * v[1];
 			var vz = this.v * v[2];
+			//console.log(vx);
+			//console.log(vy);
+			//console.log(vz);
+
 			this.currentPosition.x += vx * time;
 			this.currentPosition.y += vy * time;
 			this.currentPosition.z += vz * time;
@@ -242,32 +253,35 @@ class CircularAnimation extends Animation {
 		this.iAngle = iAngle * degToRad; //Initial angle
 		this.rAngle = rAngle * degToRad; //Rotation angle
 		this.angle = this.iAngle;
-		this.sAngle = this.rAngle / this.time;
 		this.dAngle = this.rAngle / this.time;
+		//this.sAngle = this.rAngle / this.time;
 		this.currentPosition = new Point3D(0, 0, 0);
 		this.updatePosition();
 		this.ready = true;
 	}
 	updatePosition() {
-		this.currentPosition.x = this.center.x + this.radius * Math.cos(this.angle);
+		this.currentPosition.x = this.center.x + this.radius * Math.sin(this.angle);
 		this.currentPosition.y = this.center.y;
-		this.currentPosition.z = this.center.z + this.radius * Math.sin(this.angle);
-		//console.debug(this.currentPosition);
+		this.currentPosition.z = this.center.z + this.radius * Math.cos(this.angle);
+		console.debug( this.center);
 	}
 	update(time) {
 		if (this.ready) {
 			if (this.isOver()) {
+				//console.log('acabou');
 				return;
 			}
-			this.angle += this.sAngle * time;
+			this.angle += this.dAngle * time;
 			this.updatePosition();
 			super.update(time);
 		}
 	}
 	apply(scene) {
-		scene.rotate(this.angle, 0, 1, 0);
+		console.debug(this.currentPosition);
+		//scene.rotate(this.angle, 0, 1, 0);
 		scene.translate(this.currentPosition.x, this.currentPosition.y, this.currentPosition.z);
-		
+		scene.rotate(this.angle, 0, 1, 0);
+	
 	}
 	clone() {
 		var time = this.time;

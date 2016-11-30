@@ -333,9 +333,6 @@ MySceneGraph.prototype.parseMaterials = function(element) {
     var materials = element.children;
     var mlength = materials.length;
 
-	/*for (var i = 0; i < materials.length; i++)
-		console.log(materials[i]);*/
-
     if (mlength < 1)
         return "zero materials found";
 
@@ -405,7 +402,6 @@ MySceneGraph.prototype.parseMaterials = function(element) {
 
 MySceneGraph.prototype.readTransformation = function(element) {
     var transformation = element.children;
-    //console.debug(element);
     var length = transformation.length;
 
     if (length < 1) {
@@ -846,6 +842,7 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
     var root = this.components[rootId];
     var componentRoot, transformation;
 
+    //primitives
     for (var i = 0; i < root.primitiveref.length; i++) {
 
         var type = root.primitiveref[i];
@@ -859,6 +856,7 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
         rootMaterial.setTexture(null);
     }
 
+    //node's componentref
     var materialId, textureId, materialChildren, textureChildren
     for (var i = 0; i < root.componentref.length; i++) {
         this.scene.pushMatrix();
@@ -906,12 +904,8 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
 MySceneGraph.prototype.update = function(dtime) {
     for (var key in this.primitives) {
         /*if (this.primitives[key] instanceof Chessboard)
-            this.primitives[key].updateMark();
-
-        /*if (this.primitives[key] instanceof Vehicle)
-            this.primitives[key].update();*/
-
-    }
+          this.primitives[key].updateMark();
+    */}
     for (var component in this.components) {
         this.components[component].update(dtime);
     }

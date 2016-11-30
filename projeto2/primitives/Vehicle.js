@@ -79,7 +79,6 @@ var points2 =[
     this.copa = new Patch(this.scene, 3,3,20,20, points2);
 	this.circle = new Circle(this.scene,0.3,20);
     this.torus = new Torus(this.scene, 0.2, 0.45, 30, 5);
-    this.update();
 
     this.vermelhoAppear = new CGFappearance(scene);
     this.vermelhoAppear.loadTexture("resources\\vermelho.jpg" );
@@ -95,16 +94,9 @@ var points2 =[
 Vehicle.prototype = Object.create(CGFobject.prototype);
 Vehicle.prototype.constructor = Vehicle;
 
-Vehicle.prototype.update = function () {
-    this.angle +=this.increment* Math.PI/180;
-}
-
 Vehicle.prototype.display = function () {
     this.scene.pushMatrix();
-
-    //this.scene.rotate(this.angle, 0,1,0);
-    //this.scene.translate(5,5,0);
-
+    //this.scene.translate(10,0,0);
     this.scene.pushMatrix();
     this.vermelhoAppear.apply();
 	this.body.display();
