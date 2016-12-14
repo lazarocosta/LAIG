@@ -684,6 +684,13 @@ MySceneGraph.prototype.parsePrimitives = function(element) {
             case 'vehicle':
                 this.primitives[id] = new Vehicle(this.scene);
                 break;
+            case 'pyramid':
+                this.primitives[id] = new Pyramid(this.scene);
+                break;
+            case 'piece':
+                var height = this.reader.getFloat(object, 'height');
+                this.primitives[id] = new Piece(this.scene, height);
+                break;
             default:
                 console.warn("No such primitive named '" + objname + "'!");
                 break;
@@ -852,7 +859,9 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
         }
 
         rootMaterial.apply();
+        this.scene.pushMatrix();
         this.primitives[type].display();
+        this.scene.popMatrix();
         rootMaterial.setTexture(null);
     }
 
