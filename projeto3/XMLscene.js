@@ -1,4 +1,3 @@
-
 function XMLscene(myInterface) {
     CGFscene.call(this);
     this.interface = myInterface;
@@ -10,7 +9,7 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function(application) {
     CGFscene.prototype.init.call(this, application);
 
-    this.setUpdatePeriod(1/120);
+    this.setUpdatePeriod(1 / 120);
 
     this.initCameras();
 
@@ -55,8 +54,7 @@ XMLscene.prototype.initLights = function() {
         if (omni.enable) {
             this.lights[i].enable();
             this.lights[i].setVisible(true);
-        }
-        else {
+        } else {
             this.lights[i].disable();
             this.lights[i].setVisible(false);
         }
@@ -84,8 +82,7 @@ XMLscene.prototype.initLights = function() {
         if (spot.enable) {
             this.lights[i].enable();
             this.lights[i].setVisible(true);
-        }
-        else {
+        } else {
             this.lights[i].disable();
             this.lights[i].setVisible(false);
         }
@@ -203,31 +200,33 @@ XMLscene.prototype.display = function() {
     };
 
     //var triangle = new Triangle(this, 0, 0, -2, -2, -2, -2, -2, 0, -2);
-	/*var quadrado = new Rectangle(this, 3, 2, 2, 3);
-	var torus = new Torus(this, 1, 2, 10, 10);
-	var sphere = new Sphere(this, 10, 10, 0.7);*/
+    /*var quadrado = new Rectangle(this, 3, 2, 2, 3);
+    var torus = new Torus(this, 1, 2, 10, 10);
+    var sphere = new Sphere(this, 10, 10, 0.7);*/
 
     //this.graph.primitives[0].display();
     // triangle.display();
     // quadrado.display();
     //torus.display();
-	/*this.pushMatrix();
-	this.translate(0, -5, 0);
-	sphere.display();
-	this.popMatrix();*/
+    /*this.pushMatrix();
+    this.translate(0, -5, 0);
+    sphere.display();
+    this.popMatrix();*/
 
-	//var este =new Plane(this, 10, 10, 10, 10);
-	//este.display();
+    //var este =new Plane(this, 10, 10, 10, 10);
+    //este.display();
+
+
 
     this.updateLights();
 
 };
 
-XMLscene.prototype.update = function(currTime){
-    if(this.currTime != -1){
+XMLscene.prototype.update = function(currTime) {
+    if (this.currTime != -1) {
         this.dTime = currTime - this.currTime;
     }
     this.currTime = currTime;
 
-    this.graph.update(this.dTime/1000);
+    this.graph.update(this.dTime / 1000);
 }

@@ -1,4 +1,3 @@
-
 function MySceneGraph(filename, scene) {
     this.loadedOk = null;
 
@@ -26,11 +25,11 @@ function MySceneGraph(filename, scene) {
     this.components = {};
 
 
-	/*
-	 * Read the contents of the xml file, and refer to this class for loading and error handlers.
-	 * After the file is read, the reader calls onXMLReady on this object.
-	 * If any error occurs, the reader calls onXMLError on this object, with an error message
-	 */
+    /*
+     * Read the contents of the xml file, and refer to this class for loading and error handlers.
+     * After the file is read, the reader calls onXMLReady on this object.
+     * If any error occurs, the reader calls onXMLError on this object, with an error message
+     */
 
     this.reader.open('scenes/' + filename, this);
 }
@@ -515,11 +514,11 @@ MySceneGraph.prototype.parseAnimations = function(element) {
                     var px = this.reader.getFloat(cpoint, 'xx');
                     var py = this.reader.getFloat(cpoint, 'yy');
                     var pz = this.reader.getFloat(cpoint, 'zz');
-					var point = new Point3D(px, py, pz);
+                    var point = new Point3D(px, py, pz);
                     cpoints.push(point);
                 }
                 this.animations[id] = new LinearAnimation(span, cpoints);
-				//console.debug(this.animations);
+                //console.debug(this.animations);
                 break;
             case 'circular':
                 var cx = this.reader.getFloat(animation, 'centerx');
@@ -690,6 +689,9 @@ MySceneGraph.prototype.parsePrimitives = function(element) {
             case 'piece':
                 var height = this.reader.getFloat(object, 'height');
                 this.primitives[id] = new Piece(this.scene, height);
+                break;
+            case 'board':
+                this.primitives[id] = new Board(this.scene);
                 break;
             default:
                 console.warn("No such primitive named '" + objname + "'!");
@@ -874,7 +876,7 @@ MySceneGraph.prototype.init = function(rootId, rootMaterial, texture) {
         //animation
         var animation = component.getCurrentAnimation();
         if (animation != null) {
-			//console.debug(animation);
+            //console.debug(animation);
             animation.apply(this.scene);
         }
         //transformation
@@ -914,7 +916,8 @@ MySceneGraph.prototype.update = function(dtime) {
     for (var key in this.primitives) {
         /*if (this.primitives[key] instanceof Chessboard)
           this.primitives[key].updateMark();
-    */}
+    */
+    }
     for (var component in this.components) {
         this.components[component].update(dtime);
     }
