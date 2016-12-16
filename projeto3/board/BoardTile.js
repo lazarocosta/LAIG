@@ -50,3 +50,7 @@ BoardTile.prototype.enableselection = function() {
 BoardTile.prototype.disableselection = function() {
 	this.selectable = false;
 }*/
+
+BoardTile.prototype.getPiece = function() {
+    return this.piece;
+}

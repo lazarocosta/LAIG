@@ -16,8 +16,9 @@ Piece.prototype = Object.create(CGFobject.prototype);
 Piece.prototype.constructor = Piece;
 
 Piece.prototype.setTile = function(origin, dest) {
-    origin.setpiece(null);
-    dest.setpiece(this);
+    console.debug(origin);
+    origin.setPiece(null);
+    dest.setPiece(this);
     this.tile = dest;
 };
 
