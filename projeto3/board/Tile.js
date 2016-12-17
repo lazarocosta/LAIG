@@ -1,9 +1,9 @@
 /**
- * BoardTile
+ * Tile
  * @constructor
  */
 
-function BoardTile(scene, id) {
+function Tile(scene, id) {
     CGFobject.call(this, scene);
 
     this.id = id;
@@ -13,11 +13,11 @@ function BoardTile(scene, id) {
     //this.selectable=false;
 };
 
-BoardTile.prototype = Object.create(CGFobject.prototype);
-BoardTile.prototype.constructor = BoardTile;
+Tile.prototype = Object.create(CGFobject.prototype);
+Tile.prototype.constructor = Tile;
 
 
-BoardTile.prototype.display = function() {
+Tile.prototype.display = function() {
 
     this.scene.pushMatrix();
 
@@ -34,23 +34,23 @@ BoardTile.prototype.display = function() {
     this.scene.popMatrix();
 }
 
-BoardTile.prototype.setPiece = function(piece) {
+Tile.prototype.setPiece = function(piece) {
     this.piece = piece;
 }
 
 /*
-BoardTile.prototype.select = function() {
+Tile.prototype.select = function() {
 	this.selected = !this.selected;
 }
 
-BoardTile.prototype.enableselection = function() {
+Tile.prototype.enableselection = function() {
 	this.selectable = true;
 }
 
-BoardTile.prototype.disableselection = function() {
+Tile.prototype.disableselection = function() {
 	this.selectable = false;
 }*/
 
-BoardTile.prototype.getPiece = function() {
+Tile.prototype.getPiece = function() {
     return this.piece;
 }

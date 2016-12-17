@@ -2,13 +2,14 @@
  * Piece
  * @constructor
  */
-function Piece(scene, height, tile) {
+function Piece(scene, height, tile, Player) {
     CGFobject.call(this, scene);
 
     this.pyramid = new Pyramid(this.scene);
     this.razonZ = 0.9;
     this.height = height;
     this.tile = tile;
+    this.player = Player;
 
 };
 
@@ -45,3 +46,7 @@ Piece.prototype.display = function() {
     this.scene.popMatrix();
 
 };
+
+Piece.prototype.getPlayer = function() {
+    return this.player;
+}
