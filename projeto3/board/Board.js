@@ -46,14 +46,14 @@ Board.prototype.initBoard = function() {
 
 
     //Player2
-    this.bigPieceP2_1 = new Piece(this.scene, 4, this.gameBoard.tiles[0][8], 1);
-    this.bigPieceP2_2 = new Piece(this.scene, 4, this.gameBoard.tiles[8][8], 1);
-    this.normalPieceP2_1 = new Piece(this.scene, 3, this.gameBoard.tiles[2][7], 1);
-    this.normalPieceP2_2 = new Piece(this.scene, 3, this.gameBoard.tiles[6][7], 1);
-    this.smallPieceP2_1 = new Piece(this.scene, 2, this.gameBoard.tiles[4][7], 1);
-    this.smallPieceP2_2 = new Piece(this.scene, 2, this.gameBoard.tiles[5][7], 1);
-    this.smallPieceP2_3 = new Piece(this.scene, 2, this.gameBoard.tiles[6][7], 1);
-    this.smallPieceP2_4 = new Piece(this.scene, 2, this.gameBoard.tiles[4][6], 1);
+    this.bigPieceP2_1 = new Piece(this.scene, 4, this.gameBoard.tiles[0][8], 2);
+    this.bigPieceP2_2 = new Piece(this.scene, 4, this.gameBoard.tiles[8][8], 2);
+    this.normalPieceP2_1 = new Piece(this.scene, 3, this.gameBoard.tiles[2][7], 2);
+    this.normalPieceP2_2 = new Piece(this.scene, 3, this.gameBoard.tiles[6][7], 2);
+    this.smallPieceP2_1 = new Piece(this.scene, 2, this.gameBoard.tiles[4][7], 2);
+    this.smallPieceP2_2 = new Piece(this.scene, 2, this.gameBoard.tiles[5][7], 2);
+    this.smallPieceP2_3 = new Piece(this.scene, 2, this.gameBoard.tiles[6][7], 2);
+    this.smallPieceP2_4 = new Piece(this.scene, 2, this.gameBoard.tiles[4][6], 2);
 
     this.gameBoard.tiles[0][8].setPiece(this.bigPieceP2_1);
     this.gameBoard.tiles[8][8].setPiece(this.bigPieceP2_2);
