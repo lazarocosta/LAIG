@@ -21,6 +21,7 @@ XMLscene.prototype.init = function(application) {
     this.gl.depthFunc(this.gl.LEQUAL);
 
     this.enableTextures(true);
+    this.setPickEnabled(true);
 
     this.axis = new CGFaxis(this);
 
@@ -165,7 +166,30 @@ XMLscene.prototype.onGraphLoaded = function() {
 
 };
 
+XMLscene.prototype.logPicking = function() {
+    if (this.pickMode == false) {
+
+        if (this.pickResults != null && this.pickResults.length > 0) {
+            for (var i = 0; i < this.pickResults.length; i++) {
+                var obj = this.pickResults[i][0];
+                if (obj) {
+                    obj.select();
+                    var customId = this.pickResults[i][1];
+                    console.log("Picked object: " + obj + ", with pick id " + customId);
+                }
+            }
+            this.pickResults.splice(0, this.pickResults.length);
+        }
+    }
+}
+
 XMLscene.prototype.display = function() {
+
+
+    this.logPicking();
+    this.clearPickRegistration();
+
+
     // ---- BEGIN Background, camera and axis setup
 
     // Clear image and depth buffer everytime we update the scene
@@ -198,26 +222,6 @@ XMLscene.prototype.display = function() {
         this.graph.display();
 
     };
-
-    //var triangle = new Triangle(this, 0, 0, -2, -2, -2, -2, -2, 0, -2);
-    /*var quadrado = new Rectangle(this, 3, 2, 2, 3);
-    var torus = new Torus(this, 1, 2, 10, 10);
-    var sphere = new Sphere(this, 10, 10, 0.7);*/
-
-    //this.graph.primitives[0].display();
-    // triangle.display();
-    // quadrado.display();
-    //torus.display();
-    /*this.pushMatrix();
-    this.translate(0, -5, 0);
-    sphere.display();
-    this.popMatrix();*/
-
-    //var este =new Plane(this, 10, 10, 10, 10);
-    //este.display();
-
-
-
     this.updateLights();
 
 };

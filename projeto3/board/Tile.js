@@ -9,8 +9,8 @@ function Tile(scene, id) {
     this.id = id;
     this.place = new Plane(scene, 1, 1, 1, 1);
     this.piece = null;
-    //this.selected=false;
-    //this.selectable=false;
+    this.selected = false;
+    this.selectable = false;
 };
 
 Tile.prototype = Object.create(CGFobject.prototype);
@@ -21,11 +21,12 @@ Tile.prototype.display = function() {
 
     this.scene.pushMatrix();
 
-    /*	if(this.selectable)
-      	this.scene.registerForPick(this.id, this);
+    if (this.selectable)
+        this.scene.registerForPick(this.id, this);
 
-    	if(this.selected)
-    		this.scene.translate(0,0,1);*/
+    if (this.selected) {
+        this.scene.translate(0, 0, 1);
+    }
 
     if (this.piece != null)
         this.piece.display();
@@ -38,18 +39,18 @@ Tile.prototype.setPiece = function(piece) {
     this.piece = piece;
 }
 
-/*
+
 Tile.prototype.select = function() {
-	this.selected = !this.selected;
+    this.selected = !this.selected;
 }
 
 Tile.prototype.enableselection = function() {
-	this.selectable = true;
+    this.selectable = true;
 }
 
 Tile.prototype.disableselection = function() {
-	this.selectable = false;
-}*/
+    this.selectable = false;
+}
 
 Tile.prototype.getPiece = function() {
     return this.piece;

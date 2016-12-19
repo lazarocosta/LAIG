@@ -13,10 +13,6 @@ function Board(scene) {
     this.IndexPlayer1 = 0;
     this.IndexPlayer2 = 0;
 
-
-
-
-
     this.initBoard();
 };
 
@@ -64,6 +60,11 @@ Board.prototype.initBoard = function() {
     this.gameBoard.tiles[5][7].setPiece(this.smallPieceP2_3);
     this.gameBoard.tiles[4][6].setPiece(this.smallPieceP2_4);
 
+    /* this.remove(0, 0);
+     this.remove(2, 1);
+     this.remove(8, 0);
+     this.remove(0, 8);*/
+
 
 };
 
@@ -79,10 +80,9 @@ Board.prototype.display = function() {
 }
 
 
-Board.prototype.remove = function(oldcol, oldrow, Player) {
+Board.prototype.remove = function(oldcol, oldrow) {
     var origin = this.gameBoard.tiles[oldcol][oldrow];
     var piece = this.gameBoard.tiles[oldcol][oldrow].getPiece();
-    console.debug(piece);
     var player = piece.getPlayer();
     var dest;
 
@@ -92,7 +92,7 @@ Board.prototype.remove = function(oldcol, oldrow, Player) {
     }
 
     if (player == 2) {
-        dest = this.auxiliarBoardP1.tiles[this.IndexPlayer2];
+        dest = this.auxiliarBoardP2.tiles[this.IndexPlayer2];
         this.IndexPlayer2++;
     }
 
