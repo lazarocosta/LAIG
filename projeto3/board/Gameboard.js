@@ -7,6 +7,8 @@ function Gameboard(scene) {
     this.scene = scene;
 
     this.tiles = new Array(9);
+    this.texture = new CGFappearance(scene);
+    this.texture.loadTexture("resources\\folhas.jpg");
 
     this.initGameboard();
 };
@@ -22,8 +24,7 @@ Gameboard.prototype.initGameboard = function() {
 
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            var id = parseInt((i + 1) + "" + (j + 1));
-            console.log(id);
+            var id = (i + 1) + "" + (j + 1);
             this.tiles[j][i] = new Tile(this.scene, id, null);
         }
     }
@@ -38,8 +39,6 @@ Gameboard.prototype.display = function() {
     this.scene.pushMatrix();
     this.scene.translate(0.5, 0.5, 0);
 
-
-
     //this.scene.scale(0.4,0.4,0.4);
 
     for (var i = 0; i < 9; i++) {
@@ -49,6 +48,7 @@ Gameboard.prototype.display = function() {
             this.scene.translate((j + j * 0.05), i + i * 0.05, 0);
             this.scene.registerForPick(this.tiles[j][i].id, this.tiles[j][i]);
             //this.logPicking();
+            // this.texture.apply();
             this.tiles[j][i].display();
             this.scene.popMatrix();
         }
@@ -63,6 +63,7 @@ Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
     piece.setTile(origin, dest);
 }
 
+/*
 
 Gameboard.prototype.logPicking = function() {
     if (this.scene.pickMode == false) {
@@ -79,4 +80,4 @@ Gameboard.prototype.logPicking = function() {
             this.scene.pickResults.splice(0, this.scene.pickResults.length);
         }
     }
-}
+}*/

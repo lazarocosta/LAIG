@@ -16,10 +16,8 @@ AuxBoard.prototype.constructor = AuxBoard;
 
 AuxBoard.prototype.initAuxBoard = function() {
 
-
     for (var i = 0; i < 9; i++) {
-        var id = (i + 1) + "";
-        console.log(id);
+        var id = i + 1;
         this.tiles[i] = new Tile(this.scene, id, null);
     }
 
