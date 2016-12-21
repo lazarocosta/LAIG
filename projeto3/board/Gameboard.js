@@ -7,8 +7,18 @@ function Gameboard(scene) {
     this.scene = scene;
 
     this.tiles = new Array(9);
-    this.texture = new CGFappearance(scene);
-    this.texture.loadTexture("resources\\folhas.jpg");
+
+    var texture = new CGFtexture(scene, "resources\\vermelho.jpg");
+    var texture1 = new CGFtexture(scene, "resources\\vidro.jpg");
+    var texture2 = new CGFtexture(scene, "resources\\madeira.jpg");
+
+    this.materialPlace = new CGFappearance(scene);
+    this.materialSelected = new CGFappearance(scene);
+    this.materialSelectable = new CGFappearance(scene);
+
+    this.materialPlace.setTexture(texture);
+    this.materialSelected.setTexture(texture1);
+    this.materialSelectable.setTexture(texture2);
 
     this.initGameboard();
 };
@@ -25,7 +35,7 @@ Gameboard.prototype.initGameboard = function() {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             var id = parseInt((i + 1) + "" + (j + 1));
-            this.tiles[j][i] = new Tile(this.scene, id, null);
+            this.tiles[j][i] = new Tile(this.scene, id, null, this.materialPlace, this.materialSelected, this.materialSelectable);
         }
     }
 };
@@ -46,12 +56,9 @@ Gameboard.prototype.display = function() {
 
             this.scene.pushMatrix();
             this.scene.translate((j + j * 0.05), i + i * 0.05, 0);
-            //this.scene.registerForPick(1, this);
-            // this.texture.apply();
             if (!(j == 4 && i == 1)) {
                 this.tiles[j][i].display();
             }
-            this.scene.clearPickRegistration();
             this.scene.popMatrix();
 
         }
@@ -59,29 +66,10 @@ Gameboard.prototype.display = function() {
     this.scene.popMatrix();
 }
 
-/*
+
 Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
     var piece = this.tiles[oldcol][oldrow].getPiece();
     var origin = this.tiles[oldcol][oldrow];
     var dest = this.tiles[newcol][newrow]
     piece.setTile(origin, dest);
 }
-
-
-
-Gameboard.prototype.logPicking = function() {
-    if (this.scene.pickMode == false) {
-        if (this.scene.pickResults != null && this.scene.pickResults.length > 0) {
-            for (var i = 0; i < this.scene.pickResults.length; i) {
-                var obj = this.scene.pickResults[i][0];
-                if (obj) {
-                    var Id = this.scene.pickResults[i][1];
-                    obj.select();
-                    console.log(obj);
-                    console.log("Picked with pick id ", this.id);
-                }
-            }
-            this.scene.pickResults.splice(0, this.scene.pickResults.length);
-        }
-    }
-}*/

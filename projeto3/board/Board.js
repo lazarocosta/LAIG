@@ -36,7 +36,7 @@ Board.prototype.initBoard = function() {
     this.gameBoard.tiles[2][1].setPiece(this.normalPieceP1_1);
     this.gameBoard.tiles[6][1].setPiece(this.normalPieceP1_2);
     this.gameBoard.tiles[3][1].setPiece(this.smallPieceP1_1);
-    // this.gameBoard.tiles[4][1].setPiece(this.smallPieceP1_2);
+    this.gameBoard.tiles[4][1].setPiece(this.smallPieceP1_2);
     this.gameBoard.tiles[5][1].setPiece(this.smallPieceP1_3);
     this.gameBoard.tiles[4][2].setPiece(this.smallPieceP1_4);
 

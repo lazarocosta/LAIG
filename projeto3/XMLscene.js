@@ -175,7 +175,7 @@ XMLscene.prototype.logPicking = function() {
                 console.debug(obj);
                 if (obj) {
                     console.debug(obj);
-
+                    obj.select();
                     var customId = this.pickResults[i][1];
                     console.log("Picked object: " + obj + ", with pick id " + customId);
                 }

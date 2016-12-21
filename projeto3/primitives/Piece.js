@@ -14,7 +14,7 @@ function Piece(scene, height, tile, player) {
     this.scene = scene;
 
     if (player == 1)
-        this.texture.loadTexture("resources\\vermelho.jpg");
+        this.texture.loadTexture("resources\\casa.jpg");
 
     if (player == 2)
         this.texture.loadTexture("resources\\preto.jpg");
@@ -44,15 +44,18 @@ Piece.prototype.display = function() {
 
 
     for (var i = 0; i <= this.height; i++) {
-        //this.texture.apply();
+
+        this.texture.apply();
         //this.scene.registerForPick(this.height, this);
         this.pyramid.display();
+
         this.razon -= 0.05
         this.ofset = this.ofset * this.razon;
         this.scene.translate(0, 0.8, 0);
         this.scene.scale(this.razon, this.razon * this.razonZ, this.razon);
     }
     this.scene.popMatrix();
+
 
 };
 
