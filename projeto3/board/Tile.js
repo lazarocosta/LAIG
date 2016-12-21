@@ -3,8 +3,10 @@
  * @constructor
  */
 
-function Tile(scene, id, piece, materialPlace, materialSelected, materialSelectable) {
+function Tile(scene, id, piece, materialPlace, materialSelected, materialSelectable, board) {
     CGFobject.call(this, scene);
+
+    this.board = board;
     this.scene = scene;
     this.id = id;
     this.place = new Plane(this.scene, 1, 1, 1, 1);
@@ -32,9 +34,9 @@ Tile.prototype.display = function() {
         if (this.selectable)
             this.scene.registerForPick(this.id, this);
 
-        if (this.selected)
+        if (this.selected) {
             this.materialSelected.apply();
-        else
+        } else
         if (this.selectable)
             this.materialSelectable.apply();
         else
@@ -57,8 +59,12 @@ Tile.prototype.setPiece = function(piece) {
 
 
 Tile.prototype.select = function() {
-    //this.selected = !this.selected;
-    console.debug('tile');
+    this.selected = !this.selected;
+    this.board.noSelectAllTiles(this.id);
+}
+
+Tile.prototype.noSelect = function() {
+    this.selected = false
 }
 
 Tile.prototype.enableselection = function() {

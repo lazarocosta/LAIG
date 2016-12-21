@@ -172,9 +172,7 @@ XMLscene.prototype.logPicking = function() {
             for (var i = 0; i < this.pickResults.length; i++) {
 
                 var obj = this.pickResults[i][0];
-                console.debug(obj);
                 if (obj) {
-                    console.debug(obj);
                     obj.select();
                     var customId = this.pickResults[i][1];
                     console.log("Picked object: " + obj + ", with pick id " + customId);
