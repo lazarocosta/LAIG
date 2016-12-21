@@ -36,7 +36,8 @@ Gameboard.prototype.initGameboard = function() {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             var id = parseInt((i + 1) + "" + (j + 1) + "9");
-            this.tiles[j][i] = new Tile(this.scene, id, null, this.materialPlace, this.materialSelected, this.materialSelectable, this.board);
+            var posicion = new Point2(j, i);
+            this.tiles[j][i] = new Tile(this.scene, id, null, this.materialPlace, this.materialSelected, this.materialSelectable, this.board, posicion);
         }
     }
 };
@@ -56,9 +57,7 @@ Gameboard.prototype.display = function() {
             this.scene.pushMatrix();
             this.scene.translate((j + j * 0.05), i + i * 0.05, 0);
 
-            // if (!(j == 4 && i == 1)) {
             this.tiles[j][i].display();
-            //}
             this.scene.popMatrix();
         }
     }

@@ -17,7 +17,6 @@ function Piece(scene, height, tile, player, id, board) {
     this.scene = scene;
     this.selected = false;
     this.selectable = true;
-    console.debug(tile);
 
     if (player == 1)
         this.texture.loadTexture("resources\\casa.jpg");
@@ -77,6 +76,10 @@ Piece.prototype.display = function() {
 Piece.prototype.select = function() {
     this.selected = !this.selected;
     this.board.noSelectAllPieces(this.id);
+    this.board.noSelectAllTiles(null);
+    this.board.disableSelectionAllTiles(null);
+    this.board.selectNext(this.tile.getPoint(), this.height);
+    this.board.getPieceSelected();
 
 }
 Piece.prototype.noSelect = function() {

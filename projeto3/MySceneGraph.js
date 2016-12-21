@@ -182,7 +182,7 @@ MySceneGraph.prototype.getPoint3D = function(rootElement) {
     var x = this.reader.getFloat(rootElement, 'x');
     var y = this.reader.getFloat(rootElement, 'y');
     var z = this.reader.getFloat(rootElement, 'z');
-    var point = new Point3D(x, y, z)
+    var point = new Point3D(x, y, z);
 
     return point;
 };

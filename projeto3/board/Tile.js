@@ -3,16 +3,17 @@
  * @constructor
  */
 
-function Tile(scene, id, piece, materialPlace, materialSelected, materialSelectable, board) {
+function Tile(scene, id, piece, materialPlace, materialSelected, materialSelectable, board, point) {
     CGFobject.call(this, scene);
 
+    this.point = point;
     this.board = board;
     this.scene = scene;
     this.id = id;
     this.place = new Plane(this.scene, 1, 1, 1, 1);
     this.piece = piece;
     this.selected = false;
-    this.selectable = true;
+    this.selectable = false;
     this.visible = true;
 
     this.materialPlace = materialPlace;
@@ -61,6 +62,9 @@ Tile.prototype.setPiece = function(piece) {
 Tile.prototype.select = function() {
     this.selected = !this.selected;
     this.board.noSelectAllTiles(this.id);
+    var pieceSelect = this.board.getPieceSelected();
+    this.board.gameBoard.move(pieceSelect.x, pieceSelect.y, this.point.x, this.point.y);
+
 }
 
 Tile.prototype.noSelect = function() {
@@ -77,4 +81,8 @@ Tile.prototype.disableselection = function() {
 
 Tile.prototype.getPiece = function() {
     return this.piece;
+}
+
+Tile.prototype.getPoint = function() {
+    return this.point;
 }
