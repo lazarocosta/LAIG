@@ -11,23 +11,19 @@ function Piece(scene, height, tile, player) {
     this.tile = tile;
     this.player = player;
     this.texture = new CGFappearance(scene);
+    this.scene = scene;
 
     if (player == 1)
         this.texture.loadTexture("resources\\vermelho.jpg");
 
     if (player == 2)
         this.texture.loadTexture("resources\\preto.jpg");
-
-
-
-
 };
 
 Piece.prototype = Object.create(CGFobject.prototype);
 Piece.prototype.constructor = Piece;
 
 Piece.prototype.setTile = function(origin, dest) {
-    console.debug(origin);
     origin.setPiece(null);
     dest.setPiece(this);
     this.tile = dest;
@@ -46,8 +42,10 @@ Piece.prototype.display = function() {
 
     this.scene.scale(this.ofset, this.ofset * this.razonZ, this.ofset);
 
-    for (var i = 0; i < this.height; i++) {
-        // this.texture.apply();
+
+    for (var i = 0; i <= this.height; i++) {
+        //this.texture.apply();
+        //this.scene.registerForPick(this.height, this);
         this.pyramid.display();
         this.razon -= 0.05
         this.ofset = this.ofset * this.razon;
@@ -57,6 +55,23 @@ Piece.prototype.display = function() {
     this.scene.popMatrix();
 
 };
+
+
+Piece.prototype.select = function() {
+    // this.selected = !this.selected;
+    console.debug('aqui');
+    this.scene.translate(0, 10, 0);
+
+}
+
+Piece.prototype.enableselection = function() {
+    // this.selectable = true;
+}
+
+Piece.prototype.disableselection = function() {
+    //this.selectable = false;
+}
+
 
 Piece.prototype.getPlayer = function() {
     return this.player;

@@ -24,7 +24,7 @@ Gameboard.prototype.initGameboard = function() {
 
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            var id = (i + 1) + "" + (j + 1);
+            var id = parseInt((i + 1) + "" + (j + 1));
             this.tiles[j][i] = new Tile(this.scene, id, null);
         }
     }
@@ -46,16 +46,20 @@ Gameboard.prototype.display = function() {
 
             this.scene.pushMatrix();
             this.scene.translate((j + j * 0.05), i + i * 0.05, 0);
-            this.scene.registerForPick(this.tiles[j][i].id, this.tiles[j][i]);
-            //this.logPicking();
+            //this.scene.registerForPick(1, this);
             // this.texture.apply();
-            this.tiles[j][i].display();
+            if (!(j == 4 && i == 1)) {
+                this.tiles[j][i].display();
+            }
+            this.scene.clearPickRegistration();
             this.scene.popMatrix();
+
         }
     }
     this.scene.popMatrix();
 }
 
+/*
 Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
     var piece = this.tiles[oldcol][oldrow].getPiece();
     var origin = this.tiles[oldcol][oldrow];
@@ -63,7 +67,7 @@ Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
     piece.setTile(origin, dest);
 }
 
-/*
+
 
 Gameboard.prototype.logPicking = function() {
     if (this.scene.pickMode == false) {

@@ -10,8 +10,14 @@ include = function() {
         d = a[c - 1],
         e = d.call;
     e && c--;
-    for (var g, h = 0; c > h; h++) g = b.createElement("script"), g.src = arguments[h], g.async = !0, g.onload = g.onerror = g.onreadystatechange = f, (b.head || b.getElementsByTagName("head")[0]).appendChild(g)
+    for (var g, h = 0; c > h; h++)
+        g = b.createElement("script"),
+        g.src = arguments[h],
+        g.async = !0,
+        g.onload = g.onerror = g.onreadystatechange = f,
+        (b.head || b.getElementsByTagName("head")[0]).appendChild(g)
 };
+
 serialInclude = function(a) {
     var b = console,
         c = serialInclude.l;
