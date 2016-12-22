@@ -37,7 +37,7 @@ Piece.prototype.setTile = function(origin, dest) {
 };
 
 Piece.prototype.select = function() {
-    this.selected = !this.selected;
+    this.selected = true;
     this.board.noSelectAllPieces(this.id);
     this.board.noSelectAllTiles(null);
     this.board.disableSelectionAllTiles(null);

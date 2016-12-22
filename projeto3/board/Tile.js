@@ -43,10 +43,10 @@ Tile.prototype.select = function() {
 
     var piecesLine = this.board.piecesLine(picePoint, moveVector);
 
-    // this.board.countEmptySpaces(pieceSelect, piecesLine[0]);
+    var move = this.board.makeMove(moveVector, pieceSelect, piecesLine);
 
-
-    this.board.gameBoard.move(picePoint.x, picePoint.y, this.point.x, this.point.y);
+    if (move != null)
+        this.board.gameBoard.move(picePoint.x, picePoint.y, this.point.x, this.point.y);
 
 
 
