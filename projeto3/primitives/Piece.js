@@ -16,7 +16,7 @@ function Piece(scene, height, tile, player, id, board) {
     this.textureSelect = new CGFappearance(scene);
     this.scene = scene;
     this.selected = false;
-    this.selectable = true;
+    this.selectable = false;
 
     if (player == 1)
         this.texture.loadTexture("resources\\casa.jpg");
@@ -25,7 +25,6 @@ function Piece(scene, height, tile, player, id, board) {
         this.texture.loadTexture("resources\\preto.jpg");
 
     this.textureSelect.loadTexture("resources\\luz.jpg");
-
 };
 
 Piece.prototype = Object.create(CGFobject.prototype);
@@ -36,6 +35,32 @@ Piece.prototype.setTile = function(origin, dest) {
     dest.setPiece(this);
     this.tile = dest;
 };
+
+Piece.prototype.select = function() {
+    this.selected = !this.selected;
+    this.board.noSelectAllPieces(this.id);
+    this.board.noSelectAllTiles(null);
+    this.board.disableSelectionAllTiles(null);
+    this.board.selectNext(this.tile.getPoint(), this.height);
+    this.board.getPieceSelected();
+}
+
+Piece.prototype.noSelect = function() {
+    this.selected = false
+}
+
+Piece.prototype.enableselection = function() {
+    this.selectable = true;
+}
+
+Piece.prototype.disableselection = function() {
+    this.selectable = false;
+}
+
+
+Piece.prototype.getPlayer = function() {
+    return this.player;
+}
 
 Piece.prototype.display = function() {
 
@@ -69,31 +94,4 @@ Piece.prototype.display = function() {
     }
     this.scene.clearPickRegistration();
     this.scene.popMatrix();
-
 };
-
-
-Piece.prototype.select = function() {
-    this.selected = !this.selected;
-    this.board.noSelectAllPieces(this.id);
-    this.board.noSelectAllTiles(null);
-    this.board.disableSelectionAllTiles(null);
-    this.board.selectNext(this.tile.getPoint(), this.height);
-    this.board.getPieceSelected();
-
-}
-Piece.prototype.noSelect = function() {
-    this.selected = false
-}
-
-Piece.prototype.enableselection = function() {
-    this.selectable = true;
-}
-
-Piece.prototype.disableselection = function() {
-    this.selectable = false;
-}
-
-Piece.prototype.getPlayer = function() {
-    return this.player;
-}

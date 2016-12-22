@@ -6,15 +6,17 @@ function Board(scene) {
     CGFobject.call(this, scene);
     this.scene = scene;
 
-    //this.auxiliarBoardP1 = new AuxBoard(scene);
-    //this.auxiliarBoardP2 = new AuxBoard(scene);
+    this.auxiliarBoardP1 = new AuxBoard(scene, this);
+    this.auxiliarBoardP2 = new AuxBoard(scene, this);
     this.gameBoard = new Gameboard(scene, this);
+
 
     this.IndexPlayer1 = 0;
     this.IndexPlayer2 = 0;
     this.pieces = new Array(16);
 
     this.initBoard();
+    this.turnPlayer(2);
 };
 
 Board.prototype = Object.create(CGFobject.prototype);
@@ -44,14 +46,14 @@ Board.prototype.initBoard = function() {
 
     //Player2
 
-    this.bigPieceP2_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][8], 1, 9, this);
-    this.bigPieceP2_2 = new Piece(this.scene, 3, this.gameBoard.tiles[8][8], 1, 10, this);
-    this.normalPieceP2_1 = new Piece(this.scene, 2, this.gameBoard.tiles[2][7], 1, 11, this);
-    this.normalPieceP2_2 = new Piece(this.scene, 2, this.gameBoard.tiles[6][7], 1, 12, this);
-    this.smallPieceP2_1 = new Piece(this.scene, 1, this.gameBoard.tiles[3][7], 1, 13, this);
-    this.smallPieceP2_2 = new Piece(this.scene, 1, this.gameBoard.tiles[4][7], 1, 14, this);
-    this.smallPieceP2_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][7], 1, 15, this);
-    this.smallPieceP2_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][6], 1, 16, this);
+    this.bigPieceP2_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][8], 2, 9, this);
+    this.bigPieceP2_2 = new Piece(this.scene, 3, this.gameBoard.tiles[8][8], 2, 10, this);
+    this.normalPieceP2_1 = new Piece(this.scene, 2, this.gameBoard.tiles[2][7], 2, 11, this);
+    this.normalPieceP2_2 = new Piece(this.scene, 2, this.gameBoard.tiles[6][7], 2, 12, this);
+    this.smallPieceP2_1 = new Piece(this.scene, 1, this.gameBoard.tiles[3][7], 2, 13, this);
+    this.smallPieceP2_2 = new Piece(this.scene, 1, this.gameBoard.tiles[4][7], 2, 14, this);
+    this.smallPieceP2_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][7], 2, 15, this);
+    this.smallPieceP2_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][6], 2, 16, this);
 
 
     this.gameBoard.tiles[0][8].setPiece(this.bigPieceP2_1);
@@ -84,17 +86,7 @@ Board.prototype.initBoard = function() {
     ];
 };
 
-Board.prototype.display = function() {
 
-    this.gameBoard.display();
-    this.scene.clearPickRegistration();
-    // this.auxiliarBoardP1.display();
-
-    this.scene.pushMatrix();
-    this.scene.translate(0, 11.3, 0);
-    //this.auxiliarBoardP2.display();
-    this.scene.popMatrix();
-}
 
 
 Board.prototype.remove = function(oldcol, oldrow) {
@@ -144,31 +136,44 @@ Board.prototype.selectNext = function(position, height) {
     var x = position.getx();
     var y = position.gety();
 
-    for (var j = x; j <= x + height && j < 9; j++) {
+    for (var j = x; j <= x + height && j < 9; j++)
         this.gameBoard.tiles[j][y].enableselection();
-    }
 
-    for (var j = x; j >= x - height && j >= 0; j--) {
+    for (var j = x; j >= x - height && j >= 0; j--)
         this.gameBoard.tiles[j][y].enableselection();
-    }
 
-    for (var i = y; i <= y + height && i < 9; i++) {
+    for (var i = y; i <= y + height && i < 9; i++)
         this.gameBoard.tiles[x][i].enableselection();
-    }
 
-    for (var i = y; i >= y - height && i >= 0; i--) {
+    for (var i = y; i >= y - height && i >= 0; i--)
         this.gameBoard.tiles[x][i].enableselection();
-    }
-
 }
-
 
 Board.prototype.getPieceSelected = function() {
 
-    for (i = 0; i < this.pieces.length; i++) {
-        if (this.pieces[i].selected == true) {
-            return this.pieces[i].tile.point;
+    for (i = 0; i < this.pieces.length; i++)
+        if (this.pieces[i].selected == true)
+            return this.pieces[i];
+}
 
-        }
+Board.prototype.turnPlayer = function(player) {
+
+    for (var i = 0; i < this.pieces.length; i++) {
+        if (this.pieces[i].player == player)
+            this.pieces[i].disableselection();
+        else
+            this.pieces[i].enableselection();
     }
+}
+
+Board.prototype.display = function() {
+
+    this.gameBoard.display();
+    this.scene.clearPickRegistration();
+    this.auxiliarBoardP1.display();
+
+    this.scene.pushMatrix();
+    this.scene.translate(0, 11.3, 0);
+    this.auxiliarBoardP2.display();
+    this.scene.popMatrix();
 }

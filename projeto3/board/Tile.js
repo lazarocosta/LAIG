@@ -20,12 +20,46 @@ function Tile(scene, id, piece, materialPlace, materialSelected, materialSelecta
     this.materialSelected = materialSelected;
     this.materialSelectable = materialSelectable;
 
-
 };
 
 Tile.prototype = Object.create(CGFobject.prototype);
 Tile.prototype.constructor = Tile;
 
+Tile.prototype.setPiece = function(piece) {
+    this.piece = piece;
+}
+
+
+Tile.prototype.select = function() {
+    this.selected = !this.selected;
+    this.board.noSelectAllTiles(this.id);
+    var pieceSelect = this.board.getPieceSelected();
+    var pointPiece = pieceSelect.tile.point;
+    this.board.gameBoard.move(pointPiece.x, pointPiece.y, this.point.x, this.point.y);
+    this.board.disableSelectionAllTiles();
+    this.board.noSelectAllPieces(null);
+    this.board.turnPlayer(pieceSelect.player);
+}
+
+Tile.prototype.noSelect = function() {
+    this.selected = false
+}
+
+Tile.prototype.enableselection = function() {
+    this.selectable = true;
+}
+
+Tile.prototype.disableselection = function() {
+    this.selectable = false;
+}
+
+Tile.prototype.getPiece = function() {
+    return this.piece;
+}
+
+Tile.prototype.getPoint = function() {
+    return this.point;
+}
 
 Tile.prototype.display = function() {
 
@@ -52,37 +86,4 @@ Tile.prototype.display = function() {
         this.scene.clearPickRegistration();
         this.scene.popMatrix();
     }
-}
-
-Tile.prototype.setPiece = function(piece) {
-    this.piece = piece;
-}
-
-
-Tile.prototype.select = function() {
-    this.selected = !this.selected;
-    this.board.noSelectAllTiles(this.id);
-    var pieceSelect = this.board.getPieceSelected();
-    this.board.gameBoard.move(pieceSelect.x, pieceSelect.y, this.point.x, this.point.y);
-
-}
-
-Tile.prototype.noSelect = function() {
-    this.selected = false
-}
-
-Tile.prototype.enableselection = function() {
-    this.selectable = true;
-}
-
-Tile.prototype.disableselection = function() {
-    this.selectable = false;
-}
-
-Tile.prototype.getPiece = function() {
-    return this.piece;
-}
-
-Tile.prototype.getPoint = function() {
-    return this.point;
 }
