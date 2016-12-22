@@ -52,7 +52,7 @@ Tile.prototype.select = function() {
 
     this.board.disableSelectionAllTiles();
     this.board.noSelectAllPieces(null);
-    this.board.turnPlayer(pieceSelect.player);
+    this.board.disabledPlayer(pieceSelect.player);
 }
 
 Tile.prototype.noSelect = function() {

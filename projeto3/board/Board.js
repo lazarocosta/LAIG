@@ -16,7 +16,7 @@ function Board(scene) {
     this.pieces = new Array(16);
 
     this.initBoard();
-    this.turnPlayer(2);
+    this.disabledPlayer(2);
 };
 
 Board.prototype = Object.create(CGFobject.prototype);
@@ -86,9 +86,6 @@ Board.prototype.initBoard = function() {
     ];
 };
 
-
-
-
 Board.prototype.remove = function(oldcol, oldrow) {
     var origin = this.gameBoard.tiles[oldcol][oldrow];
     var piece = this.gameBoard.tiles[oldcol][oldrow].getPiece();
@@ -156,7 +153,7 @@ Board.prototype.getPieceSelected = function() {
             return this.pieces[i];
 }
 
-Board.prototype.turnPlayer = function(player) {
+Board.prototype.disabledPlayer = function(player) {
 
     for (var i = 0; i < this.pieces.length; i++) {
         if (this.pieces[i].player == player)
@@ -164,18 +161,6 @@ Board.prototype.turnPlayer = function(player) {
         else
             this.pieces[i].enableselection();
     }
-}
-
-Board.prototype.display = function() {
-
-    this.gameBoard.display();
-    this.scene.clearPickRegistration();
-    this.auxiliarBoardP1.display();
-
-    this.scene.pushMatrix();
-    this.scene.translate(0, 11.3, 0);
-    this.auxiliarBoardP2.display();
-    this.scene.popMatrix();
 }
 
 Board.prototype.piecesLine = function(picePoint, moveVector) {
@@ -265,7 +250,6 @@ Board.prototype.countEmptySpaces = function(piece, targetPiece) {
 
 Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
 
-
     var moveX = false;
     var dist;
     var positive = false;
@@ -324,4 +308,16 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
                 this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece, pointYPiece - deslocation);
     }
     return 1;
+}
+
+Board.prototype.display = function() {
+
+    this.gameBoard.display();
+    this.scene.clearPickRegistration();
+    this.auxiliarBoardP1.display();
+
+    this.scene.pushMatrix();
+    this.scene.translate(0, 11.3, 0);
+    this.auxiliarBoardP2.display();
+    this.scene.popMatrix();
 }
