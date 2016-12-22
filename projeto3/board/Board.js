@@ -10,7 +10,7 @@ function Board(scene) {
     this.auxiliarBoardP2 = new AuxBoard(scene, this);
     this.gameBoard = new Gameboard(scene, this);
 
-
+    this.lengthBoard = 9;
     this.IndexPlayer1 = 0;
     this.IndexPlayer2 = 0;
     this.pieces = new Array(16);
@@ -176,4 +176,92 @@ Board.prototype.display = function() {
     this.scene.translate(0, 11.3, 0);
     this.auxiliarBoardP2.display();
     this.scene.popMatrix();
+}
+
+Board.prototype.piecesLine = function(picePoint, moveVector) {
+
+    var distX = moveVector.x;
+    var distY = moveVector.y;
+    var pointX = picePoint.x;
+    var pointY = picePoint.y;
+    var piecesLine = [];
+
+    if (distX != 0) {
+        if (distX > 0) {
+            for (var i = pointX + 1; i < this.lengthBoard; i++) {
+                var piece = this.gameBoard.getTile(i, pointY).getPiece();
+                if (piece != null)
+                    piecesLine.push(piece);
+            }
+        } else if (distX < 0) {
+            for (var i = pointX - 1; i >= 0; i--) {
+                var piece = this.gameBoard.getTile(i, pointY).getPiece();
+                if (piece != null)
+                    piecesLine.push(piece);
+            }
+        }
+    } else if (distY != 0) {
+        if (distY > 0) {
+            for (var i = pointY + 1; i < this.lengthBoard; i++) {
+                var piece = this.gameBoard.getTile(pointX, i).getPiece();
+                if (piece != null)
+                    piecesLine.push(piece);
+            }
+        } else if (distY < 0) {
+            for (var i = pointY - 1; i >= 0; i--) {
+                var piece = this.gameBoard.getTile(pointX, i).getPiece();
+                if (piece != null)
+                    piecesLine.push(piece);
+            }
+        }
+    }
+    console.debug(piecesLine);
+    return piecesLine;
+}
+
+Board.prototype.countEmptySpaces = function(piece, targetPiece) {
+
+    var targetPointX = targetPiece.tile.point.x;
+    var targetPointY = targetPiece.tile.point.y;
+
+    console.debug(piece.tile);
+    var picePointX = piece.tile.point.x;
+    var picePointY = piece.tile.point.y;
+
+    var distX = targetPointX - picePointX;
+    var distY = targetPointY - picePointY;
+
+    var count = 0;
+
+    if (distX != 0) {
+        if (distX > 0) {
+            for (var i = picePointX + 1; i < targetPointX; i++) {
+                var piece = this.gameBoard.getTile(i, picePointY).getPiece();
+                if (piece == null)
+                    count++;
+            }
+        } else if (distX < 0) {
+            for (var i = picePointX - 1; i > targetPointX; i--) {
+                var piece = this.gameBoard.getTile(i, picePointY).getPiece();
+                if (piece == null)
+                    count++
+            }
+        }
+    } else if (distY != 0) {
+        if (distY > 0) {
+            for (var i = picePointY + 1; i < targetPointY; i++) {
+                var piece = this.gameBoard.getTile(picePointX, i).getPiece();
+                if (piece == null)
+                    count++;
+            }
+        } else if (distY < 0) {
+            for (var i = picePointY - 1; i > targetPointY; i--) {
+                var piece = this.gameBoard.getTile(picePointX, i).getPiece();
+                if (piece == null)
+                    count++
+            }
+        }
+    }
+    console.debug(count);
+    return count;
 }

@@ -31,11 +31,25 @@ Tile.prototype.setPiece = function(piece) {
 
 
 Tile.prototype.select = function() {
+
     this.selected = !this.selected;
     this.board.noSelectAllTiles(this.id);
     var pieceSelect = this.board.getPieceSelected();
-    var pointPiece = pieceSelect.tile.point;
-    this.board.gameBoard.move(pointPiece.x, pointPiece.y, this.point.x, this.point.y);
+    var picePoint = pieceSelect.tile.point;
+    var distX = (this.point.x - picePoint.x);
+    var distY = (this.point.y - picePoint.y);
+
+    var moveVector = new Point2(distX, distY);
+
+    var piecesLine = this.board.piecesLine(picePoint, moveVector);
+
+    // this.board.countEmptySpaces(pieceSelect, piecesLine[0]);
+
+
+    this.board.gameBoard.move(picePoint.x, picePoint.y, this.point.x, this.point.y);
+
+
+
     this.board.disableSelectionAllTiles();
     this.board.noSelectAllPieces(null);
     this.board.turnPlayer(pieceSelect.player);
