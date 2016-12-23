@@ -253,6 +253,7 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
     var moveX = false;
     var dist;
     var positive = false;
+
     if (moveVector.x != 0) {
         moveX = true;
         if (moveVector.x > 0)
@@ -263,114 +264,39 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
             positive = true;
         dist = Math.abs(moveVector.y);
     }
+
     var emptySpaces;
-    for (var i = piecesLine.length - 1; i >= 0; i--) {
-        emptySpaces = this.countEmptySpaces(piece, piecesLine[i]);
-        if (emptySpaces >= dist) {
-            console.debug('continue');
-            continue;
-        }
-
-        var distBoar;
-        var pointXPiece = piecesLine[i].tile.point.x;
-        var pointYPiece = piecesLine[i].tile.point.y;
-        if (moveX) {
-            if (positive)
-                distBoar = (this.lengthBoard - 1) - pointXPiece;
-            else
-                distBoar = pointXPiece;
-        } else
-        if (!moveX) {
-            if (positive)
-                distBoar = (this.lengthBoard - 1) - pointYPiece;
-            else
-                distBoar = pointYPiece;
-        }
-        var deslocation = dist - emptySpaces;
-        if (deslocation > distBoar) {
-            this.remove(pointXPiece, pointYPiece);
-            continue;
-        }
-
-        //_____translate piece
-        console.debug('translate');
-
-        if (moveX)
-            if (positive)
-                this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece + deslocation, pointYPiece);
-            else
-                this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece - deslocation, pointYPiece);
-        else
-        if (!moveX)
-            if (positive)
-                this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece, pointYPiece + deslocation);
-            else
-                this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece, pointYPiece - deslocation);
-    }
-    return 1;
-}
-
-Board.prototype.display = function() {
-
-    this.gameBoard.display();
-    this.scene.clearPickRegistration();
-    this.auxiliarBoardP1.display();
-
-    this.scene.pushMatrix();
-    this.scene.translate(0, 11.3, 0);
-    this.auxiliarBoardP2.display();
-    this.scene.popMatrix();
-}
-
-/*_________depois ver melhor
-
-Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
-
-    var moveX = false;
-    var dist;
-    var positive = false;
-    if (moveVector.x != 0) {
-        moveX = true;
-        if (moveVector.x > 0)
-            positive = true;
-        dist = Math.abs(moveVector.x);
-    } else {
-        if (moveVector.y > 0)
-            positive = true;
-        dist = Math.abs(moveVector.y);
-    }
-    var emptySpaces = this.countEmptySpaces(piece, piecesLine[piecesLine.length - 1]);
     var move;
     var forcePiece = piece.height;
     var distMove = null;
+    var deslocation;
 
-    if (forcePiece < piecesLine.length)
+    if (forcePiece < piecesLine.length) {
         move = false;
-    else
+        emptySpaces = this.countEmptySpaces(piece, piecesLine[piecesLine.length - 1]);
+    } else
         move = true;
 
     for (var i = piecesLine.length - 1; i >= 0; i--) {
         var emptySpacesNext = this.countEmptySpaces(piece, piecesLine[i]);
         var spaceToPiece = emptySpaces - emptySpacesNext;
+        console.debug('piece');
 
         if (!move) {
             emptySpaces = emptySpacesNext;
-            console.debug(i);
 
             if (i > forcePiece) {
                 continue;
             }
 
-            console.debug(spaceToPiece);
-            if (spaceToPiece != 0 && i <= forcePiece) {
-                console.debug('aqui');
+            if (i == forcePiece) {
+                console.debug('force');
                 move = true;
-                distMove = spaceToPiece;
+                distMove = 0;
             }
         } else {
             console.debug('aqui');
             if (emptySpacesNext >= dist) {
-                console.debug('continue');
                 continue;
             }
 
@@ -389,7 +315,9 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
                 else
                     distBoar = pointYPiece;
             }
-            var deslocation;
+
+            console.debug(deslocation);
+            console.debug(distMove);
             if (distMove != null) {
                 distMove += spaceToPiece;
                 deslocation = Math.min(distMove, dist - emptySpacesNext);
@@ -416,10 +344,30 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
                 else
                     this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece, pointYPiece - deslocation);
         }
-        // if (!move)
-        //   return null;
-
     }
-    return 1;
+    console.debug(emptySpaces);
+    console.debug(deslocation);
+
+    if (emptySpaces != 0 && deslocation == 0)
+        return emptySpaces;
+
+    if (emptySpaces > 0 && deslocation > 0)
+        return Math.max(emptySpaces, deslocation);
+
+    if (deslocation == 0)
+        return -1;
+
+    return null;
 }
-*/
+
+Board.prototype.display = function() {
+
+    this.gameBoard.display();
+    this.scene.clearPickRegistration();
+    this.auxiliarBoardP1.display();
+
+    this.scene.pushMatrix();
+    this.scene.translate(0, 11.3, 0);
+    this.auxiliarBoardP2.display();
+    this.scene.popMatrix();
+}

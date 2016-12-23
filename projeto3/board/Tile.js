@@ -45,14 +45,28 @@ Tile.prototype.select = function() {
 
     var move = this.board.makeMove(moveVector, pieceSelect, piecesLine);
 
-    if (move != null)
+    console.debug(move);
+    if (move == null)
         this.board.gameBoard.move(picePoint.x, picePoint.y, this.point.x, this.point.y);
+    else if (move != -1) {
+        if (distX)
+            if (distX > 0)
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x + move, this.point.y);
+            else
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x - move, this.point.y);
 
-
+        if (distY)
+            if (distY > 0)
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, this.point.y + move);
+            else
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, this.point.y - move);
+    }
 
     this.board.disableSelectionAllTiles();
     this.board.noSelectAllPieces(null);
-    this.board.disabledPlayer(pieceSelect.player);
+
+    if (move != -1)
+        this.board.disabledPlayer(pieceSelect.player);
 }
 
 Tile.prototype.noSelect = function() {
