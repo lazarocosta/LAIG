@@ -352,13 +352,17 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
                     this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece, pointYPiece - deslocation);
         }
     }
-
+    console.debug('aqui');
     if (emptySpaces != 0 && deslocation == 0)
         return emptySpaces;
 
+    console.debug('aqui1');
+    console.debug(deslocation);
     if (emptySpaces > 0 && deslocation > 0)
-        return Math.max(emptySpaces, deslocation);
+        return deslocation;
+    //return Math.max(emptySpaces, deslocation);
 
+    console.debug('aqui2');
     if (deslocation == 0)
         return -1;
 

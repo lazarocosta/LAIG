@@ -50,15 +50,15 @@ Tile.prototype.select = function() {
     else if (move != -1) {
         if (distX)
             if (distX > 0)
-                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x + move, this.point.y);
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x + move, picePoint.y);
             else
-                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x - move, this.point.y);
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x - move, picePoint.y);
 
         if (distY)
             if (distY > 0)
-                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, this.point.y + move);
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, picePoint.y + move);
             else
-                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, this.point.y - move);
+                this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, picePoint.y - move);
     }
 
     this.board.disableSelectionAllTiles();
