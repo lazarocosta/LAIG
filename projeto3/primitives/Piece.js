@@ -2,7 +2,7 @@
  * Piece
  * @constructor
  */
-function Piece(scene, height, tile, player, id, board) {
+function Piece(scene, height, tile, player, id, board, texturePiece1, texturePiece2, texturePieceSelected) {
     CGFobject.call(this, scene);
 
     this.board = board;
@@ -12,19 +12,26 @@ function Piece(scene, height, tile, player, id, board) {
     this.height = height;
     this.tile = tile;
     this.player = player;
-    this.texture = new CGFappearance(scene);
+    this.materialPiece = new CGFappearance(scene);
     this.textureSelect = new CGFappearance(scene);
     this.scene = scene;
     this.selected = false;
     this.selectable = false;
 
-    if (player == 1)
-        this.texture.loadTexture("resources\\casa.jpg");
 
-    if (player == 2)
-        this.texture.loadTexture("resources\\preto.jpg");
+    if (player == 1) {
+        var piecetexture = this.scene.graph.textures[texturePiece1];
+        this.materialPiece.setTexture(piecetexture.file);
+    }
 
-    this.textureSelect.loadTexture("resources\\luz.jpg");
+
+    if (player == 2) {
+        var piecetexture = this.scene.graph.textures[texturePiece2];
+        this.materialPiece.setTexture(piecetexture.file);
+    }
+
+    var pieceSelected = this.scene.graph.textures[texturePieceSelected];
+    this.textureSelect.setTexture(pieceSelected.file);
 };
 
 Piece.prototype = Object.create(CGFobject.prototype);
@@ -75,7 +82,7 @@ Piece.prototype.display = function() {
 
     this.scene.scale(this.ofset, this.ofset * this.razonZ, this.ofset);
 
-    this.texture.apply();
+    this.materialPiece.apply();
 
     if (this.selectable)
         this.scene.registerForPick(this.id, this);

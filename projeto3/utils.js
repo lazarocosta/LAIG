@@ -127,34 +127,25 @@ class Component {
         this.textureId = textureId;
         this.componentref = componentref;
         this.primitiveref = primitiveref;
-        //console.debug(inanimations);
         this.animations = clone(inanimations);
-        //console.debug(this.animations);
         this.animationIndex = 0;
         this.currAnimation = this.animations[this.animationIndex];
-        //console.debug(this.currAnimation);
+
     }
     update(dtime) {
         if (this.currAnimation != undefined) {
             if (this.currAnimation.isOver()) {
                 this.nextAnimation();
             }
-            //console.log("UPDATE");
             this.updateAnimation(dtime);
         }
     }
     nextAnimation() {
-            if (this.animationIndex != this.animations.length - 1) {
-                this.animationIndex++;
-                this.currAnimation = this.animations[this.animationIndex];
-            }
+        if (this.animationIndex != this.animations.length - 1) {
+            this.animationIndex++;
+            this.currAnimation = this.animations[this.animationIndex];
         }
-        /*applyAnimation() {
-        	if (this.currAnimation != undefined) {
-        		console.log('aqui');
-        		this.currAnimation.apply();
-        	}
-        }*/
+    }
     updateAnimation(dtime) {
         if (this.currAnimation != undefined) {
             this.currAnimation.update(dtime);

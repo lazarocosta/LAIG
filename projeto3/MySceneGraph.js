@@ -691,7 +691,39 @@ MySceneGraph.prototype.parsePrimitives = function(element) {
                 this.primitives[id] = new Piece(this.scene, height);
                 break;
             case 'board':
-                this.primitives[id] = new Board(this.scene);
+                if (object.children.length != 6)
+                    return "invalid number of texture Board";
+
+                var piece1, piece2, pieceSelected, spaceMaterial, selectableSpace;
+
+                for (var j = 0; j < 6; j++) {
+                    var textureBoard = object.children[j];
+                    var texture = textureBoard.tagName;
+                    switch (texture) {
+                        case 'textuPlayer1':
+                            piece1 = this.reader.getString(textureBoard, 'textureref');
+                            break;
+                        case 'textuPlayer2':
+                            piece2 = this.reader.getString(textureBoard, 'textureref');
+                            break;
+                        case 'textuPieceSelected':
+                            pieceSelected = this.reader.getString(textureBoard, 'textureref');
+                            break;
+                        case 'spaceMaterial':
+                            spaceMaterial = this.reader.getString(textureBoard, 'textureref');
+                            break;
+                        case 'selectableSpace':
+                            selectableSpace = this.reader.getString(textureBoard, 'textureref');
+                            break;
+                        case 'textureAuxBoard':
+                            textureAuxBoard = this.reader.getString(textureBoard, 'textureref');
+                            break;
+                        default:
+                            console.warn("Invalid texture Board name");
+                            break;
+                    }
+                }
+                this.primitives[id] = new Board(this.scene, piece1, piece2, pieceSelected, spaceMaterial, selectableSpace, textureAuxBoard);
                 break;
             default:
                 console.warn("No such primitive named '" + objname + "'!");

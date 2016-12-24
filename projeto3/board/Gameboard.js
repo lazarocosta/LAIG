@@ -2,24 +2,21 @@
  * Gameboard
  * @constructor
  */
-function Gameboard(scene, board) {
+function Gameboard(scene, board, textureBoard, selectableSpace) {
     CGFobject.call(this, scene);
     this.scene = scene;
 
     this.board = board;
     this.tiles = new Array(9);
 
-    var texture = new CGFtexture(scene, "resources\\vermelho.jpg");
-    var texture1 = new CGFtexture(scene, "resources\\vidro.jpg");
-    var texture2 = new CGFtexture(scene, "resources\\madeira.jpg");
 
     this.materialPlace = new CGFappearance(scene);
-    this.materialSelected = new CGFappearance(scene);
-    this.materialSelectable = new CGFappearance(scene);
+    var texture = this.scene.graph.textures[textureBoard];
+    this.materialPlace.setTexture(texture.file);
 
-    this.materialPlace.setTexture(texture);
-    this.materialSelected.setTexture(texture1);
-    this.materialSelectable.setTexture(texture2);
+    this.materialSelectable = new CGFappearance(scene);
+    var texture2 = this.scene.graph.textures[selectableSpace];
+    this.materialSelectable.setTexture(texture2.file);
 
     this.initGameboard();
 };
@@ -37,7 +34,7 @@ Gameboard.prototype.initGameboard = function() {
         for (var j = 0; j < 9; j++) {
             var id = parseInt((i + 1) + "" + (j + 1) + "9");
             var posicion = new Point2(j, i);
-            this.tiles[j][i] = new Tile(this.scene, id, null, this.materialPlace, this.materialSelected, this.materialSelectable, this.board, posicion);
+            this.tiles[j][i] = new Tile(this.scene, id, null, this.materialPlace, this.materialSelectable, this.board, posicion);
         }
     }
 };

@@ -2,22 +2,18 @@
  * AuxBoard
  * @constructor
  */
-function AuxBoard(scene, board) {
+function AuxBoard(scene, board, textureAuxBoard) {
     CGFobject.call(this, scene);
     this.scene = scene;
     this.board = board;
 
     this.tiles = new Array(9);
-    var texture2 = new CGFtexture(scene, "resources\\madeira.jpg");
 
     this.materialPlace = new CGFappearance(scene);
-    this.materialPlace.setTexture(texture2);
-    console.debug(this.materialPlace);
+    var texture = this.scene.graph.textures[textureAuxBoard];
+    this.materialPlace.setTexture(texture.file);
 
     this.initAuxBoard();
-
-
-
 };
 
 AuxBoard.prototype = Object.create(CGFobject.prototype);
@@ -27,7 +23,7 @@ AuxBoard.prototype.initAuxBoard = function() {
 
     for (var i = 0; i < 9; i++) {
         var id = i + 1;
-        this.tiles[i] = new Tile(this.scene, null, null, this.materialPlace, null, null, this.board, null);
+        this.tiles[i] = new Tile(this.scene, null, null, this.materialPlace, null, this.board, null);
     }
 
 };

@@ -3,7 +3,7 @@
  * @constructor
  */
 
-function Tile(scene, id, piece, materialPlace, materialSelected, materialSelectable, board, point) {
+function Tile(scene, id, piece, materialPlace, materialSelectable, board, point) {
     CGFobject.call(this, scene);
 
     this.point = point;
@@ -17,7 +17,6 @@ function Tile(scene, id, piece, materialPlace, materialSelected, materialSelecta
     this.visible = true;
 
     this.materialPlace = materialPlace;
-    this.materialSelected = materialSelected;
     this.materialSelectable = materialSelectable;
 
 };
@@ -97,9 +96,6 @@ Tile.prototype.display = function() {
         if (this.selectable)
             this.scene.registerForPick(this.id, this);
 
-        if (this.selected) {
-            this.materialSelected.apply();
-        } else
         if (this.selectable)
             this.materialSelectable.apply();
         else
