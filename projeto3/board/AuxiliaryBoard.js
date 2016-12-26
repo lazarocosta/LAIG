@@ -37,8 +37,6 @@ AuxBoard.prototype.display = function() {
     this.scene.pushMatrix();
     this.scene.translate(0.5, -1, 0);
 
-    //this.scene.scale(0.4,0.4,0.4);
-
     for (var i = 0; i < 9; i++) {
 
         this.scene.pushMatrix();
@@ -49,12 +47,3 @@ AuxBoard.prototype.display = function() {
     }
     this.scene.popMatrix();
 }
-
-/*
-AuxBoard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
-    var piece = this.tiles[oldcol][oldrow].getPiece();
-    var origin = this.tiles[oldcol][oldrow];
-    var dest = this.tiles[newcol][newrow]
-    piece.setTile(origin, dest);
-}
-*/

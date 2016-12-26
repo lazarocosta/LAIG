@@ -382,9 +382,8 @@ Board.prototype.updatePlayingTime = function(dtime) {
         this.disableSelectionAllTiles(null);
         this.noSelectAllPieces(null);
     }
-
-
 }
+
 Board.prototype.display = function() {
 
     this.gameBoard.display();
