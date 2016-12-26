@@ -7,6 +7,11 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
     this.scene = scene;
 
     this.plays = [];
+    this.second = 0;
+    this.video = false;
+    this.IndexPlayed = 0;
+    this.reset = false;
+
     this.playerWaiting = 1;
     this.clock = new MyClock(scene, 15, 15);
 
@@ -37,6 +42,8 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
 
 Board.prototype = Object.create(CGFobject.prototype);
 Board.prototype.constructor = Board;
+
+
 
 Board.prototype.initPieces = function() {
 
@@ -83,6 +90,11 @@ Board.prototype.initPieces = function() {
 
 Board.prototype.initBoard = function() {
 
+    for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
+            this.gameBoard.tiles[i][j].setPiece(null);
+        }
+    }
     //Player1   
     this.gameBoard.tiles[0][0].setPiece(this.bigPieceP1_1);
     this.gameBoard.tiles[8][0].setPiece(this.bigPieceP1_2);
@@ -102,12 +114,56 @@ Board.prototype.initBoard = function() {
     this.gameBoard.tiles[4][7].setPiece(this.smallPieceP2_2);
     this.gameBoard.tiles[5][7].setPiece(this.smallPieceP2_3);
     this.gameBoard.tiles[4][6].setPiece(this.smallPieceP2_4);
+
+}
+
+Board.prototype.resetGame = function() {
+
+    this.resetPieces();
+    this.initBoard();
+    this.resetAuxiliarBoard();
+}
+
+Board.prototype.resetPieces = function() {
+    for (var i = 0; i < this.pieces.length; i++)
+        this.pieces[i].tile = null;
+
+    //Player1
+    this.bigPieceP1_1.tile = this.gameBoard.tiles[0][0];
+    this.bigPieceP1_2.tile = this.gameBoard.tiles[8][0];
+    this.normalPieceP1_1.tile = this.gameBoard.tiles[2][1];
+    this.normalPieceP1_2.tile = this.gameBoard.tiles[6][1];
+    this.smallPieceP1_1.tile = this.gameBoard.tiles[3][1];
+    this.smallPieceP1_2.tile = this.gameBoard.tiles[4][1];
+    this.smallPieceP1_3.tile = this.gameBoard.tiles[5][1];
+    this.smallPieceP1_4.tile = this.gameBoard.tiles[4][2];
+
+    //Player2
+    this.bigPieceP2_1.tile = this.gameBoard.tiles[0][8];
+    this.bigPieceP2_2.tile = this.gameBoard.tiles[8][8];
+    this.normalPieceP2_1.tile = this.gameBoard.tiles[2][7];
+    this.normalPieceP2_2.tile = this.gameBoard.tiles[6][7];
+    this.smallPieceP2_1.tile = this.gameBoard.tiles[3][7];
+    this.smallPieceP2_2.tile = this.gameBoard.tiles[4][7];
+    this.smallPieceP2_3.tile = this.gameBoard.tiles[5][7];
+    this.smallPieceP2_4.tile = this.gameBoard.tiles[4][6];
+}
+
+Board.prototype.resetAuxiliarBoard = function() {
+
+    this.IndexPlayer1 = 0;
+    this.IndexPlayer2 = 0;
+
+    for (var i = 0; i < this.lengthBoard; i++) {
+        this.auxiliarBoardP1.tiles[i].setPiece(null);
+        this.auxiliarBoardP2.tiles[i].setPiece(null);
+    }
 }
 
 Board.prototype.remove = function(oldcol, oldrow) {
     var origin = this.gameBoard.tiles[oldcol][oldrow];
     var piece = this.gameBoard.tiles[oldcol][oldrow].getPiece();
-    var player = piece.getPlayer();
+    var player = piece.player;
     var dest;
 
     if (player == 1) {
@@ -148,7 +204,6 @@ Board.prototype.noSelectAllTiles = function(id) {
 }
 
 Board.prototype.selectNext = function(position, height) {
-    console.debug(position);
     var x = position.x;
     var y = position.y;
 
@@ -299,7 +354,6 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
     for (var i = piecesLine.length - 1; i >= 0; i--) {
         var emptySpacesNext = this.countEmptySpaces(piece, piecesLine[i]);
         var spaceToPiece = emptySpaces - emptySpacesNext;
-        console.debug('piece');
 
         if (!move) {
             emptySpaces = emptySpacesNext;
@@ -309,12 +363,10 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
             }
 
             if (i == forcePiece) {
-                console.debug('force');
                 move = true;
                 distMove = 0;
             }
         } else {
-            console.debug('aqui');
             if (emptySpacesNext >= dist) {
                 continue;
             }
@@ -335,8 +387,6 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
                     distBoar = pointYPiece;
             }
 
-            console.debug(deslocation);
-            console.debug(distMove);
             if (distMove != null) {
                 distMove += spaceToPiece;
                 deslocation = Math.min(distMove, dist - emptySpacesNext);
@@ -348,7 +398,6 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
                 continue;
             }
 
-            //_____translate piece
             console.debug('translate');
 
             if (moveX)
@@ -364,36 +413,72 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
                     this.gameBoard.move(pointXPiece, pointYPiece, pointXPiece, pointYPiece - deslocation);
         }
     }
-    console.debug('aqui');
     if (emptySpaces != 0 && deslocation == 0)
         return emptySpaces;
 
-    console.debug('aqui1');
-    console.debug(deslocation);
     if (emptySpaces > 0 && deslocation > 0)
         return deslocation;
 
-    console.debug('aqui2');
     if (deslocation == 0)
         return -1;
-
     return null;
 }
 
 Board.prototype.updatePlayingTime = function(dtime) {
 
-    this.clock.updateTime(dtime);
-    if (this.clock.timer < 0) {
-        this.clock.timer = this.scene.playingTime;
-        this.playerWaiting++;
-        this.playerWaiting %= 2;
-        this.disabledPlayer(this.playerWaiting);
-        console.debug('mudou');
-        this.disableSelectionAllTiles(null);
-        this.noSelectAllPieces(null);
+    if (this.reset) {
+        console.debug('reset');
+        this.reset = false;
+        this.resetGame();
+        this.video = true;
+
+    }
+    if (this.video) {
+        this.second += dtime;
+        if (this.second >= 1) {
+            this.videoGame(this.IndexPlayed);
+            this.second = 0;
+        }
+    } else {
+        this.clock.updateTime(dtime);
+        if (this.clock.timer < 0) {
+            this.clock.timer = this.scene.playingTime;
+            this.playerWaiting++;
+            this.playerWaiting %= 2;
+            this.disabledPlayer(this.playerWaiting);
+            console.debug('mudou');
+            this.disableSelectionAllTiles(null);
+            this.noSelectAllPieces(null);
+        }
     }
 }
 
+Board.prototype.videoGame = function(indexPlayed) {
+
+    if (indexPlayed >= this.plays.length)
+        return;
+    console.debug('vide0');
+
+    this.noSelectAllTiles(null);
+    this.disableSelectionAllTiles(null);
+    this.noSelectAllPieces(null);
+
+
+
+    var moveVector = this.plays[indexPlayed].moveVector;
+    var piecePoint = this.plays[indexPlayed].oldPosition;
+    var newPoint = this.plays[indexPlayed].newPosition;
+    var piece = this.plays[indexPlayed].piece;
+
+    var piecesLine = this.piecesLine(piecePoint, moveVector);
+    var move = this.makeMove(moveVector, piece, piecesLine);
+
+    this.gameBoard.move(piecePoint.x, piecePoint.y, newPoint.x, newPoint.y);
+
+    this.IndexPlayed++;
+    console.debug('fimvide0');
+
+}
 Board.prototype.display = function() {
 
     this.gameBoard.display();
