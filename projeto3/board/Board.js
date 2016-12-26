@@ -6,8 +6,10 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
     CGFobject.call(this, scene);
     this.scene = scene;
 
+    this.plays = [];
     this.playerWaiting = 1;
     this.clock = new MyClock(scene, 15, 15);
+
     this.texturePiece1 = texturePiece1;
     this.texturePiece2 = texturePiece2;
     this.texturePieceSelected = texturePieceSelected;
@@ -22,21 +24,21 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
     this.IndexPlayer2 = 0;
     this.pieces = new Array(16);
 
+    this.initPieces();
     this.initBoard();
     this.disabledPlayer(this.playerWaiting);
 
-    this.gameBoard.countPoints(0);
+    /*this.gameBoard.countPoints(0);
     console.debug(this.gameBoard.player_0_points);
 
     this.gameBoard.countPoints(1);
-    console.debug(this.gameBoard.player_1_points);
+    console.debug(this.gameBoard.player_1_points);*/
 };
 
 Board.prototype = Object.create(CGFobject.prototype);
 Board.prototype.constructor = Board;
 
-Board.prototype.initBoard = function() {
-
+Board.prototype.initPieces = function() {
 
     //Player1
     this.bigPieceP1_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][0], 0, 1, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
@@ -48,18 +50,7 @@ Board.prototype.initBoard = function() {
     this.smallPieceP1_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][1], 0, 7, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
     this.smallPieceP1_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][2], 0, 8, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
 
-    this.gameBoard.tiles[0][0].setPiece(this.bigPieceP1_1);
-    this.gameBoard.tiles[8][0].setPiece(this.bigPieceP1_2);
-    this.gameBoard.tiles[2][1].setPiece(this.normalPieceP1_1);
-    this.gameBoard.tiles[6][1].setPiece(this.normalPieceP1_2);
-    this.gameBoard.tiles[3][1].setPiece(this.smallPieceP1_1);
-    this.gameBoard.tiles[4][1].setPiece(this.smallPieceP1_2);
-    this.gameBoard.tiles[5][1].setPiece(this.smallPieceP1_3);
-    this.gameBoard.tiles[4][2].setPiece(this.smallPieceP1_4);
-
-
     //Player2
-
     this.bigPieceP2_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][8], 1, 9, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
     this.bigPieceP2_2 = new Piece(this.scene, 3, this.gameBoard.tiles[8][8], 1, 10, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
     this.normalPieceP2_1 = new Piece(this.scene, 2, this.gameBoard.tiles[2][7], 1, 11, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
@@ -68,16 +59,6 @@ Board.prototype.initBoard = function() {
     this.smallPieceP2_2 = new Piece(this.scene, 1, this.gameBoard.tiles[4][7], 1, 14, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
     this.smallPieceP2_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][7], 1, 15, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
     this.smallPieceP2_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][6], 1, 16, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-
-
-    this.gameBoard.tiles[0][8].setPiece(this.bigPieceP2_1);
-    this.gameBoard.tiles[8][8].setPiece(this.bigPieceP2_2);
-    this.gameBoard.tiles[2][7].setPiece(this.normalPieceP2_1);
-    this.gameBoard.tiles[6][7].setPiece(this.normalPieceP2_2);
-    this.gameBoard.tiles[3][7].setPiece(this.smallPieceP2_1);
-    this.gameBoard.tiles[4][7].setPiece(this.smallPieceP2_2);
-    this.gameBoard.tiles[5][7].setPiece(this.smallPieceP2_3);
-    this.gameBoard.tiles[4][6].setPiece(this.smallPieceP2_4);
 
     this.pieces = [
         this.bigPieceP1_1,
@@ -99,6 +80,29 @@ Board.prototype.initBoard = function() {
         this.smallPieceP2_4
     ];
 };
+
+Board.prototype.initBoard = function() {
+
+    //Player1   
+    this.gameBoard.tiles[0][0].setPiece(this.bigPieceP1_1);
+    this.gameBoard.tiles[8][0].setPiece(this.bigPieceP1_2);
+    this.gameBoard.tiles[2][1].setPiece(this.normalPieceP1_1);
+    this.gameBoard.tiles[6][1].setPiece(this.normalPieceP1_2);
+    this.gameBoard.tiles[3][1].setPiece(this.smallPieceP1_1);
+    this.gameBoard.tiles[4][1].setPiece(this.smallPieceP1_2);
+    this.gameBoard.tiles[5][1].setPiece(this.smallPieceP1_3);
+    this.gameBoard.tiles[4][2].setPiece(this.smallPieceP1_4);
+
+    //Player2
+    this.gameBoard.tiles[0][8].setPiece(this.bigPieceP2_1);
+    this.gameBoard.tiles[8][8].setPiece(this.bigPieceP2_2);
+    this.gameBoard.tiles[2][7].setPiece(this.normalPieceP2_1);
+    this.gameBoard.tiles[6][7].setPiece(this.normalPieceP2_2);
+    this.gameBoard.tiles[3][7].setPiece(this.smallPieceP2_1);
+    this.gameBoard.tiles[4][7].setPiece(this.smallPieceP2_2);
+    this.gameBoard.tiles[5][7].setPiece(this.smallPieceP2_3);
+    this.gameBoard.tiles[4][6].setPiece(this.smallPieceP2_4);
+}
 
 Board.prototype.remove = function(oldcol, oldrow) {
     var origin = this.gameBoard.tiles[oldcol][oldrow];

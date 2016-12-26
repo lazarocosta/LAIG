@@ -45,20 +45,27 @@ Tile.prototype.select = function() {
     var move = this.board.makeMove(moveVector, pieceSelect, piecesLine);
 
     console.debug(move);
-    if (move == null)
+    if (move == null) {
         this.board.gameBoard.move(picePoint.x, picePoint.y, this.point.x, this.point.y);
-    else if (move != -1) {
+        this.board.plays.push(new Played(pieceSelect, picePoint, this.point.x, this.point.y));
+    } else if (move != -1) {
         if (distX)
-            if (distX > 0)
+            if (distX > 0) {
                 this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x + move, picePoint.y);
-            else
+                this.board.plays.push(new Played(pieceSelect, picePoint, picePoint.x + move, picePoint.y));
+            } else {
                 this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x - move, picePoint.y);
+                this.board.plays.push(new Played(pieceSelect, picePoint, picePoint.x - move, picePoint.y));
+            }
 
         if (distY)
-            if (distY > 0)
+            if (distY > 0) {
                 this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, picePoint.y + move);
-            else
+                this.board.plays.push(new Played(pieceSelect, picePoint, picePoint.x, picePoint.y + move));
+            } else {
                 this.board.gameBoard.move(picePoint.x, picePoint.y, picePoint.x, picePoint.y - move);
+                this.board.plays.push(new Played(pieceSelect, picePoint, picePoint.x, picePoint.y - move));
+            }
     }
 
     this.board.disableSelectionAllTiles();
@@ -77,6 +84,7 @@ Tile.prototype.select = function() {
 
         console.debug(this.board.gameBoard.player_0_points);
         console.debug(this.board.gameBoard.player_1_points);
+        console.debug(this.board.plays);
     }
 }
 

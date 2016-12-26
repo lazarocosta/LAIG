@@ -310,17 +310,14 @@ class CircularAnimation extends Animation {
         return newAnimation;
     }
 }
-/*
-var LinearAnimationInfo = function(time,points){
-	this.time = time;
-	this.points = points
-}
 
-var CircularAnimationInfo = function(time,center,radius,iAngle,rAngle){
-	this.time = time;
-	this.center = center;
-	this.radius = radius;
-	this.iAngle = iAngle;
-	this.rAngle = rAngle;
+class Played {
+    constructor(piece, oldPosition, newX, newY) {
+        this.piece = piece;
+        this.oldPosition = oldPosition;
+        this.newPosition = new Point2(newX, newY);
+        var moveX = this.newPosition.x - this.oldPosition.x;
+        var moveY = this.newPosition.y - this.oldPosition.y;
+        this.moveVector = new Point2(moveX, moveY);
+    }
 }
-*/
