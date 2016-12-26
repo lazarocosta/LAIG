@@ -33,11 +33,13 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
     this.initBoard();
     this.disabledPlayer(this.playerWaiting);
 
-    /*this.gameBoard.countPoints(0);
-    console.debug(this.gameBoard.player_0_points);
+    this.gameBoard.countPoints(0);
+
 
     this.gameBoard.countPoints(1);
-    console.debug(this.gameBoard.player_1_points);*/
+
+    console.debug(this.gameBoard.player_0_points);
+    console.debug(this.gameBoard.player_1_points);
 };
 
 Board.prototype = Object.create(CGFobject.prototype);

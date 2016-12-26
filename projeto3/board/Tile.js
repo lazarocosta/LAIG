@@ -47,6 +47,7 @@ Tile.prototype.select = function() {
     if (move == null) {
         this.board.gameBoard.move(picePoint.x, picePoint.y, this.point.x, this.point.y);
         this.board.plays.push(new Played(pieceSelect, picePoint, this.point.x, this.point.y));
+
     } else if (move != -1) {
         if (distX)
             if (distX > 0) {
@@ -81,9 +82,10 @@ Tile.prototype.select = function() {
         this.board.disabledPlayer(this.board.playerWaiting);
         this.board.clock.timer = this.scene.playingTime;
 
+        this.board.IndexPlayed++;
         console.debug(this.board.plays);
     }
-    // if (this.board.plays.length > 5) 
+    // if (this.board.plays.length > 5)
     //   this.board.reset = true;
 
 }
