@@ -41,7 +41,6 @@ MyInterface.prototype.init = function(application) {
     obj = this;
     this.gui.add(this.scene, 'playingTime', 10, 30).onChange(function(v) {
         obj.scene.playingTime = v;
-        console.debug(obj.scene.playingTime);
     });
     return true;
 };
