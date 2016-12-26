@@ -64,8 +64,12 @@ Tile.prototype.select = function() {
     this.board.disableSelectionAllTiles();
     this.board.noSelectAllPieces(null);
 
-    if (move != -1)
-        this.board.disabledPlayer(pieceSelect.player);
+    if (move != -1) {
+        this.board.playerWaiting++;
+        this.board.playerWaiting %= 2;
+        this.board.disabledPlayer(this.board.playerWaiting);
+        this.board.elapsedTime = 0;
+    }
 }
 
 Tile.prototype.noSelect = function() {

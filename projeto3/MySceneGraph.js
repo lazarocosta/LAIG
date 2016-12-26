@@ -949,6 +949,9 @@ MySceneGraph.prototype.update = function(dtime) {
         /*if (this.primitives[key] instanceof Chessboard)
           this.primitives[key].updateMark();
     */
+        if (this.primitives[key] instanceof Board)
+            this.primitives[key].updatePlayingTime(dtime);
+
     }
     for (var component in this.components) {
         this.components[component].update(dtime);

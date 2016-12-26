@@ -19,13 +19,13 @@ function Piece(scene, height, tile, player, id, board, texturePiece1, texturePie
     this.selectable = false;
 
 
-    if (player == 1) {
+    if (player == 0) {
         var piecetexture = this.scene.graph.textures[texturePiece1];
         this.materialPiece.setTexture(piecetexture.file);
     }
 
 
-    if (player == 2) {
+    if (player == 1) {
         var piecetexture = this.scene.graph.textures[texturePiece2];
         this.materialPiece.setTexture(piecetexture.file);
     }

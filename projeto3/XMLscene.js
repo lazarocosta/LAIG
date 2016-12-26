@@ -26,6 +26,7 @@ XMLscene.prototype.init = function(application) {
     this.axis = new CGFaxis(this);
 
     this.Index = 0;
+    this.IndexOld = 0;
 
     this.matIndex = 0;
 
@@ -35,6 +36,24 @@ XMLscene.prototype.init = function(application) {
 
     this.currTime = -1;
     this.dTime = 0;
+    this.playingTime = 30;
+
+
+    this.chageCamera = false;
+    this.stepsCamera = 0;
+    this.countStepsCamera = 0;
+    this.difAngleCamera = 0;
+    this.difNearCamera = 0;
+    this.difFarCamera = 0;
+
+    this.difPosiXCamera = 0;
+    this.difPosiYCamera = 0;
+    this.difPosiZCamera = 0;
+
+    this.difTargXCamera = 0;
+    this.difTargYCamera = 0;
+    this.difTargZCamera = 0;
+
 };
 
 XMLscene.prototype.initGraph = function(graph) {
@@ -124,11 +143,129 @@ XMLscene.prototype.initCameras = function() {
 
 XMLscene.prototype.Cameras = function() {
 
-    this.camera = this.graph.views[this.Index];
-    this.interface.setActiveCamera(this.graph.views[this.Index]);
+    //this.camera = this.graph.views[this.Index];
+    //  this.interface.setActiveCamera(this.camera);
+    //this.stepsCamera = 0;
+    //this.countStepsCamera = 0;
 
+    this.IndexOld = this.Index;
     this.Index = (++this.Index) % this.graph.views.length;
+
+    if (this.IndexOld != this.Index) {
+        this.chageCamera = true;
+        this.stepsCamera = 0;
+        console.debug('aqui');
+        this.updateStepsCamera();
+
+    }
+
 };
+XMLscene.prototype.updateStepsCamera = function() {
+    var position1, position2;
+    var target1, target2;
+
+    position1 = this.graph.views[this.IndexOld].position;
+    position2 = this.graph.views[this.Index].position;
+
+
+    console.debug(position1);
+
+    console.debug(position2);
+
+    target1 = this.graph.views[this.IndexOld].target;
+    target2 = this.graph.views[this.Index].target;
+
+    this.difTargXCamera = target2[0] - target1[0];
+    this.difTargYCamera = target2[1] - target1[1];
+    this.difTargZCamera = target2[2] - target1[2];
+    console.debug(this.difTargXCamera);
+    console.debug(this.difTargYCamera);
+    console.debug(this.difTargZCamera);
+
+    this.difPosiXCamera = position2[0] - position1[0];
+    this.difPosiYCamera = position2[1] - position1[1];
+    this.difPosiZCamera = position2[2] - position1[2];
+    console.debug(this.difPosiXCamera);
+    console.debug(this.difPosiYCamera);
+    console.debug(this.difPosiZCamera);
+
+
+    var max = Math.max(Math.abs(this.difPosiXCamera), Math.abs(this.difPosiYCamera), Math.abs(this.difPosiZCamera),
+        Math.abs(this.difTargXCamera), Math.abs(this.difTargYCamera), Math.abs(this.difTargZCamera));
+
+    this.countStepsCamera = Math.ceil(max);
+
+
+    this.difTargXCamera /= this.countStepsCamera;
+    this.difTargYCamera /= this.countStepsCamera;
+    this.difTargZCamera /= this.countStepsCamera;
+
+    this.difPosiXCamera /= this.countStepsCamera;
+    this.difPosiYCamera /= this.countStepsCamera;
+    this.difPosiZCamera /= this.countStepsCamera;
+
+    this.difAngleCamera = this.graph.views[this.Index].fov - this.graph.views[this.IndexOld].fov;
+    this.difNearCamera = this.graph.views[this.Index].near - this.graph.views[this.IndexOld].near;
+    this.difFarCamera = this.graph.views[this.Index].far - this.graph.views[this.IndexOld].far;
+
+    this.difAngleCamera /= this.countStepsCamera;
+    this.difNearCamera /= this.countStepsCamera;
+    this.difFarCamera /= this.countStepsCamera;
+
+    console.debug(this.difFarCamera);
+    console.debug(this.difFarCamera);
+    console.debug('fim');
+};
+XMLscene.prototype.moveCamera = function() {
+
+    if (this.countStepsCamera > this.stepsCamera) {
+
+        this.stepsCamera++;
+
+        var positionOld = this.graph.views[this.IndexOld].position;
+
+        var posX = this.difPosiXCamera * this.stepsCamera;
+        var posY = this.difPosiYCamera * this.stepsCamera;
+        var posZ = this.difPosiZCamera * this.stepsCamera;
+
+        var position = vec3.fromValues(positionOld[0] + posX, positionOld[1] + posY, positionOld[2] + posZ);
+        console.debug(position);
+
+
+        var targetOld = this.graph.views[this.IndexOld].target;
+        var targetX = this.difTargXCamera * this.stepsCamera;
+        var targetY = this.difTargYCamera * this.stepsCamera;
+        var targetZ = this.difTargZCamera * this.stepsCamera;
+
+
+        var target = vec3.fromValues(targetOld[0] + targetX, targetOld[1] + targetY, targetOld[2] + targetZ);
+        //  console.debug(target);
+
+        var angleOld = this.graph.views[this.IndexOld].fov;
+        var angle = angleOld + this.difAngleCamera * this.stepsCamera;
+
+
+        var nearOld = this.graph.views[this.IndexOld].near;
+        //console.debug(nearOld);
+        var near = nearOld + this.difNearCamera * this.stepsCamera;
+
+
+        var farOld = this.graph.views[this.IndexOld].far;
+        var far = farOld + this.difFarCamera * this.stepsCamera;
+
+        var novo = angle * radToDeg;
+        console.debug(novo);
+
+
+
+        //this.camera = new CGFcamera(angle, near, far, position, target);
+        this.camera = new CGFcamera(angle, near, far, position, target);
+
+        this.interface.setActiveCamera(this.camera);
+    } else
+        this.chageCamera = false;
+}
+
 
 XMLscene.prototype.setDefaultAppearance = function() {
     this.setAmbient(0.4, 0.7, 0.7, 0.5);
@@ -158,11 +295,8 @@ XMLscene.prototype.onGraphLoaded = function() {
     this.axis = new CGFaxis(this, this.graph.axisLength, 0.1);
 
     this.initLights();
-    //console.log(this.interface);
-    this.Cameras();
-    //this.graph.display();
-
-    //this.graph.primitives[0]= new MyCylinder(this, 0, 1, 4, 30, 10);
+    this.camera = this.graph.views[this.Index];
+    this.interface.setActiveCamera(this.camera);
 
 };
 
@@ -233,4 +367,9 @@ XMLscene.prototype.update = function(currTime) {
     this.currTime = currTime;
 
     this.graph.update(this.dTime / 1000);
+
+    if (this.chageCamera) {
+        this.moveCamera();
+
+    }
 }

@@ -6,7 +6,8 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
     CGFobject.call(this, scene);
     this.scene = scene;
 
-
+    this.elapsedTime = 0;
+    this.playerWaiting = 1;
     this.texturePiece1 = texturePiece1;
     this.texturePiece2 = texturePiece2;
     this.texturePieceSelected = texturePieceSelected;
@@ -22,7 +23,7 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
     this.pieces = new Array(16);
 
     this.initBoard();
-    this.disabledPlayer(2);
+    this.disabledPlayer(this.playerWaiting);
 };
 
 Board.prototype = Object.create(CGFobject.prototype);
@@ -32,14 +33,14 @@ Board.prototype.initBoard = function() {
 
 
     //Player1
-    this.bigPieceP1_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][0], 1, 1, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.bigPieceP1_2 = new Piece(this.scene, 3, this.gameBoard.tiles[8][0], 1, 2, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.normalPieceP1_1 = new Piece(this.scene, 2, this.gameBoard.tiles[2][1], 1, 3, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.normalPieceP1_2 = new Piece(this.scene, 2, this.gameBoard.tiles[6][1], 1, 4, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP1_1 = new Piece(this.scene, 1, this.gameBoard.tiles[3][1], 1, 5, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP1_2 = new Piece(this.scene, 1, this.gameBoard.tiles[4][1], 1, 6, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP1_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][1], 1, 7, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP1_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][2], 1, 8, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.bigPieceP1_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][0], 0, 1, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.bigPieceP1_2 = new Piece(this.scene, 3, this.gameBoard.tiles[8][0], 0, 2, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.normalPieceP1_1 = new Piece(this.scene, 2, this.gameBoard.tiles[2][1], 0, 3, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.normalPieceP1_2 = new Piece(this.scene, 2, this.gameBoard.tiles[6][1], 0, 4, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP1_1 = new Piece(this.scene, 1, this.gameBoard.tiles[3][1], 0, 5, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP1_2 = new Piece(this.scene, 1, this.gameBoard.tiles[4][1], 0, 6, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP1_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][1], 0, 7, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP1_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][2], 0, 8, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
 
     this.gameBoard.tiles[0][0].setPiece(this.bigPieceP1_1);
     this.gameBoard.tiles[8][0].setPiece(this.bigPieceP1_2);
@@ -53,14 +54,14 @@ Board.prototype.initBoard = function() {
 
     //Player2
 
-    this.bigPieceP2_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][8], 2, 9, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.bigPieceP2_2 = new Piece(this.scene, 3, this.gameBoard.tiles[8][8], 2, 10, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.normalPieceP2_1 = new Piece(this.scene, 2, this.gameBoard.tiles[2][7], 2, 11, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.normalPieceP2_2 = new Piece(this.scene, 2, this.gameBoard.tiles[6][7], 2, 12, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP2_1 = new Piece(this.scene, 1, this.gameBoard.tiles[3][7], 2, 13, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP2_2 = new Piece(this.scene, 1, this.gameBoard.tiles[4][7], 2, 14, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP2_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][7], 2, 15, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
-    this.smallPieceP2_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][6], 2, 16, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.bigPieceP2_1 = new Piece(this.scene, 3, this.gameBoard.tiles[0][8], 1, 9, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.bigPieceP2_2 = new Piece(this.scene, 3, this.gameBoard.tiles[8][8], 1, 10, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.normalPieceP2_1 = new Piece(this.scene, 2, this.gameBoard.tiles[2][7], 1, 11, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.normalPieceP2_2 = new Piece(this.scene, 2, this.gameBoard.tiles[6][7], 1, 12, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP2_1 = new Piece(this.scene, 1, this.gameBoard.tiles[3][7], 1, 13, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP2_2 = new Piece(this.scene, 1, this.gameBoard.tiles[4][7], 1, 14, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP2_3 = new Piece(this.scene, 1, this.gameBoard.tiles[5][7], 1, 15, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
+    this.smallPieceP2_4 = new Piece(this.scene, 1, this.gameBoard.tiles[4][6], 1, 16, this, this.texturePiece1, this.texturePiece2, this.texturePieceSelected);
 
 
     this.gameBoard.tiles[0][8].setPiece(this.bigPieceP2_1);
@@ -137,8 +138,9 @@ Board.prototype.noSelectAllTiles = function(id) {
 }
 
 Board.prototype.selectNext = function(position, height) {
-    var x = position.getx();
-    var y = position.gety();
+    console.debug(position);
+    var x = position.x;
+    var y = position.y;
 
     for (var j = x; j <= x + height && j < 9; j++)
         this.gameBoard.tiles[j][y].enableselection();
@@ -360,7 +362,6 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
     console.debug(deslocation);
     if (emptySpaces > 0 && deslocation > 0)
         return deslocation;
-    //return Math.max(emptySpaces, deslocation);
 
     console.debug('aqui2');
     if (deslocation == 0)
@@ -369,6 +370,21 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
     return null;
 }
 
+Board.prototype.updatePlayingTime = function(dtime) {
+
+    this.elapsedTime += dtime;
+    if (this.elapsedTime >= this.scene.playingTime) {
+        this.playerWaiting++;
+        this.playerWaiting %= 2;
+        this.disabledPlayer(this.playerWaiting);
+        this.elapsedTime = 0;
+        console.debug('mudou');
+        this.disableSelectionAllTiles(null);
+        this.noSelectAllPieces(null);
+    }
+
+
+}
 Board.prototype.display = function() {
 
     this.gameBoard.display();

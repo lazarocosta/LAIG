@@ -5,8 +5,8 @@
 
 
 function MyInterface() {
-	//call CGFinterface constructor
-	CGFinterface.call(this);
+    //call CGFinterface constructor
+    CGFinterface.call(this);
 }
 
 MyInterface.prototype = Object.create(CGFinterface.prototype);
@@ -16,41 +16,47 @@ MyInterface.prototype.constructor = MyInterface;
  * init
  * @param {CGFapplication} application
  */
-MyInterface.prototype.init = function (application) {
-	// call CGFinterface init
-	CGFinterface.prototype.init.call(this, application);
+MyInterface.prototype.init = function(application) {
+    // call CGFinterface init
+    CGFinterface.prototype.init.call(this, application);
 
-	// init GUI. For more information on the methods, check:
-	//  http://workshop.chromeexperiments.com/examples/gui
-	this.gui = new dat.GUI();
+    // init GUI. For more information on the methods, check:
+    //  http://workshop.chromeexperiments.com/examples/gui
+    this.gui = new dat.GUI();
 
-	// add a button:
-	// the first parameter is the object that is being controlled (in this case the scene)
-	// the identifier 'doSomething' must be a function declared as part of that object (i.e. a member of the scene class)
-	// e.g. LightingScene.prototype.doSomething = function () { console.log("Doing something..."); };
+    // add a button:
+    // the first parameter is the object that is being controlled (in this case the scene)
+    // the identifier 'doSomething' must be a function declared as part of that object (i.e. a member of the scene class)
+    // e.g. LightingScene.prototype.doSomething = function () { console.log("Doing something..."); };
 
-	//this.gui.add(this.scene, 'UpdateTime');
+    //this.gui.add(this.scene, 'UpdateTime');
 
-	// add a group of controls (and open/expand by defult)
-	this.lights = this.gui.addFolder("Ligths");
-	this.omni = this.lights.addFolder("Omni");
-	this.spot = this.lights.addFolder("Spot");
+    // add a group of controls (and open/expand by defult)
+    this.lights = this.gui.addFolder("Ligths");
+    this.omni = this.lights.addFolder("Omni");
+    this.spot = this.lights.addFolder("Spot");
 
-	this.views = this.gui.addFolder("Views");
-	return true;
+    this.views = this.gui.addFolder("Views");
+
+    obj = this;
+    this.gui.add(this.scene, 'playingTime', 10, 30).onChange(function(v) {
+        obj.scene.playingTime = v;
+        console.debug(obj.scene.playingTime);
+    });
+    return true;
 };
 
-MyInterface.prototype.addLight = function (id, type) {
-	switch (type) {
-		case 'omni':
-			this.omni.add(this.scene.lightsStatus,id,this.scene.lightsStatus[id]).name(id);
-			break;
-		case 'spot':
-			this.spot.add(this.scene.lightsStatus,id,this.scene.lightsStatus[id]).name(id);
-			break;
-		default:
-			break;
-	}
+MyInterface.prototype.addLight = function(id, type) {
+    switch (type) {
+        case 'omni':
+            this.omni.add(this.scene.lightsStatus, id, this.scene.lightsStatus[id]).name(id);
+            break;
+        case 'spot':
+            this.spot.add(this.scene.lightsStatus, id, this.scene.lightsStatus[id]).name(id);
+            break;
+        default:
+            break;
+    }
 }
 
 /**
@@ -68,23 +74,23 @@ MyInterface.prototype.addLight = function (id, type) {
  * processKeyboard
  * @param event {Event}
  */
-MyInterface.prototype.processKeyboard = function (event) {
-	// call CGFinterface default code (omit if you want to override)
-	// CGFinterface.prototype.processKeyboard.call(this, event);
+MyInterface.prototype.processKeyboard = function(event) {
+    // call CGFinterface default code (omit if you want to override)
+    // CGFinterface.prototype.processKeyboard.call(this, event);
 
-	// Check key codes e.g. here: http://www.asciitable.com/
-	// or use String.fromCharCode(event.keyCode) to compare chars
+    // Check key codes e.g. here: http://www.asciitable.com/
+    // or use String.fromCharCode(event.keyCode) to compare chars
 
-	// for better cross-browser support, you may also check suggestions on using event.which in http://www.w3schools.com/jsref/event_key_keycode.asp
+    // for better cross-browser support, you may also check suggestions on using event.which in http://www.w3schools.com/jsref/event_key_keycode.asp
 
-	switch (event.keyCode) {
-		case (86): //letra v
-		case (118): //letra V
-			this.scene.Cameras();
-			break;
-		case (77):
-		case (109):
-			this.scene.changeMaterial();
-			break;
-	};
+    switch (event.keyCode) {
+        case (86): //letra v
+        case (118): //letra V
+            this.scene.Cameras();
+            break;
+        case (77):
+        case (109):
+            this.scene.changeMaterial();
+            break;
+    };
 }
