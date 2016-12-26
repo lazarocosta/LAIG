@@ -6,6 +6,9 @@ function Gameboard(scene, board, textureBoard, selectableSpace) {
     CGFobject.call(this, scene);
     this.scene = scene;
 
+    this.player_0_points;
+    this.player_1_points;
+
     this.board = board;
     this.tiles = new Array(9);
 
@@ -19,6 +22,11 @@ function Gameboard(scene, board, textureBoard, selectableSpace) {
     this.materialSelectable.setTexture(texture2.file);
 
     this.initGameboard();
+
+    //this.countPoints(0);
+    //this.countPoints(1);
+    // console.debug(this.player_0_points);
+
 };
 
 Gameboard.prototype = Object.create(CGFobject.prototype);
@@ -43,6 +51,33 @@ Gameboard.prototype.getTile = function(col, row) {
     return this.tiles[col][row];
 };
 
+Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
+    var piece = this.tiles[oldcol][oldrow].getPiece();
+    var origin = this.tiles[oldcol][oldrow];
+    var dest = this.tiles[newcol][newrow]
+    piece.setTile(origin, dest);
+}
+
+Gameboard.prototype.countPoints = function(player) {
+    this.player_0_points = 0;
+    this.player_1_points = 0
+    for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
+            if (this.tiles[j][i].piece != null) {
+                var piece = this.tiles[j][i].piece;
+                var player = piece.player;
+                var points = piece.height;
+
+                if (player == 0)
+                    this.player_0_points += points;
+
+                if (player == 1)
+                    this.player_1_points += points;
+            }
+        }
+    }
+}
+
 Gameboard.prototype.display = function() {
 
     this.scene.pushMatrix();
@@ -59,11 +94,4 @@ Gameboard.prototype.display = function() {
         }
     }
     this.scene.popMatrix();
-}
-
-Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
-    var piece = this.tiles[oldcol][oldrow].getPiece();
-    var origin = this.tiles[oldcol][oldrow];
-    var dest = this.tiles[newcol][newrow]
-    piece.setTile(origin, dest);
 }

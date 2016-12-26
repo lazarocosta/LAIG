@@ -65,12 +65,18 @@ Tile.prototype.select = function() {
     this.board.noSelectAllPieces(null);
 
     if (move != -1) {
+        this.board.gameBoard.countPoints(this.board.playerWaiting);
+
         this.board.playerWaiting++;
         this.board.playerWaiting %= 2;
+
+        this.board.gameBoard.countPoints(this.board.playerWaiting);
+
         this.board.disabledPlayer(this.board.playerWaiting);
-        this.board.elapsedTime = this.scene.playingTime;
-        this.board.clock.timer = this.scene.playingTime
-        console.debug(this.board.elapsedTime);
+        this.board.clock.timer = this.scene.playingTime;
+
+        console.debug(this.board.gameBoard.player_0_points);
+        console.debug(this.board.gameBoard.player_1_points);
     }
 }
 

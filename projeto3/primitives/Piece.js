@@ -77,8 +77,6 @@ Piece.prototype.display = function() {
     this.scene.rotate(Math.PI / 2, 1, 0, 0);
     this.ofset = 2;
     this.razon = 1;
-    if (this.height == 2)
-        this.scene.scale(1, 0.8, 0.8);
 
     this.scene.scale(this.ofset, this.ofset * this.razonZ, this.ofset);
 
