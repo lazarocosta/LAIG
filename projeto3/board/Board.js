@@ -6,7 +6,6 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
     CGFobject.call(this, scene);
     this.scene = scene;
 
-    this.elapsedTime = this.scene.playingTime;
     this.playerWaiting = 1;
     this.clock = new MyClock(scene, 15, 15);
     this.texturePiece1 = texturePiece1;
@@ -373,14 +372,12 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
 
 Board.prototype.updatePlayingTime = function(dtime) {
 
-    this.elapsedTime -= dtime;
     this.clock.updateTime(dtime);
-    if (this.elapsedTime < 0) {
-        this.elapsedTime = this.scene.playingTime;
+    if (this.clock.timer < 0) {
+        this.clock.timer = this.scene.playingTime;
         this.playerWaiting++;
         this.playerWaiting %= 2;
         this.disabledPlayer(this.playerWaiting);
-        this.clock.timer = this.scene.playingTime;
         console.debug('mudou');
         this.disableSelectionAllTiles(null);
         this.noSelectAllPieces(null);

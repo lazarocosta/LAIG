@@ -68,7 +68,9 @@ Tile.prototype.select = function() {
         this.board.playerWaiting++;
         this.board.playerWaiting %= 2;
         this.board.disabledPlayer(this.board.playerWaiting);
-        this.board.elapsedTime = 0;
+        this.board.elapsedTime = this.scene.playingTime;
+        this.board.clock.timer = this.scene.playingTime
+        console.debug(this.board.elapsedTime);
     }
 }
 
