@@ -494,6 +494,7 @@ Board.prototype.display = function() {
 
     this.scene.pushMatrix();
     this.scene.translate(11, 5, 0);
+    this.scene.rotate(-90 * degToRad, 0, 0, 1);
     this.clock.display();
     this.scene.popMatrix();
 }
