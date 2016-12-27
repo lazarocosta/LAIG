@@ -483,6 +483,7 @@ Board.prototype.videoGame = function(indexPlayed) {
     console.debug('fimvide0');
 
 }
+
 Board.prototype.display = function() {
 
     this.gameBoard.display();
