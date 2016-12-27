@@ -168,14 +168,14 @@ Board.prototype.remove = function(oldcol, oldrow) {
     var player = piece.player;
     var dest;
 
+    if (player == 0) {
+        dest = this.auxiliarBoardP2.tiles[this.IndexPlayer2];
+        this.IndexPlayer2++;
+    }
+
     if (player == 1) {
         dest = this.auxiliarBoardP1.tiles[this.IndexPlayer1];
         this.IndexPlayer1++;
-    }
-
-    if (player == 2) {
-        dest = this.auxiliarBoardP2.tiles[this.IndexPlayer2];
-        this.IndexPlayer2++;
     }
     piece.setTile(origin, dest);
 }
@@ -395,12 +395,14 @@ Board.prototype.makeMove = function(moveVector, piece, piecesLine) {
             } else
                 deslocation = dist - emptySpacesNext;
 
+            console.debug(piecesLine[i].tile.point);
             if (deslocation > distBoar) {
                 this.remove(pointXPiece, pointYPiece);
                 continue;
             }
 
             console.debug('translate');
+
 
             if (moveX)
                 if (positive)
