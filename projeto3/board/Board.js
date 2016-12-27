@@ -493,7 +493,7 @@ Board.prototype.display = function() {
     this.scene.popMatrix();
 
     this.scene.pushMatrix();
-    this.scene.translate(12, 5, 0);
+    this.scene.translate(11, 5, 0);
     this.clock.display();
     this.scene.popMatrix();
 }

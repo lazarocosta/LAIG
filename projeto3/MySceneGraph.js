@@ -725,6 +725,9 @@ MySceneGraph.prototype.parsePrimitives = function(element) {
                 }
                 this.primitives[id] = new Board(this.scene, piece1, piece2, pieceSelected, spaceMaterial, selectableSpace, textureAuxBoard);
                 break;
+            case 'cube':
+                this.primitives[id] = new Cube(this.scene);
+                break;
             default:
                 console.warn("No such primitive named '" + objname + "'!");
                 break;

@@ -83,7 +83,6 @@ Tile.prototype.select = function() {
         this.board.clock.timer = this.scene.playingTime;
 
         this.board.IndexPlayed++;
-        console.debug(this.board.plays);
     }
     // if (this.board.plays.length > 5)
     //   this.board.reset = true;

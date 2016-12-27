@@ -324,6 +324,7 @@ XMLscene.prototype.display = function() {
     this.clearPickRegistration();
 
 
+
     // ---- BEGIN Background, camera and axis setup
 
     // Clear image and depth buffer everytime we update the scene
