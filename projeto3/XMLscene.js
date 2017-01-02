@@ -167,27 +167,16 @@ XMLscene.prototype.updateStepsCamera = function() {
     position1 = this.graph.views[this.IndexOld].position;
     position2 = this.graph.views[this.Index].position;
 
-
-    console.debug(position1);
-
-    console.debug(position2);
-
     target1 = this.graph.views[this.IndexOld].target;
     target2 = this.graph.views[this.Index].target;
 
     this.difTargXCamera = target2[0] - target1[0];
     this.difTargYCamera = target2[1] - target1[1];
     this.difTargZCamera = target2[2] - target1[2];
-    console.debug(this.difTargXCamera);
-    console.debug(this.difTargYCamera);
-    console.debug(this.difTargZCamera);
 
     this.difPosiXCamera = position2[0] - position1[0];
     this.difPosiYCamera = position2[1] - position1[1];
     this.difPosiZCamera = position2[2] - position1[2];
-    console.debug(this.difPosiXCamera);
-    console.debug(this.difPosiYCamera);
-    console.debug(this.difPosiZCamera);
 
 
     var max = Math.max(Math.abs(this.difPosiXCamera), Math.abs(this.difPosiYCamera), Math.abs(this.difPosiZCamera),
@@ -212,9 +201,6 @@ XMLscene.prototype.updateStepsCamera = function() {
     this.difNearCamera /= this.countStepsCamera;
     this.difFarCamera /= this.countStepsCamera;
 
-    console.debug(this.difFarCamera);
-    console.debug(this.difFarCamera);
-    console.debug('fim');
 };
 XMLscene.prototype.moveCamera = function() {
 
@@ -229,7 +215,7 @@ XMLscene.prototype.moveCamera = function() {
         var posZ = this.difPosiZCamera * this.stepsCamera;
 
         var position = vec3.fromValues(positionOld[0] + posX, positionOld[1] + posY, positionOld[2] + posZ);
-        console.debug(position);
+
 
 
         var targetOld = this.graph.views[this.IndexOld].target;
@@ -254,7 +240,6 @@ XMLscene.prototype.moveCamera = function() {
         var far = farOld + this.difFarCamera * this.stepsCamera;
 
         var novo = angle * radToDeg;
-        console.debug(novo);
 
 
 
