@@ -56,6 +56,7 @@ Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
     var origin = this.tiles[oldcol][oldrow];
     var dest = this.tiles[newcol][newrow];
     piece.setTile(origin, dest);
+    this.scene.interface.game.move(oldcol, oldrow, newcol, newrow);
 }
 
 Gameboard.prototype.countPoints = function(player) {
