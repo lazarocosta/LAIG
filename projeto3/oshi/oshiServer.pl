@@ -105,11 +105,15 @@ print_header_line(_).
 % Require your Prolog Files here
 
 parse_input(handshake, handshake).
-parse_input(newGame(Mode), Res) :- newGame(Mode,Res).
+parse_input(newBoard, Res):-
+    default_board(Res).
+parse_input(move(Board,X,Y,Dir,Num),Res):-
+	check_move(Board,Y,X,Num,Dir),
+    move(Board,Y,X,Num,Dir,Res).
+parse_input(move(_,_,_,_,_),'invalid').
+parse_input(whitePoints(Board),Res):-
+	count_points_white(Board,Res).
+parse_input(redPoints(Board),Res):-
+	count_points_red(Board,Res).
 parse_input(quit, goodbye).
-
-newGame(Mode,Res):-
-
-test(_,[],N) :- N =< 0.
-test(A,[A|Bs],N) :- N1 is N-1, test(A,Bs,N1).
 	
