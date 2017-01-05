@@ -321,3 +321,24 @@ class Played {
         this.moveVector = new Point2(moveX, moveY);
     }
 }
+
+function boardToString(board) {
+    console.log(board);
+    var boardString = "[";
+    for (var i = 0; i < board.length; i++) {
+        boardString += "[";
+        for (var j = 0; j < board[i].length; j++) {
+            boardString += board[i][j];
+            if (j + 1 < board[i].length) {
+                boardString += ","
+            }
+        }
+        boardString += "]";
+        if (i + 1 < board.length) {
+            boardString += ","
+        }
+    }
+    boardString += "]";
+    console.log(boardString);
+    return boardString;
+}

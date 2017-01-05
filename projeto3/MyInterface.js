@@ -38,12 +38,25 @@ MyInterface.prototype.init = function(application) {
 
     this.views = this.gui.addFolder("Views");
 
+    this.addGameTab();
+
     obj = this;
     this.gui.add(this.scene, 'playingTime', 10, 30).onChange(function(v) {
         obj.scene.playingTime = v;
     });
     return true;
 };
+
+MyInterface.prototype.addGameTab = function() {
+    this.gameTab = this.gui.addFolder("Game");
+
+    this.game = new Game(45);
+
+    this.gameTab.add(this.game, 'gameMode', ['PvP', 'PvAI', 'AIvAI']).name("Game Mode");
+    this.gameTab.add(this.game, 'begin').name("Start Game");
+    this.gameTab.add(this.game, 'getRedPoints').name("Red Points");
+    this.gameTab.add(this.game, 'shutdown').name("Shutdown Server");
+}
 
 MyInterface.prototype.addLight = function(id, type) {
     switch (type) {

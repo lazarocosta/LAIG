@@ -52,7 +52,7 @@ function getUrlVars() {
 serialInclude(['../lib/CGF.js', 'XMLscene.js', 'utils.js', 'MySceneGraph.js', 'primitives/Rectangle.js', 'primitives/Triangle.js', 'primitives/Torus.js', 'MyInterface.js',
     'primitives/Cylinder.js', 'primitives/Circle.js', 'primitives/Sphere.js', 'primitives/Plane.js', 'primitives/Chessboard.js',
     'primitives/Patch.js', 'primitives/Vehicle.js', 'primitives/Pyramid.js', 'primitives/Piece.js', 'primitives/Cube.js',
-    'board/Tile.js', 'board/Gameboard.js', 'board/Board.js', 'board/AuxiliaryBoard.js', 'board/MyClock.js',
+    'board/Tile.js', 'board/Gameboard.js', 'board/Board.js', 'board/AuxiliaryBoard.js', 'board/MyClock.js', 'board/Client.js', 'board/Game.js',
 
     main = function() {
         // Standard application, scene and interface setup
