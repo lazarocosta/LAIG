@@ -50,7 +50,7 @@ MyInterface.prototype.init = function(application) {
 MyInterface.prototype.addGameTab = function() {
     this.gameTab = this.gui.addFolder("Game");
 
-    this.game = new Game(45);
+    this.game = new Game(45, this.scene);
 
     this.gameTab.add(this.game, 'gameMode', ['PvP', 'PvAI', 'AIvAI']).name("Game Mode");
     this.gameTab.add(this.game, 'begin').name("Start Game");

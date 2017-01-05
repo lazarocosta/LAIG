@@ -52,11 +52,13 @@ Gameboard.prototype.getTile = function(col, row) {
 };
 
 Gameboard.prototype.move = function(oldcol, oldrow, newcol, newrow) {
+    if (!this.scene.interface.game.move(oldcol, oldrow, newcol, newrow)) {
+        return;
+    }
     var piece = this.tiles[oldcol][oldrow].getPiece();
     var origin = this.tiles[oldcol][oldrow];
     var dest = this.tiles[newcol][newrow];
     piece.setTile(origin, dest);
-    this.scene.interface.game.move(oldcol, oldrow, newcol, newrow);
 }
 
 Gameboard.prototype.countPoints = function(player) {

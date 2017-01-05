@@ -2,7 +2,7 @@
  * Game
  * @constructor
  */
-function Game(id) {
+function Game(id, scene) {
     this.id = id;
     this.time = 0;
     this.gameMode = 'none';
@@ -11,6 +11,7 @@ function Game(id) {
     this.redPoints = 0;
     this.whitePoints = 0;
     this.client = new Client();
+    this.scene = scene;
 }
 
 Game.prototype.constructor = Game;
@@ -21,11 +22,13 @@ Game.prototype.getNewBoard = function() {
 }
 
 Game.prototype.setBoard = function(boardTemp) {
+    console.debug(boardTemp);
     this.board = JSON.parse(boardTemp);
 }
 
 Game.prototype.begin = function() {
     this.getNewBoard();
+    this.scene.graph.board.resetGame();
 }
 
 Game.prototype.stop = function() {
@@ -53,24 +56,30 @@ Game.prototype.move = function(Xi, Yi, Xf, Yf) {
     var dx = Xf - Xi;
     var Num = 0;
     if (dy > 0) {
-        dir = 1;
+        dir = 2;
         Num = dy;
     }
     if (dy < 0) {
-        dir = 0;
-        Num = dy;
+        dir = 3;
+        Num = Math.abs(dy);
     }
     if (dx > 0) {
-        dir = 2;
+        dir = 0;
         Num = dx;
     }
     if (dx < 0) {
-        dir = 3;
-        Num = dx;
+        dir = 1;
+        Num = Math.abs(dx);
     }
-    var message = "move(" + board + "," + Xi + "," + Yi + "," + dir + "," + Num + ")";
+    var x = Xi + 1;
+    var y = Yi + 1;
+    var message = "move(" + board + "," + x + "," + y + "," + dir + "," + Num + ")";
     var boardTemp = this.client.sendRequest(message);
-    this.setBoard(boardTemp);
+    if (boardTemp != "invalid") {
+        this.setBoard(boardTemp);
+        return true;
+    }
+    return false;
 }
 
 Game.GameState = {

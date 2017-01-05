@@ -724,6 +724,7 @@ MySceneGraph.prototype.parsePrimitives = function(element) {
                     }
                 }
                 this.primitives[id] = new Board(this.scene, piece1, piece2, pieceSelected, spaceMaterial, selectableSpace, textureAuxBoard);
+                this.board = this.primitives[id];
                 break;
             case 'cube':
                 this.primitives[id] = new Cube(this.scene);

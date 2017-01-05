@@ -35,6 +35,7 @@ function Board(scene, texturePiece1, texturePiece2, texturePieceSelected, textur
 
     this.gameBoard.countPoints(0);
 
+    this.board = [];
 
     this.gameBoard.countPoints(1);
 
